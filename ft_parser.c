@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/06 02:44:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/06 11:12:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ t_infos	*ft_sort(char *tokens[])
 			}
 			redir = ft_create_redir(tokens[i], tokens[i + 1]);
 			data->redirs[data->red_index++] = redir;
+			i++;
 			printf("\n\n\n\n");
 
 		}

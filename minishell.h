@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/06 02:11:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:01:54 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,15 @@ typedef struct s_infos{
 char	**ft_read_input(char *prompt);
 void	errors(char *str);
 char	**ft_split(char const *s, char *delimeter);
-int	ft_strcmp(const char *s1, const char *s2);
+int		ft_strcmp(const char *s1, const char *s2);
 void	*ft_malloc(size_t size);
 t_infos	*ft_init(void);
 void	ft_null(t_infos *data);
 char	**ft_check_path(char *envp[]);
 t_infos	*ft_sort(char *tokens[]);
 char	*ft_strdup(const char *s);
-
+void	ft_execute(t_command *command, char *envp[], t_infos *tokens);
+void	ft_execute_pipe(t_pipe *pipe, char *envp[], t_infos *tokens);
 
 
 
@@ -89,12 +90,11 @@ void	bad_arg(int x);
 char	*ft_access(char *av, char *envp[]);
 void	ft_cleaner(char *str[]);
 int		ft_file(char *file, int mode);
-void	ft_execute(t_infos *data, char *envp[], int x);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlen(const char *s);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-void	execute_command(char *av[], char *envp[], int pipefd[], int process);
+void	execute_command(t_infos *tokens, char *envp[], int pipefd[]);
 int		redirect_input_output(int infile, int outfile, int pipefd[2], int x);
 void	close_fd(int pipefd[2], int x);
 void	create_pipe(int pipefd[2]);

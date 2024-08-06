@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/06 02:52:33 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:20:16 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,18 +107,18 @@ int	ft_file(char *file, int mode)
 	if (mode == INPUT)
 	{
 		file_fd = open(file, O_RDONLY);
-		ft_file_error(file_fd);
+		// ft_file_error(file_fd);
 	}
 	else if (mode == OUTPUT)
 	{
 		file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		ft_file_error(file_fd);
+		// ft_file_error(file_fd);
 
 	}
 	else if (mode == APPEND)
 	{
 		file_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		ft_file_error(file_fd);
+		// ft_file_error(file_fd);
 
 	}
 	// else if (mode == DELIMETER)
@@ -127,7 +127,7 @@ int	ft_file(char *file, int mode)
 	// }
 	else 
 	{
-		error();
+		// error();
 		return (-1);
 	}
 	return (file_fd);
@@ -167,19 +167,30 @@ void	ft_cleaner(char *str[])
 	free(str);
 }
 
+
 int main(int ac, char *av[], char *envp[])
 {
     char **tester;
 	tester = ft_read_input("Minishell> ");
-   
-
 	t_infos *tokens ;
 
 	tokens = ft_sort(tester);
-	
-		
-	ft_check_path(envp);
-	ft_execute(tokens, envp, 0);
+printf("values of %d	%d\n", tokens->cmd_index, tokens->pipe_index);
+	if (tokens->pipe_index > 0)
+	{
+	for (int i = 0; i < tokens->pipe_index; i++) {
+        ft_execute_pipe(tokens->pipes[i], envp, tokens);
+    }
+	}
+	else
+	{
+    for (int i = 0; i < tokens->cmd_index; i++) {
+        if (fork() == 0) {
+            ft_execute(tokens->commands[i], envp, tokens);
+        }
+        wait(NULL);
+    }
+	}
 
 	free(tokens->commands);
     free(tokens);
@@ -191,26 +202,40 @@ int main(int ac, char *av[], char *envp[])
     return 0;
 }
 
-void	execute_command(char *av[], char *envp[], int pipefd[], int process)
+void	execute_command(t_infos *tokens, char *envp[], int pipefd[])
 {
 	int	infile;
 	int	outfile;
+	int	append;
+	int	i;
 
-	if (process == 1)
+	i = 0;
+	while(i < tokens->red_index)
 	{
-		infile = ft_file(av[1], 0);
-		redirect_input_output(infile, 0, pipefd, 1);
-		close(infile);
-		ft_execute(av, envp, 2);
-	}
-	else if (process == 2)
-	{
-		outfile = ft_file(av[4], 1);
-		redirect_input_output(0, outfile, pipefd, 2);
-		close(outfile);
-		ft_execute(av, envp, 3);
+		if (tokens->redirs[i]->type == INPUT)
+		{
+			infile = ft_file(tokens->redirs[i]->file, 0);
+			if (infile == -1)
+				errors("couldnt open file");
+			redirect_input_output(infile, 0, pipefd, 1);
+			close(infile);
+		}
+		else if (tokens->redirs[i]->type == OUTPUT)
+		{
+			outfile = ft_file(tokens->redirs[i]->file, 1);
+			redirect_input_output(0, outfile, pipefd, 2);
+			close(outfile);
+		}
+		else if (tokens->redirs[i]->type == APPEND)
+		{
+			append = ft_file(tokens->redirs[i]->file, 2);
+			redirect_input_output(0, outfile, pipefd, 2);
+			close(outfile);
+		}
+		i++;
 	}
 }
+
 
 int	redirect_input_output(int infile, int outfile, int pipefd[2], int x)
 {
@@ -237,53 +262,3 @@ int	redirect_input_output(int infile, int outfile, int pipefd[2], int x)
 	return (0);
 }
 
-void	ft_execute(t_infos *data, char *envp[], int x)
-{
-	char	*path;
-
-	path = ft_access(data->commands[0]->name, envp);
-	if (path == NULL){
-		errors("Couldn't find the executable");
-		}
-	if (execve(path, data->commands[0]->args, envp) == -1)
-	{
-		free(path);
-		errors("Couldnt execute the cmd");
-	}
-}
-
-char	*ft_access(char *av, char *envp[])
-{
-	char	**splitted;
-	char	*path;
-	int		i;
-
-	splitted = ft_check_path(envp);
-	i = -1;
-	while (splitted[++i] != NULL)
-	{
-		path = join(splitted[i], av);
-		if (access(path, X_OK) == 0)
-			break ;
-		free(path);
-	}
-	if (splitted[i] == NULL)
-	{
-		ft_cleaner(splitted);
-		return (NULL);
-	}
-	return (path);
-}
-
-char	*join(char *str, char *av)
-{
-	char	*path;
-	char	**cmd;
-
-	cmd = ft_split(av, "     ");
-	str = ft_strjoin(str, "/");
-	path = ft_strjoin(str, cmd[0]);
-	free(str);
-	ft_cleaner(cmd);
-	return (path);
-}
