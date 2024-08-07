@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:40:29 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/02 12:41:31 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/07 13:14:47 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,26 @@
 #include <sys/ioctl.h>
 #include <curses.h>
 #include <term.h>
+
 /* Function to export an environment variable */
-void export_env(const char *name, const char *value) {
-    // Check for null pointers
-    if (name == NULL || value == NULL) {
-        fprintf(stderr, "Error: Name and value must be non-null.\n");
-        return (1);
-    }
-    // Set the environment variable
-    if (setenv(name, value, 1) != 0) {
+int	export_env(const char *name, const char *value)
+{
+	// Check for null pointers
+	if (name == NULL || value == NULL)
+	{
+		fprintf(stderr, "Error: Name and value must be non-null.\n");
+		return (1);
+	}
+	// Set the environment variable
+	if (setenv(name, value, 1) != 0)
+	{
 		perror("setenv");
-    }
+		return (1);
+	}
+	return (0);
 }
 
-int main(void)
+int	main(void)
 {
 	// Example usage
 	export_env("MY_VAR", "HelloWorld");
