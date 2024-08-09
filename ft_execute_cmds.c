@@ -6,62 +6,58 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/06 14:03:22 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 06:26:23 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-void	ft_execute(t_command *command, char *envp[], t_infos *tokens)
+void execute_command(t_infos *tokens, char *envp[])
+{
+	// int	status;
+	int	i;
+
+	i = 0;
+    if (tokens->pipe_index > 0)
+    {
+		while (i < tokens->pipe_index)
+        {
+            t_pipe *pipe = tokens->pipes[i];
+            ft_create_pipe(pipe, envp, tokens);
+			i++;
+		}
+    }
+    // 2. Handle Built-ins
+    // else if (is_builtin(tokens->commands[0]->name))
+    // {
+    //     execute_builtin(tokens->commands[0], tokens);  // Execute built-in command
+    // }
+    else
+    {
+        pid_t pid = fork();
+        if (pid == 0)  // Child process
+        {
+            handle_redirections(tokens->commands[0], tokens);
+            ft_execute(tokens->commands[0], envp);
+        }
+        else if (pid > 0)
+			waitpid(pid, NULL, 0);
+        else
+			errors("Fork failed");
+    }
+}
+
+void	ft_execute(t_command *command, char *envp[])
 {
 	char	*path;
-	
-	if (tokens->red_index > 0)
-		execute_command;
+
 	path = ft_access(command->name, envp);
-	if (path == NULL){
+	if (path == NULL)
 		errors("Couldn't find the executable");
-		}
 	if (execve(path, command->args, envp) == -1)
 	{
 		free(path);
 		errors("Couldnt execute the cmd");
 	}
-}
-
-char	*ft_access(char *av, char *envp[])
-{
-	char	**splitted;
-	char	*path;
-	int		i;
-
-	splitted = ft_check_path(envp);
-	i = -1;
-	while (splitted[++i] != NULL)
-	{
-		path = join(splitted[i], av);
-		if (access(path, X_OK) == 0)
-			break ;
-		free(path);
-	}
-	if (splitted[i] == NULL)
-	{
-		ft_cleaner(splitted);
-		return (NULL);
-	}
-	return (path);
-}
-
-char	*join(char *str, char *av)
-{
-	char	*path;
-	char	**cmd;
-
-	cmd = ft_split(av, "     ");
-	str = ft_strjoin(str, "/");
-	path = ft_strjoin(str, cmd[0]);
-	free(str);
-	ft_cleaner(cmd);
-	return (path);
 }
