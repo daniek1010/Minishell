@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 12:40:29 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/07 13:14:47 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:12:09 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	main(void)
 {
 	// Example usage
 	export_env("MY_VAR", "HelloWorld");
-	// Verify by printing the environment variable
+	//Verify by printing the environment variable
 	printf("MY_VAR = %s\n", getenv("MY_VAR"));
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 12:50:27 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/02 10:39:41 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:24:57 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,7 @@ int	main()
 	// end Terminal
 	disableRawMode();
 	freeList(&list);
+	// free the rest
 	printf("\nExiting...\n");
 	return (0);
 }

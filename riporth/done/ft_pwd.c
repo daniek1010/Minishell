@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:17:50 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/02 11:46:10 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:04:03 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_pwd(void)
 	}
 	return (0);
 }
-/*
+
 int main()
 {
 	int i;
@@ -51,4 +51,3 @@ int main()
 	i = ft_pwd();
 	printf("test end i = %d\n",i);
 }
-*/
