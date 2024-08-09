@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 06:26:23 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:16:02 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 void execute_command(t_infos *tokens, char *envp[])
 {
-	// int	status;
 	int	i;
 
 	i = 0;
@@ -38,7 +37,8 @@ void execute_command(t_infos *tokens, char *envp[])
         pid_t pid = fork();
         if (pid == 0)  // Child process
         {
-            handle_redirections(tokens->commands[0], tokens);
+			if (tokens->commands[0]->redir_count > 0)
+            	handle_redirections(tokens->commands[0], tokens);
             ft_execute(tokens->commands[0], envp);
         }
         else if (pid > 0)

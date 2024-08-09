@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 06:25:43 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 12:32:23 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,10 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 		close(pipefd[0]);
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 			errors("dup2 failed\n");
-		handle_redirections(pipe->cmd1, tokens);
-		ft_execute(pipe->cmd1, envp);
 		close(pipefd[1]);
+		handle_redirections(pipe->cmd1, tokens);
+		// exec_cmmd(pipe->cmd1, tokens, envp);
+		ft_execute(pipe->cmd1, envp);
 		exit (1);
 	}
 	pid2 = fork_process();
@@ -53,9 +54,10 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 		if (dup2(pipefd[0], STDIN_FILENO) == -1)
 			errors("dup2 failed\n");
 		// tokens->pipout = pipefd[1];
+		close(pipefd[0]);
+		// exec_cmmd(pipe->cmd2, tokens, envp);
 		handle_redirections(pipe->cmd2, tokens);
 		ft_execute(pipe->cmd2, envp);
-		close(pipefd[0]);
 		exit (1);
 	}
 	close(pipefd[0]);
@@ -63,4 +65,10 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
 	return (0);
+}
+
+void exec_cmmd(t_command *cmd, t_infos *tokens, char *envp[])
+{
+    handle_redirections(cmd, tokens);
+    ft_execute(cmd, envp);
 }

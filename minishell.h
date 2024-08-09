@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 05:26:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:16:34 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_pipe{
 typedef struct s_infos{
 	t_command	**commands;
 	t_pipe		**pipes;
-	t_redir		**redirs;
+	// t_redir		**redirs;
 	int			pipe_index; 
 	int			cmd_index; 
 	int			red_index;
@@ -79,15 +79,15 @@ void	ft_putstr_fd(char *s, int fd);
 
 
 void handle_redirections(t_command *cmd, t_infos *tokens);
-void	redir_input(t_infos *tokens, int i);
-void	redir_append_trunc(t_infos *tokens, int type, int i);
+void	redir_input(t_infos *tokens, char *file);
+void	redir_append_trunc(t_infos *tokens, int type, char *file);
 void	execute_command(t_infos *tokens, char *envp[]);
-t_redir	*ft_create_redir(char *tokens, char *file);
+t_redir	*ft_create_redir(char *str, char *file);
 void	ft_putendl_fd(char *s, int fd);
 
 void	ft_close(int fd);
 
-
+void exec_cmmd(t_command *cmd, t_infos *tokens, char *envp[]);
 
 
 

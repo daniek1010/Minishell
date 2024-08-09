@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 05:38:45 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:23:09 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,90 +34,53 @@ char	**ft_read_input(char *prompt)
 	return (tokens);
 }
 
-// t_command	*ft_create_cmd(int start, int end, char *tokens[])
-// {
-// 	int			i;
-// 	t_command	*commands;
-
-// 	commands = malloc(sizeof(t_command));
-// 	if (!commands)
-// 		errors("Failed to allocate memory for command");
-// 	commands->name = ft_strdup(tokens[start]);
-// 	commands->args = malloc(sizeof(char *) * (end - start + 1));
-// 	if (!commands->args)
-// 		errors("Failed to allocate memory for command arguments");
-// 	i = 0;
-// 	while (start <= end)
-// 	{
-// 		commands->args[i] = malloc(sizeof (commands->args[i]));
-// 		commands->args[i] = ft_strdup(tokens[start]);
-// 		i++;
-// 		start++;
-// 	}
-// 	commands->args[i] = NULL;
-// 	return (commands);
-// }
-
 t_command	*ft_create_cmd(int start, int end, char *tokens[])
 {
 	int			i;
-	 int         redir_index = 0;
 	t_command	*commands;
-
-	commands = malloc(sizeof(t_command));
-	if (!commands)
-		errors("Failed to allocate memory for command");
-
+	t_redir		*redir_command;
+	
+	commands = (t_command *)ft_malloc(sizeof(t_command));
 	commands->name = ft_strdup(tokens[start]);
-	commands->args = malloc(sizeof(char *) * (end - start + 2));
-	commands->redir_cmd = malloc(sizeof(t_redir *) * INIT_SIZE);  // Allocate space for redirections
-	commands->redir_count = 0;  // Initialize redirection index
-
-	if (!commands->args)
-		errors("Failed to allocate memory for command arguments");
-
+	commands->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
+	commands->args = (char **)ft_malloc(sizeof(char *) * (end - start + 2));
 	i = 0;
+	commands->redir_count = 0;
 	while (start <= end)
 	{
-		// Handle redirection within command arguments
 		if (ft_strcmp(tokens[start], "<") == 0 || ft_strcmp(tokens[start], ">") == 0
 			|| ft_strcmp(tokens[start], ">>") == 0 || ft_strcmp(tokens[start], "<<") == 0)
 		{
-			// Next token is the file name for redirection
 			if (tokens[start + 1])
 			{
-				t_redir *redir = ft_create_redir(tokens[start], tokens[start + 1]);
-				commands->redir_cmd[redir_index++] = redir;
-				start += 2;  // Skip over the redirection and its file
+				redir_command = ft_create_redir(tokens[start], tokens[start + 1]);
+				commands->redir_cmd[commands->redir_count++] = redir_command;
+				start += 2;
 				continue;
 			}
 			else
-			{
-				errors("Syntax error: missing file after redirection");
 				break;
-			}
 		}
 		commands->args[i++] = ft_strdup(tokens[start++]);
 	}
-
 	commands->args[i] = NULL;
-	return commands;
+	commands->redir_cmd[commands->redir_count] = NULL;
+	return (commands);
 }
 
-
-t_redir	*ft_create_redir(char *tokens, char *file)
+t_redir	*ft_create_redir(char *str, char *file)
 {
 	t_redir	*redir;
 
-	redir = malloc(sizeof(t_redir));
-	if (ft_strcmp(tokens, "<") == 0)
+	redir = (t_redir *)ft_malloc(sizeof(t_redir));
+	if (ft_strcmp(str, "<") == 0)
 		redir->type = INPUT;
-	else if (ft_strcmp(tokens, ">") == 0)
+	else if (ft_strcmp(str, ">") == 0)
 		redir->type = TRUNC;
-	else if (ft_strcmp(tokens, ">>") == 0)
+	else if (ft_strcmp(str, ">>") == 0)
 		redir->type = APPEND;
-	else if (ft_strcmp(tokens, "<<") == 0)
-		redir->type = DELIMETER;
+	// else if (ft_strcmp(str, "<<") == 0)
+	// 	redir->type = DELIMETER;
 	else
 		return (NULL);
 	redir->file = ft_strdup(file);
@@ -133,7 +96,6 @@ t_infos	*ft_sort(char *tokens[])
 	t_infos		*data;
 	t_pipe		*pipe;
 	t_command	*command;
-	t_redir		*redir;
 	data = ft_init();
 	i = 0;
 	while (tokens[i])
@@ -141,8 +103,6 @@ t_infos	*ft_sort(char *tokens[])
 		if (ft_strcmp(tokens[i], "|") == 0)
 		{
 			pipe = (t_pipe *)ft_malloc(sizeof(t_pipe));
-			if (!pipe)
-				return NULL;
 			pipe->cmd1 = ft_create_cmd(j, i - 1, tokens);
 			end = i + 1;
 			while (tokens[end] && (ft_strcmp(tokens[end], "|") != 0))
@@ -150,28 +110,12 @@ t_infos	*ft_sort(char *tokens[])
 			pipe->cmd2 = ft_create_cmd(i + 1, end - 1, tokens);
 			data->pipes[data->pipe_index++] = pipe;
 			j = i + 1;
-			printf("\n\n\n\n");
-		}
-		else if (ft_strcmp(tokens[i], "<") == 0 || ft_strcmp(tokens[i], ">")
-			== 0 || ft_strcmp(tokens[i], ">>") == 0 || ft_strcmp(tokens[i], "<<") == 0)
-		{
-			redir = (t_redir *)malloc(sizeof(t_redir));
-			if (tokens[i + 1] == NULL)
-			{
-				//need to check if no two character are followed
-				return NULL;
-			}
-			redir = ft_create_redir(tokens[i], tokens[i + 1]);
-			data->redirs[data->red_index++] = redir;
-			i++;
 		}
 		else
 		{
 			start = i;
 			command = (t_command *)ft_malloc(sizeof(t_command));
-			while (tokens[i] && ft_strcmp(tokens[i], "|") != 0
-				&& ft_strcmp(tokens[i], "<") != 0 && ft_strcmp(tokens[i], ">") != 0
-				&& ft_strcmp(tokens[i], "<<") != 0 && ft_strcmp(tokens[i], ">>") != 0)
+			while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 				i++;
 			command = ft_create_cmd(start, i - 1, tokens);
 			data->commands[data->cmd_index++] = command;

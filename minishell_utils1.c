@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 05:38:07 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:20:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ t_infos	*ft_init(void)
 	data = (t_infos *)ft_malloc(sizeof(t_infos));
 	data->commands = (t_command **)ft_malloc(sizeof(t_command) * INIT_SIZE);
 	data->pipes = (t_pipe **)ft_malloc(sizeof(t_pipe) * INIT_SIZE);
-	data->redirs = (t_redir **)ft_malloc(sizeof(t_redir) * INIT_SIZE);
 	data->cmd_index = 0;
 	data->pipe_index = 0;
 	data->red_index = 0;
@@ -70,7 +69,6 @@ t_infos	*ft_init(void)
 void	ft_null(t_infos *data)
 {
 	data->pipes[data->pipe_index] = NULL;
-	data->redirs[data->red_index] = NULL;
 	data->commands[data->cmd_index] = NULL;
 }
 

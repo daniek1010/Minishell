@@ -2,6 +2,7 @@ NAME = minishell
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
+FILES = $(wildcard *.txt)
 
 CC = gcc
 CFLAGS =  -Wall -I.
@@ -21,7 +22,7 @@ clean:
 	$(RM) $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(FILES)
 
 re: fclean all
 
