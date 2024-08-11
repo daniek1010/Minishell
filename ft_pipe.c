@@ -3,14 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 12:32:23 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 00:35:28 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+size_t	ft_strlen(const char *s)
+{
+	int	index;
+
+	index = 0;
+	while (s[index] != '\0')
+		index++;
+	return (index);
+}
+
+void	ft_cleaner(char *str[])
+{
+	int		i;
+
+	i = 0;
+	while (str[i] != NULL)
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+}
 
 void	pipe_create(int pipefd[2])
 {
@@ -28,7 +51,7 @@ pid_t	fork_process(void)
 	return (pid);
 }
 
-int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
+int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 {
 	int		pipefd[2];
 	pid_t	pid1;
@@ -43,8 +66,7 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 			errors("dup2 failed\n");
 		close(pipefd[1]);
 		handle_redirections(pipe->cmd1, tokens);
-		// exec_cmmd(pipe->cmd1, tokens, envp);
-		ft_execute(pipe->cmd1, envp);
+		ft_execute(pipe->cmd1, envp, env);
 		exit (1);
 	}
 	pid2 = fork_process();
@@ -53,11 +75,9 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 		close(pipefd[1]);
 		if (dup2(pipefd[0], STDIN_FILENO) == -1)
 			errors("dup2 failed\n");
-		// tokens->pipout = pipefd[1];
 		close(pipefd[0]);
-		// exec_cmmd(pipe->cmd2, tokens, envp);
 		handle_redirections(pipe->cmd2, tokens);
-		ft_execute(pipe->cmd2, envp);
+		ft_execute(pipe->cmd2, envp, env);
 		exit (1);
 	}
 	close(pipefd[0]);
@@ -65,10 +85,4 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
 	return (0);
-}
-
-void exec_cmmd(t_command *cmd, t_infos *tokens, char *envp[])
-{
-    handle_redirections(cmd, tokens);
-    ft_execute(cmd, envp);
 }

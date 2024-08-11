@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/09 15:23:09 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/11 13:25:10 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ t_redir	*ft_create_redir(char *str, char *file)
 		redir->type = TRUNC;
 	else if (ft_strcmp(str, ">>") == 0)
 		redir->type = APPEND;
-	// else if (ft_strcmp(str, "<<") == 0)
-	// 	redir->type = DELIMETER;
+	else if (ft_strcmp(str, "<<") == 0)
+		redir->type = HEREDOC;
 	else
 		return (NULL);
 	redir->file = ft_strdup(file);
