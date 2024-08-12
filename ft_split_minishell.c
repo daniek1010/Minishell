@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split_pipex.c                                   :+:      :+:    :+:   */
+/*   ft_split_minishell.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 19:03:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/02 05:13:56 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:10:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,16 @@ static int	count_words(char const *s, char *delimter)
 	control = 0;
 	while (s[i] != '\0')
 	{
-		if ((s[i] != delimter[0] || s[i] != delimter[1] || s[i] != delimter[2] 
-			|| s[i] != delimter[3] || s[i] != delimter[4] || s[i] != delimter[5]) && control == 0)
+		if ((s[i] != delimter[0] || s[i] != delimter[1] || s[i] != delimter[2]
+				|| s[i] != delimter[3] || s[i] != delimter[4]
+				|| s[i] != delimter[5]) && control == 0)
 		{
 			count++;
 			control = 1;
 		}
-		else if (s[i] == delimter[0] || s[i] == delimter[1] ||
-			s[i] == delimter[2] || s[i] == delimter[3] || s[i] == delimter[4])
+		else if (s[i] == delimter[0] || s[i] == delimter[1]
+			|| s[i] == delimter[2] || s[i] == delimter[3]
+			|| s[i] == delimter[4])
 			control = 0;
 		i++;
 	}
@@ -88,11 +90,10 @@ static char	**write_str(char const *s, char *c, char **result, int start)
 	j = 0;
 	while (i <= ft_strlen(s))
 	{
-		if ((s[i] != c[0] || s[i] != c[1] ||
-			 s[i] != c[2] || s[i] != c[3]) && start < 0)
+		if ((s[i] != c[0] || s[i] != c[1]
+				|| s[i] != c[2] || s[i] != c[3]) && start < 0)
 			start = i;
-		else if (((s[i] == c[0] || s[i] == c[1] || s[i] == c[2] 
-			|| s[i] == c[3] || s[i] == c[4] || s[i] == c[5]) || i == ft_strlen(s)) && start >= 0)
+		else if (is_type(s, c, start, i))
 		{
 			result[j++] = ft_substr(s, start, i - start);
 			if (result[j - 1] == NULL)

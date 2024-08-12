@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/11 13:25:10 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 15:10:46 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,15 @@ char	**ft_read_input(char *prompt)
 	char	**tokens;
 
 	delimter = " \t\r\n\a";
-	input_read =  readline(prompt);
+	input_read = readline(prompt);
 	if (input_read)
-	{
 		add_history(input_read);
-	}
 	else
 	{
 		free (input_read);
 		errors("No input read");
 	}
-	tokens =  ft_split(input_read, delimter);
+	tokens = ft_split(input_read, delimter);
 	free (input_read);
 	return (tokens);
 }
@@ -39,7 +37,7 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[])
 	int			i;
 	t_command	*commands;
 	t_redir		*redir_command;
-	
+
 	commands = (t_command *)ft_malloc(sizeof(t_command));
 	commands->name = ft_strdup(tokens[start]);
 	commands->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
@@ -48,18 +46,20 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[])
 	commands->redir_count = 0;
 	while (start <= end)
 	{
-		if (ft_strcmp(tokens[start], "<") == 0 || ft_strcmp(tokens[start], ">") == 0
-			|| ft_strcmp(tokens[start], ">>") == 0 || ft_strcmp(tokens[start], "<<") == 0)
+		if (ft_strcmp(tokens[start], "<") == 0 || ft_strcmp(tokens[start],
+				">") == 0 || ft_strcmp(tokens[start], ">>") == 0
+			|| ft_strcmp(tokens[start], "<<") == 0)
 		{
 			if (tokens[start + 1])
 			{
-				redir_command = ft_create_redir(tokens[start], tokens[start + 1]);
+				redir_command = ft_create_redir(tokens[start],
+						tokens[start + 1]);
 				commands->redir_cmd[commands->redir_count++] = redir_command;
 				start += 2;
-				continue;
+				continue ;
 			}
 			else
-				break;
+				break ;
 		}
 		commands->args[i++] = ft_strdup(tokens[start++]);
 	}

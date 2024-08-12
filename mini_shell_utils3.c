@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:27:06 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 00:30:42 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:43:53 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ char	**ft_check_path(char *envp[])
 {
 	int		i;
 	char	**splitted;
-	char *delimter = ":,:,:,:,:";
-	
+	char	*delimter;
 
+	delimter = ":,:,:,:,:";
 	i = 0;
 	splitted = NULL;
 	while (envp[i] != NULL)

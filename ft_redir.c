@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/11 13:54:54 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 14:06:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	str = NULL;
 	while (1)
 	{
-		input_read =  readline(prompt);
+		input_read = readline(prompt);
 		if (!input_read || ft_strcmp(input_read, delimeter) == 0)
-			break;
+			break ;
 		add_history(input_read);
 		str = ft_strjoin_new_line(str, input_read);
 		free (input_read);
@@ -41,8 +41,10 @@ void	handle_redirections(t_command *cmd, t_infos *tokens)
 		i = 0;
 		while (i < cmd->redir_count)
 		{
-			if (cmd->redir_cmd[i]->type == TRUNC ||cmd->redir_cmd[i]->type == APPEND)
-				redir_append_trunc(tokens, cmd->redir_cmd[i]->type, cmd->redir_cmd[i]->file);
+			if (cmd->redir_cmd[i]->type == TRUNC
+				|| cmd->redir_cmd[i]->type == APPEND)
+				redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
+					cmd->redir_cmd[i]->file);
 			else if (cmd->redir_cmd[i]->type == INPUT)
 				redir_input(tokens, cmd->redir_cmd[i]->file);
 			else
@@ -58,7 +60,7 @@ void	redir_here_docs(char *prompt, char *delimeter)
 	int		pipefd[2];
 
 	pipe_create(pipefd);
-	input =	ft_read_input_here_doc(prompt, delimeter);
+	input = ft_read_input_here_doc(prompt, delimeter);
 	if (!input)
 	{
 		free (input);
@@ -73,18 +75,22 @@ void	redir_here_docs(char *prompt, char *delimeter)
 
 void	redir_append_trunc(t_infos *tokens, int type, char *file)
 {
-	ft_close(tokens->fdout);
+	int	fdout;
+
+	fdout = 0;
 	if (type == TRUNC)
-		tokens->fdout = open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+		fdout = open(file, O_CREAT | O_WRONLY
+				| O_TRUNC, S_IRUSR | S_IWUSR);
 	else
-		tokens->fdout = open(file, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
-	if (tokens->fdout == -1)		
+		fdout = open(file, O_CREAT | O_WRONLY
+				| O_APPEND, S_IRUSR | S_IWUSR);
+	if (fdout == -1)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 	}
-	dup2(tokens->fdout, STDOUT_FILENO);
+	dup2(fdout, STDOUT_FILENO);
 }
 
 void	redir_input(t_infos *tokens, char *file)
@@ -99,4 +105,3 @@ void	redir_input(t_infos *tokens, char *file)
 	}
 	dup2(tokens->fdin, STDIN_FILENO);
 }
-

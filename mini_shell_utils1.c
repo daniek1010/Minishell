@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 00:35:06 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:10:07 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ char	*ft_strdup(const char *s)
 void	*ft_malloc(size_t n_size)
 {
 	void	*ptr;
+
 	ptr = malloc(n_size);
 	if (!ptr)
 		errors("Malloc Failed");

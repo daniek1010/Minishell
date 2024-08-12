@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 01:41:23 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:30:18 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	set_env_var(t_env **env, char *key, char *value)
 		{
 			free (current->value);
 			current->value = ft_strdup(value);
-			return;
+			return ;
 		}
 		current = current->next;
 	}
@@ -49,16 +49,14 @@ char	*get_env_var(t_env *env, char *key, char *value)
 char	**convert_env(t_env *env)
 {
 	int		count;
-	int		len;
 	t_env	*temp;
 	char	**env_array;
-	char	*str;
 	int		i;
 
 	temp = env;
 	count = 0;
 	i = 0;
-	while(temp)
+	while (temp)
 	{
 		count++;
 		temp = temp->next;
@@ -66,13 +64,9 @@ char	**convert_env(t_env *env)
 	env_array = (char **)ft_malloc(sizeof(char *) * count + 1);
 	i = 0;
 	temp = env;
-	while(temp)
+	while (temp)
 	{
-		len = ft_strlen(temp->key) + ft_strlen(temp->value) + 2;
-		env_array[temp->i] = (char *)ft_malloc(len);
-		str = ft_strjoin(temp->key, "=");
-		env_array[i] = ft_strjoin(str, temp->value);
-		free(str);
+		env_array[i] = helper_convert_env(temp, i);
 		temp = temp->next;
 		i++;
 	}
@@ -82,7 +76,7 @@ char	**convert_env(t_env *env)
 
 void	builtin_cd(t_env *env, const char *path)
 {
-	const char *home;
+	const char	*home;
 
 	if (!path)
 	{

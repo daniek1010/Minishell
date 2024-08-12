@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:24:55 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 00:30:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 12:39:59 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 char	*ft_strjoin_new_line(char const *s1, char const *s2)
 {
 	char		*str;
+	char		*temp;
 	size_t		s1_len;
 	size_t		s2_len;
-	size_t		i;
-	size_t		j;
 
 	if (!s1)
 		s1_len = 0;
@@ -92,19 +91,9 @@ char	*ft_strjoin_new_line(char const *s1, char const *s2)
 	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 2));
 	if (str == NULL)
 		return (NULL);
-	i = 0;
-	while (i < s1_len)
-	{
-		str[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (j < s2_len)
-	{
-		str[i + j] = s2[j];
-		j++;
-	}
-	str[i + j] = '\n';
-	str[i + j + 1] = '\0';
+	temp = ft_strjoin(s1, s2);
+	ft_strcpy(str, temp);
+	str[s1_len + s2_len] = '\n';
+	str[s1_len + s2_len + 1] = '\0';
 	return (str);
 }

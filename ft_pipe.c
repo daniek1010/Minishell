@@ -6,34 +6,11 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 00:35:28 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:46:31 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-size_t	ft_strlen(const char *s)
-{
-	int	index;
-
-	index = 0;
-	while (s[index] != '\0')
-		index++;
-	return (index);
-}
-
-void	ft_cleaner(char *str[])
-{
-	int		i;
-
-	i = 0;
-	while (str[i] != NULL)
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
 
 void	pipe_create(int pipefd[2])
 {
@@ -51,6 +28,30 @@ pid_t	fork_process(void)
 	return (pid);
 }
 
+void	ft_dup(int pipefd[2], int fd)
+{
+	if (fd == STDOUT_FILENO)
+	{
+		close(pipefd[0]);
+		if (dup2(pipefd[1], fd) == -1)
+			errors("dup2 failed\n");
+		close(pipefd[1]);
+	}
+	else if (fd == STDIN_FILENO)
+	{
+		close(pipefd[1]);
+		if (dup2(pipefd[0], fd) == -1)
+			errors("dup2 failed\n");
+		close(pipefd[0]);
+	}
+}
+
+void	ft_close_pipe(int pipefd[2])
+{
+	close(pipefd[0]);
+	close(pipefd[1]);
+}
+
 int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 {
 	int		pipefd[2];
@@ -61,10 +62,7 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 	pid1 = fork_process();
 	if (pid1 == 0)
 	{
-		close(pipefd[0]);
-		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-			errors("dup2 failed\n");
-		close(pipefd[1]);
+		ft_dup(pipefd, STDOUT_FILENO);
 		handle_redirections(pipe->cmd1, tokens);
 		ft_execute(pipe->cmd1, envp, env);
 		exit (1);
@@ -72,16 +70,11 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 	pid2 = fork_process();
 	if (pid2 == 0)
 	{
-		close(pipefd[1]);
-		if (dup2(pipefd[0], STDIN_FILENO) == -1)
-			errors("dup2 failed\n");
-		close(pipefd[0]);
+		ft_dup(pipefd, STDIN_FILENO);
 		handle_redirections(pipe->cmd2, tokens);
 		ft_execute(pipe->cmd2, envp, env);
 		exit (1);
 	}
-	close(pipefd[0]);
-	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
 	return (0);
