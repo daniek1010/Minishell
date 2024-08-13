@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 13:46:31 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 21:03:01 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 	{
 		ft_dup(pipefd, STDOUT_FILENO);
 		handle_redirections(pipe->cmd1, tokens);
-		ft_execute(pipe->cmd1, envp, env);
+		ft_execute(pipe->cmd1, envp, env, tokens);
 		exit (1);
 	}
 	pid2 = fork_process();
@@ -72,7 +72,7 @@ int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
 	{
 		ft_dup(pipefd, STDIN_FILENO);
 		handle_redirections(pipe->cmd2, tokens);
-		ft_execute(pipe->cmd2, envp, env);
+		ft_execute(pipe->cmd2, envp, env, tokens);
 		exit (1);
 	}
 	waitpid(pid1, NULL, 0);

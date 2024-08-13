@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 13:30:18 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 19:50:14 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,19 @@ char	**convert_env(t_env *env)
 
 	temp = env;
 	count = 0;
-	i = 0;
 	while (temp)
 	{
 		count++;
 		temp = temp->next;
 	}
-	env_array = (char **)ft_malloc(sizeof(char *) * count + 1);
+	env_array = (char **)ft_malloc(sizeof(char *) * (count + 1));
 	i = 0;
 	temp = env;
 	while (temp)
 	{
-		env_array[i] = helper_convert_env(temp, i);
+		env_array[i] = helper_convert_env(temp);
+		if (!env_array)
+			ft_cleaner(env_array);
 		temp = temp->next;
 		i++;
 	}

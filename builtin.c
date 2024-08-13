@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/12 13:13:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 20:06:21 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int	is_builtin(char *type)
 {
 	if (ft_strcmp("echo", type) == 0 || ft_strcmp("cd", type) == 0
 		|| ft_strcmp("export", type) == 0 || ft_strcmp("pwd", type) == 0
-		|| ft_strcmp("unset", type) == 0 || ft_strcmp("env", type) == 0)
+		|| ft_strcmp("unset", type) == 0 || ft_strcmp("env", type) == 0
+		|| ft_strcmp("exit", type) == 0)
 		return (1);
 	return (0);
 }

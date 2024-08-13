@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 15:10:46 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/13 14:46:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ char	**ft_read_input(char *prompt)
 	return (tokens);
 }
 
+int	is_redir(char *tokens[], int start)
+{
+	if (ft_strcmp(tokens[start], "<") == 0
+			|| ft_strcmp(tokens[start], ">") == 0
+			|| ft_strcmp(tokens[start], ">>") == 0
+			|| ft_strcmp(tokens[start], "<<") == 0)
+		return (1);
+	return (0);
+}
+
 t_command	*ft_create_cmd(int start, int end, char *tokens[])
 {
 	int			i;
@@ -39,22 +49,22 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[])
 	t_redir		*redir_command;
 
 	commands = (t_command *)ft_malloc(sizeof(t_command));
-	commands->name = ft_strdup(tokens[start]);
 	commands->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
+	commands->name = ft_strdup(tokens[start]);
 	commands->args = (char **)ft_malloc(sizeof(char *) * (end - start + 2));
 	i = 0;
 	commands->redir_count = 0;
 	while (start <= end)
 	{
-		if (ft_strcmp(tokens[start], "<") == 0 || ft_strcmp(tokens[start],
-				">") == 0 || ft_strcmp(tokens[start], ">>") == 0
-			|| ft_strcmp(tokens[start], "<<") == 0)
+		if (is_redir(tokens, start))
 		{
 			if (tokens[start + 1])
 			{
 				redir_command = ft_create_redir(tokens[start],
 						tokens[start + 1]);
 				commands->redir_cmd[commands->redir_count++] = redir_command;
+				// free (redir_command->file);
+				// free (redir_command);
 				start += 2;
 				continue ;
 			}
@@ -86,6 +96,7 @@ t_redir	*ft_create_redir(char *str, char *file)
 	redir->file = ft_strdup(file);
 	return (redir);
 }
+
 
 t_infos	*ft_sort(char *tokens[])
 {
@@ -124,6 +135,7 @@ t_infos	*ft_sort(char *tokens[])
 		i++;
 	}
 	ft_null(data);
+	ft_cleaner(tokens);
 	return (data);
 }
 

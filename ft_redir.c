@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redir.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 14:06:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/13 14:30:16 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,15 @@ void	redir_append_trunc(t_infos *tokens, int type, char *file)
 
 void	redir_input(t_infos *tokens, char *file)
 {
-	ft_close(tokens->fdin);
-	tokens->fdin = open(file, O_RDONLY);
-	if (tokens->fdin == -1)
+	int	fdin;
+
+	fdin = 0;
+	fdin = open(file, O_RDONLY);
+	if (fdin == -1)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 	}
-	dup2(tokens->fdin, STDIN_FILENO);
+	dup2(fdin, STDIN_FILENO);
 }

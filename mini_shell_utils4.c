@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils4.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:40:31 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 13:33:44 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/12 22:36:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,14 @@ int	is_type(const char *s, char *c, int start, int i)
 	return (0);
 }
 
-char	*helper_convert_env(t_env *temp, int i)
+char	*helper_convert_env(t_env *temp)
 {
-	int		len;
 	char	*str;
 	char	*env;
 
-	len = ft_strlen(temp->key) + ft_strlen(temp->value) + 2;
-	env = (char *)ft_malloc(len);
 	str = ft_strjoin(temp->key, "=");
+	if (!str)
+		return (NULL);
 	env = ft_strjoin(str, temp->value);
 	free(str);
 	return (env);
@@ -71,4 +70,5 @@ void	ft_cleaner(char *str[])
 		i++;
 	}
 	free(str);
+	return ;
 }
