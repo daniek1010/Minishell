@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/13 15:40:44 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:32:33 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,18 @@ void	free_command(t_command *cmd)
 	{
 		if (cmd->name)
 			free(cmd->name);
+		cmd->name = NULL;
 		if (cmd->args)
 		{
 			i = 0;
 			while (cmd->args[i])
 			{
 				free (cmd->args[i]);
+				cmd->args[i] = NULL;
 				i++;
 			}
 			free(cmd->args);
+			cmd->args = NULL;
         }
         if (cmd->redir_cmd)
 		{
@@ -36,11 +39,14 @@ void	free_command(t_command *cmd)
 			while (cmd->redir_cmd[i])
 			{
 				free (cmd->redir_cmd[i]);
+				cmd->redir_cmd[i] = NULL;
 				i++;
 			}
 			free(cmd->redir_cmd);
+			cmd->redir_cmd = NULL;
 		}
 		free(cmd);
+		cmd = NULL;
 	}
 }
 
@@ -57,23 +63,27 @@ void	free_tokens(t_infos *tokens)
 			free_command(tokens->pipes[i]->cmd1);
 			free_command(tokens->pipes[i]->cmd2);
 			free(tokens->pipes[i]);
+			tokens->pipes[i] = NULL;
 			i++;
 		}
 		free(tokens->pipes);
+		tokens->pipes = NULL;
 	}
 	else
 	{
 		i = 0;
 		while (i < tokens->cmd_index)
 		{
-			printf("what are you here else %d	%d\n", i, tokens->cmd_index);
 			free_command(tokens->commands[i]);
 			i++;
 		}
 		free(tokens->commands);
+		tokens->commands = NULL;
 	}
-	
 	free(tokens);
+	// tokens->commands = NULL;
+	// tokens->pipes = NULL;
+	tokens = NULL;
 }
 
 void	free_env(t_env *env)

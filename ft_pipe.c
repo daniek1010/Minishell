@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 21:03:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 14:05:32 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	ft_close_pipe(int pipefd[2])
 	close(pipefd[1]);
 }
 
-int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env)
+int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env **env)
 {
 	int		pipefd[2];
 	pid_t	pid1;

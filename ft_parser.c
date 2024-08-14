@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/13 14:46:58 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 12:01:41 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,6 @@ t_infos	*ft_sort(char *tokens[])
 		else
 		{
 			start = i;
-			command = (t_command *)ft_malloc(sizeof(t_command));
 			while (tokens[i] && ft_strcmp(tokens[i], "|") != 0)
 				i++;
 			command = ft_create_cmd(start, i - 1, tokens);

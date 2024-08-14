@@ -5,7 +5,7 @@ OBJS = $(SRCS:.c=.o)
 FILES = $(wildcard *.txt)
 
 CC = gcc
-CFLAGS =  -Wall -I.
+CFLAGS =  -Wall -g -I.
 LDFLAGS = -lreadline -lncurses
 RM = rm -f
 INCLUDE = minishell.h

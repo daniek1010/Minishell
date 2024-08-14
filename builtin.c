@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/12 20:06:21 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 14:19:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,19 +58,19 @@ void	builtin_env(t_env *env)
 	}
 }
 
-void	builtin_export(t_env *envp, char *key, char *value)
+void	builtin_export(t_env **envp, char *key, char *value)
 {
 	if (key == NULL || value == NULL)
 		ft_putendl_fd("Error: Name and value must be non-null", STDERR_FILENO);
-	set_env_var(&envp, key, value);
+	set_env_var(envp, key, value);
 }
 
-void	builtin_unset(t_env *envp, char *key)
+void	builtin_unset(t_env **envp, char *key)
 {
 	t_env	*current;
 	t_env	*previous;
 
-	current = envp;
+	current = *envp;
 	previous = NULL;
 	while (current)
 	{
@@ -79,7 +79,7 @@ void	builtin_unset(t_env *envp, char *key)
 			if (previous)
 				previous->next = current->next;
 			else
-				envp = current->next;
+				*envp = current->next;
 			free(current->key);
 			free(current->value);
 			free(current);

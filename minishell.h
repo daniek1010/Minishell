@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/13 13:38:29 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 14:05:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	free_env(t_env *env);
 
 void	ft_ultimate_free_cmd(char *env[], t_infos *tokens, t_env *envp);
 void	ft_ultimate_free_pipes(char *env[], t_infos *tokens, t_env *envp);
-void	ft_execute_errors(char *str, t_command *command, char *env[], t_infos *tokens);
+// void	ft_execute_errors(char *str, char *env[], t_infos *tokens);
 
 // char	**ft_splittest(char const *s, char c);
 // void exec_cmmd(t_command *cmd, t_infos *tokens, char *envp[]);
@@ -97,15 +97,15 @@ char		**ft_read_input(char *prompt);
 t_command	*ft_create_cmd(int start, int end, char *tokens[]);
 
 /* ft_execute_cmds.c .... not formatted*/
-void	ft_execute(t_command *command, char *envp[], t_env *env, t_infos *tokens);
-void	execute_command(t_infos *tokens, t_env *env);
-void	ft_check_builtin(t_command *command, t_env *env);
+void	ft_execute(t_command *command, char *envp[], t_env **env, t_infos *tokens);
+void	execute_command(t_infos *tokens, t_env **env);
+void	ft_check_builtin(t_command *command, t_env **env);
 
 
 
 
 /* ft_pipe.c ....*/
-int		ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env *env);
+int		ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env **env);
 void	pipe_create(int pipefd[2]);
 pid_t	fork_process(void);
 void	ft_close_pipe(int pipefd[2]);
@@ -119,8 +119,8 @@ void	redir_append_trunc(t_infos *tokens, int type, char *file);
 void	redir_here_docs(char *prompt, char *delimeter);
 
 /* builtin.c .... formated*/
-void	builtin_export(t_env *envp, char *key, char *value);
-void	builtin_unset(t_env *envp, char *key);
+void	builtin_export(t_env **envp, char *key, char *value);
+void	builtin_unset(t_env **envp, char *key);
 void	builtin_env(t_env *envp);
 void	builtin_echo(t_command *cmd);
 int		is_builtin(char *type);
@@ -129,7 +129,7 @@ int		is_builtin(char *type);
 char	**convert_env(t_env *env);
 void	set_env_var(t_env **env, char *key, char *value);
 char	*get_env_var(t_env *env, char *key, char *value);
-void	builtin_cd(t_env *env,const char *path);
+void	builtin_cd(t_env **env,const char *path);
 void	builtin_pwd(void);
 
 /*mini_shell_utils1.c ....formated*/

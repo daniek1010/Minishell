@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 19:50:14 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/14 14:02:12 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,13 @@ char	**convert_env(t_env *env)
 	return (env_array);
 }
 
-void	builtin_cd(t_env *env, const char *path)
+void	builtin_cd(t_env **env, const char *path)
 {
 	const char	*home;
 
 	if (!path)
 	{
-		home = get_env_var(env, "HOME", NULL);
+		home = get_env_var(*env, "HOME", NULL);
 		if (!home)
 			errors("HOME path not set");
 		path = home;

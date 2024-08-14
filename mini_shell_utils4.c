@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:40:31 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 22:36:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:49:34 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ void	ft_cleaner(char *str[])
 {
 	int		i;
 
+	if (!str)
+		return ;
 	i = 0;
 	while (str[i] != NULL)
 	{
