@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/14 14:20:57 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/15 02:07:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	iterate_pipe_index(t_infos *tokens, char *envp[], t_env **env)
 // 	{
 // 		free_tokens(tokens);
 // 		ft_putendl_fd("token free child", STDERR_FILENO);
-// 	}
+// 	}gi
 // 	tokens->commands = NULL;
 // 	tokens->pipes = NULL;
 // 	tokens = NULL;
