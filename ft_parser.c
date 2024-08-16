@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/14 12:01:41 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 20:01:19 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,6 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[])
 				redir_command = ft_create_redir(tokens[start],
 						tokens[start + 1]);
 				commands->redir_cmd[commands->redir_count++] = redir_command;
-				// free (redir_command->file);
-				// free (redir_command);
 				start += 2;
 				continue ;
 			}

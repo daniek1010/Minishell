@@ -6,75 +6,61 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/14 13:38:21 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 20:35:59 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void ft_ultimate_free_pipes(char *env[], t_infos *tokens, t_env *envp)
+char	**copy_env(char *envp[])
 {
-	for (int i = 0; tokens->pipes[i]; i++)
+	int		i;
+	int		len;
+	char	**new_envp;
+
+	len = 0;
+	i = 0;
+	while (envp[len])
+		len++;
+	new_envp = (char **)malloc(sizeof(char *) * (len + 1));
+	if (!new_envp)
+		return (NULL);
+	while(i < len)
 	{
-		free_command(tokens->pipes[i]->cmd1);
-		free_command(tokens->pipes[i]->cmd2);
+		new_envp[i] = ft_strdup(envp[i]);
+		i++;
 	}
-	if (envp)
-    {
-        t_env *temp;
-        while (envp)
-        {
-            temp = envp;
-            free(envp->key);
-            free(envp->value);
-            envp = envp->next;
-            free(temp);
-        }
-    }
-	if (env)
-		ft_cleaner(env);
+	new_envp[len] = NULL;
+	return (new_envp);	
 }
 
-void	clean_env(t_env *env)
-{
-	if (env)
-	{
-		t_env	*temp;
-		while (env)
-		{
-			temp = env;
-			free(env->key);
-			free(env->value);
-			env = env->next;
-			free(temp);
-		}
-		exit (EXIT_SUCCESS);
-	}
-}
-
-int main(int ac, char *av[])
+int mini_shell(char *envp[])
 {
     char	**token_array;
-    t_infos	*tokens;
-    t_env	*envp;
+	t_infos	*tokens;
+	int		e_status;
 
-    envp = NULL;
-	(void)ac;
-	(void)av;
-	set_env_var(&envp, "PATH", "/usr/bin:/bin");
-	while (1)
+	e_status = 0;
+	while (e_status >= -1)
 	{
-		// ft_putendl_fd("*********** start here ******************", STDERR_FILENO);
 		token_array = ft_read_input("Minishell> ");
-        // ft_putendl_fd("*********** after input recvied ***************", STDERR_FILENO);
-
 		tokens = ft_sort(token_array);
-        // ft_putendl_fd("*********** after input broken into token ***************", STDERR_FILENO);
-
-		execute_command(tokens, &envp);
-		// ft_putendl_fd("**********  end hhere after execution *********", STDERR_FILENO);
+		e_status = execute_command(tokens, envp);
 		free_tokens(tokens);
     }
-	clean_env(envp);
-    return 0;
+	return (e_status);
+}
+
+int main(int ac, char *av[], char *envp[])
+{
+	int	status;
+	char	**env;
+
+	env = copy_env(envp);
+	status = 0;
+	(void)ac;
+	(void)av;
+	status = mini_shell(env);
+	ft_cleaner(env);
+    return (status);
 }

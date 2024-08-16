@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:40:31 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/13 17:49:34 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 16:23:55 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_strcpy(char *s1, char *s2)
 	int	i;
 
 	i = 0;
-	if (!s2)
+	if (!s2 || !s1)
 		return ;
 	while (s2[i] != '\0')
 	{
@@ -36,24 +36,13 @@ int	is_type(const char *s, char *c, int start, int i)
 	return (0);
 }
 
-char	*helper_convert_env(t_env *temp)
-{
-	char	*str;
-	char	*env;
-
-	str = ft_strjoin(temp->key, "=");
-	if (!str)
-		return (NULL);
-	env = ft_strjoin(str, temp->value);
-	free(str);
-	return (env);
-}
-
 size_t	ft_strlen(const char *s)
 {
 	int	index;
 
 	index = 0;
+	if (!s)
+		return (0);
 	while (s[index] != '\0')
 		index++;
 	return (index);

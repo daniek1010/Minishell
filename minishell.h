@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/14 14:05:58 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 20:05:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@
 #define HEREDOC		3
 #define	INIT_SIZE	64
 
-typedef struct s_env
-{
-	int				i;
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}t_env;
+// typedef struct s_env
+// {
+// 	int				i;
+// 	char			*key;
+// 	char			*value;
+// 	struct s_env	*next;
+// }t_env;
 
 
 typedef struct s_redir{
@@ -64,10 +64,10 @@ typedef struct s_infos{
 	int			pipe_index; 
 	int			cmd_index; 
 	int			red_index;
-	int			pipin;
-	int			pipout;
-	int			fdin;
-	int			fdout;
+	// int			pipin;
+	// int			pipout;
+	// int			fdin;
+	// int			fdout;
 	
 }t_infos;
 
@@ -75,15 +75,15 @@ typedef struct s_infos{
 void free_command(t_command *cmd);
 
 void free_tokens(t_infos *tokens);
-void	free_env(t_env *env);
+// void	free_env(t_env *env);
 
 // void	ultimate_free_cmd(t_env *env, t_infos *tokens);
 // void	ultimate_free_pipes(t_env *env, t_infos *tokens);
 
 
 
-void	ft_ultimate_free_cmd(char *env[], t_infos *tokens, t_env *envp);
-void	ft_ultimate_free_pipes(char *env[], t_infos *tokens, t_env *envp);
+// void	ft_ultimate_free_cmd(char *env[], t_infos *tokens);
+// void	ft_ultimate_free_pipes(char *env[], t_infos *tokens);
 // void	ft_execute_errors(char *str, char *env[], t_infos *tokens);
 
 // char	**ft_splittest(char const *s, char c);
@@ -97,15 +97,15 @@ char		**ft_read_input(char *prompt);
 t_command	*ft_create_cmd(int start, int end, char *tokens[]);
 
 /* ft_execute_cmds.c .... not formatted*/
-void	ft_execute(t_command *command, char *envp[], t_env **env, t_infos *tokens);
-void	execute_command(t_infos *tokens, t_env **env);
-void	ft_check_builtin(t_command *command, t_env **env);
+int	ft_execute(t_command *command, char *envp[], t_infos *tokens);
+int	execute_command(t_infos *tokens, char *envp[]);
+int	ft_check_builtin(t_command *command, char *envp[]);
 
 
 
 
 /* ft_pipe.c ....*/
-int		ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env **env);
+int		ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens);
 void	pipe_create(int pipefd[2]);
 pid_t	fork_process(void);
 void	ft_close_pipe(int pipefd[2]);
@@ -119,18 +119,19 @@ void	redir_append_trunc(t_infos *tokens, int type, char *file);
 void	redir_here_docs(char *prompt, char *delimeter);
 
 /* builtin.c .... formated*/
-void	builtin_export(t_env **envp, char *key, char *value);
-void	builtin_unset(t_env **envp, char *key);
-void	builtin_env(t_env *envp);
-void	builtin_echo(t_command *cmd);
+int	builtin_export(char *envp[], char *key, char *value);
+int	builtin_unset(char ***envp, char *key);
+int	builtin_env(char *envp[]);
+int	builtin_echo(t_command *cmd);
 int		is_builtin(char *type);
 
 /* ft_env.c ....formated*/
-char	**convert_env(t_env *env);
-void	set_env_var(t_env **env, char *key, char *value);
-char	*get_env_var(t_env *env, char *key, char *value);
-void	builtin_cd(t_env **env,const char *path);
-void	builtin_pwd(void);
+// char	**convert_env(t_env *env);
+int	compare_key(char ***envp, char *key, int i);
+void	set_env_var(char ***envp, char *key, char *value);
+char	*get_env_var(char *envp[], char *key);
+int	builtin_cd(char *envp[], const char *path);
+int	builtin_pwd(void);
 
 /*mini_shell_utils1.c ....formated*/
 void	errors(char *str);
@@ -153,12 +154,14 @@ char	*join(char *str, char *av);
 char	*ft_access(char *av, char *envp[]);
 char	**ft_check_path(char *envp[]);
 
-/*mini_shell_utils4.c ....formated*/
+/*mini_shell_utils4.c ....*/
 void	ft_strcpy(char *s1, char *s2);
 int		is_type(const char *s, char *c, int start, int i);
 size_t	ft_strlen(const char *s);
-char	*helper_convert_env(t_env *temp);
 void	ft_cleaner(char *str[]);
+
+
+//minishell 5 redistribute
 
 /*ft_split_minishell.c ....formatted*/
 char	**ft_split(char const *s, char *delimeter);

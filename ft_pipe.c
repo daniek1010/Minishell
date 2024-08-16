@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/14 14:05:32 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 18:29:36 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,28 +52,30 @@ void	ft_close_pipe(int pipefd[2])
 	close(pipefd[1]);
 }
 
-int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens, t_env **env)
+int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
 {
 	int		pipefd[2];
+	int		e_status;
 	pid_t	pid1;
 	pid_t	pid2;
 
+	e_status = 0;
 	pipe_create(pipefd);
 	pid1 = fork_process();
 	if (pid1 == 0)
 	{
 		ft_dup(pipefd, STDOUT_FILENO);
 		handle_redirections(pipe->cmd1, tokens);
-		ft_execute(pipe->cmd1, envp, env, tokens);
-		exit (1);
+		e_status = ft_execute(pipe->cmd1, envp, tokens);
+		exit (e_status);
 	}
 	pid2 = fork_process();
 	if (pid2 == 0)
 	{
 		ft_dup(pipefd, STDIN_FILENO);
 		handle_redirections(pipe->cmd2, tokens);
-		ft_execute(pipe->cmd2, envp, env, tokens);
-		exit (1);
+		e_status = ft_execute(pipe->cmd2, envp, tokens);
+		exit (e_status);
 	}
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);

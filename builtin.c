@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/14 14:19:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 18:34:41 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	is_builtin(char *type)
 	return (0);
 }
 
-void	builtin_echo(t_command *cmd)
+int	builtin_echo(t_command *cmd)
 {
 	int	i;
 
@@ -32,9 +32,10 @@ void	builtin_echo(t_command *cmd)
 		while (cmd->args[i])
 		{
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
+			if (cmd->args[i + 1] != NULL)
+				ft_putstr_fd(" ", STDOUT_FILENO);
 			i++;
 		}
-		ft_putstr_fd("\n", STDOUT_FILENO);
 	}
 	else
 	{
@@ -42,50 +43,71 @@ void	builtin_echo(t_command *cmd)
 		while (cmd->args[i])
 		{
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
+			if (cmd->args[i + 1] != NULL)
+				ft_putstr_fd(" ", STDOUT_FILENO);
 			i++;
 		}
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	}
+	return (0);
 }
 
-void	builtin_env(t_env *env)
+int	builtin_env(char *envp[])
 {
-	while (env)
+	int	i;
+
+	i = 0;
+	while (envp[i] != NULL)
 	{
-		ft_putstr_fd(env->key, STDOUT_FILENO);
-		ft_putstr_fd("=", STDOUT_FILENO);
-		ft_putendl_fd(env->value, STDOUT_FILENO);
-		env = env->next;
+		ft_putendl_fd(envp[i], STDOUT_FILENO);
+		i++;
 	}
+	return (0);
 }
 
-void	builtin_export(t_env **envp, char *key, char *value)
+int	builtin_export(char *envp[], char *key, char *value)
 {
 	if (key == NULL || value == NULL)
 		ft_putendl_fd("Error: Name and value must be non-null", STDERR_FILENO);
-	set_env_var(envp, key, value);
+	set_env_var(&envp, key, value);
+	return (0);
 }
 
-void	builtin_unset(t_env **envp, char *key)
+int	builtin_unset(char ***envp, char *key)
 {
-	t_env	*current;
-	t_env	*previous;
+	int		i;
+	int		j;
+	int		k;
+	int		l;
+	char	**new_envp;
 
-	current = *envp;
-	previous = NULL;
-	while (current)
+	i = 0;
+	j = 0;
+	l = 0;
+	while ((*envp)[j])
+		j++;
+	while ((*envp)[i])
 	{
-		if (ft_strcmp(current->key, key) == 0)
+		if (compare_key(envp, key, i))
 		{
-			if (previous)
-				previous->next = current->next;
-			else
-				*envp = current->next;
-			free(current->key);
-			free(current->value);
-			free(current);
-			return ;
+			free ((*envp)[i]);
+			new_envp = (char **)ft_malloc(sizeof(char *) * (j));
+			break ;
 		}
-		previous = current;
-		current = current->next;
+		i++;
 	}
+	k = 0;
+	if (new_envp)
+	{
+		while (k < j)
+		{
+			if (k != i)
+				new_envp[l++] = (*envp)[k];
+			k++;
+		}
+		new_envp[j - 1] = NULL;
+		free ((*envp));
+		*envp = new_envp;
+	}
+	return (0);
 }

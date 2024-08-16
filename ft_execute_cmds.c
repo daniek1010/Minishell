@@ -6,51 +6,34 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/15 02:07:39 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/16 19:45:10 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_check_builtin(t_command *command, t_env **env)
+int	ft_check_builtin(t_command *command, char *envp[])
 {
+	int	e_status;
+
+	e_status = 0;
 	if (ft_strcmp("echo", command->name) == 0)
-			builtin_echo(command);
+		e_status = builtin_echo(command);
 	else if (ft_strcmp("env", command->name) == 0)
-		builtin_env(*env);
-	else if (ft_strcmp("export", command->name) == 0){
-		printf("Exporting key: %s, value: %s\n", command->args[1], command->args[2]);
-		builtin_export(env, command->args[1], command->args[2]);}
+		e_status = builtin_env(envp);
+	else if (ft_strcmp("export", command->name) == 0)
+		e_status = builtin_export(envp, command->args[1], command->args[2]);
 	else if (ft_strcmp("unset", command->name) == 0)
-		builtin_unset(env, command->args[1]);
+		e_status = builtin_unset(&envp, command->args[1]);
 	else if (ft_strcmp("cd", command->name) == 0)
-		builtin_cd(env, command->args[1]);
+		e_status = builtin_cd(envp, command->args[1]);
 	else if (ft_strcmp("pwd", command->name) == 0)
-		builtin_pwd();
+		e_status = builtin_pwd();
 	else if (ft_strcmp("exit", command->name) == 0)
-	{
-			ft_putendl_fd("not yet assigned\n", STDERR_FILENO);
+	{	printf("here?\n");
+		exit (0);
 	}
-}
-
-void	execute_error(char *str, char *envp[], t_infos *tokens, t_env *env)
-{
-	perror(str);
-	// if (tokens)
-	// 	free_tokens(tokens);
-	if (envp)
-		ft_cleaner(envp);
-	return ;
-}
-
-char	**check_envp_error(t_env **env, t_infos *tokens)
-{
-	char	**envp;
-
-	envp = convert_env(*env);
-	if (!envp)
-		execute_error("envp_array Failed ", envp, tokens, *env);
-	return (envp);
+	return (e_status);
 }
 
 void	destroy_cmd_use_pipe_cmd(t_infos *tokens)
@@ -66,101 +49,92 @@ void	destroy_cmd_use_pipe_cmd(t_infos *tokens)
 	free(tokens->commands);
 }
 
-void	iterate_pipe_index(t_infos *tokens, char *envp[], t_env **env)
+int	iterate_pipe_index(t_infos *tokens, char *envp[])
 {
-	int 	i;
+	int		i;
+	int		e_status;
 	t_pipe	*pipe;
 
 	i = 0;
 	while (i < tokens->pipe_index)
 	{
 		pipe = tokens->pipes[i];
-		ft_create_pipe(pipe, envp, tokens, env);
+		e_status = ft_create_pipe(pipe, envp, tokens);
 		i++;
 	}
+	return (e_status);
 }
 
-// void	ft_execute_errors(char *str, char *envp[], t_infos *tokens, t_env *env)
-// {
-// 	perror(str);
-// 	if (tokens)
-// 	{
-// 		free_tokens(tokens);
-// 		ft_putendl_fd("token free child", STDERR_FILENO);
-// 	}gi
-// 	tokens->commands = NULL;
-// 	tokens->pipes = NULL;
-// 	tokens = NULL;
-// 	if (envp)
-// 		ft_cleaner(envp);
-// 	if (env)
-// 	{
-// 		t_env	*temp;
-// 		while (env)
-// 		{
-// 			temp = env;
-// 			free(env->key);
-// 			free(env->value);
-// 			env = env->next;
-// 			free(temp);
-//         }
-// 	}
-// 	exit (EXIT_FAILURE);
-// }
-
-void	execute_command(t_infos *tokens, t_env **env)
+int	handle_builtin_exit(t_command *cmd, t_infos *tokens, char *envp[])
 {
-	char	**envp;
-	pid_t	pid;
+	int	e_status;
 
-	envp = check_envp_error(env, tokens);
-	if (!envp)
-		return ;
-	if (tokens->pipe_index > 0)
+	e_status = -5;
+	if (is_builtin(cmd->name))
 	{
-		destroy_cmd_use_pipe_cmd(tokens);
-		iterate_pipe_index(tokens, envp, env);
+		if (cmd->redir_count > 0)
+			handle_redirections(cmd, tokens);
+		e_status = ft_execute(cmd, envp, tokens);
 	}
+	return (e_status);
+}
+
+int	execute_command(t_infos *tokens, char *envp[])
+{
+	pid_t	pid;
+	int		e_status;
+
+	e_status = 0;
+	if (tokens->pipe_index > 0)
+		e_status = iterate_pipe_index(tokens, envp);
 	else
 	{
+		e_status = handle_builtin_exit(tokens->commands[0], tokens, envp);
+		if (e_status != -5)
+			return (e_status);
 		pid = fork();
 		if (pid == 0)
 		{
 			if (tokens->commands[0]->redir_count > 0)
 				handle_redirections(tokens->commands[0], tokens);
-			ft_execute(tokens->commands[0], envp, env, tokens);
-			exit (EXIT_FAILURE);
+			e_status = ft_execute(tokens->commands[0], envp, tokens);
+			printf("exit from the of child %d\n", e_status);
+			exit (e_status);
 		}
 		else if (pid > 0)
 		{
-			waitpid(pid, NULL, 0);
-			if (envp)
-					ft_cleaner(envp);
-			return ;
+			waitpid(pid, &e_status, 0);
+			printf("exit staus of child %d\n", e_status);
+			return (e_status);
 		}
 	}
+	return (e_status);
 }
 
-
-void	ft_execute(t_command *command, char *envp[], t_env **env, t_infos *tokens)
+int	ft_execute(t_command *command, char *envp[], t_infos *tokens)
 {
 	char	*path;
+	int		e_status;
 
+	e_status = 0;
 	if (is_builtin(command->name))
-		ft_check_builtin(command, env);
+		e_status = ft_check_builtin(command, envp);
 	else
 	{
 		path = ft_access(command->name, envp);
 		if (path == NULL)
 		{
-			perror("PATH failed ");
-			return ;
+			perror("PATH");
+			e_status = 2;
+			return (e_status);
 		}
 		if (execve(path, command->args, envp) == -1)
 		{
-			perror("EXECVE FAILED ");
+			perror("EXECVE");
 			free(path);
-			return ;
+			e_status = 13;
+			return (e_status);
 		}
 	}
+	return (e_status);
 }
