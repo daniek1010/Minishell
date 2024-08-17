@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 20:05:40 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/17 02:24:04 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ typedef struct s_infos{
 }t_infos;
 
 
+char	**ft_spliter(char const *s, char c);
+
+
 void free_command(t_command *cmd);
 
 void free_tokens(t_infos *tokens);
@@ -91,10 +94,10 @@ void free_tokens(t_infos *tokens);
 
 
 /* ft_parser.c .... not formatted*/
-t_infos		*ft_sort(char *tokens[]);
+t_infos		*ft_sort(char *tokens[], char *envp[]);
 t_redir		*ft_create_redir(char *str, char *file);
 char		**ft_read_input(char *prompt);
-t_command	*ft_create_cmd(int start, int end, char *tokens[]);
+t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[]);
 
 /* ft_execute_cmds.c .... not formatted*/
 int	ft_execute(t_command *command, char *envp[], t_infos *tokens);

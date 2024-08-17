@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute_cmds.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 19:45:10 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/17 01:12:56 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,13 +98,11 @@ int	execute_command(t_infos *tokens, char *envp[])
 			if (tokens->commands[0]->redir_count > 0)
 				handle_redirections(tokens->commands[0], tokens);
 			e_status = ft_execute(tokens->commands[0], envp, tokens);
-			printf("exit from the of child %d\n", e_status);
 			exit (e_status);
 		}
 		else if (pid > 0)
 		{
 			waitpid(pid, &e_status, 0);
-			printf("exit staus of child %d\n", e_status);
 			return (e_status);
 		}
 	}

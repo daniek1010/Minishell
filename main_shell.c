@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 20:35:59 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/17 02:08:26 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,17 @@ int mini_shell(char *envp[])
 	while (e_status >= -1)
 	{
 		token_array = ft_read_input("Minishell> ");
-		tokens = ft_sort(token_array);
+		for (int i = 0; token_array[i]; i++)
+		{
+			printf("%s\n",token_array[i]);
+		}
+		tokens = ft_sort(token_array, envp);
+		for (int i = 0; tokens->commands[i]; i++)
+		{
+			printf("%s\n",tokens->commands[i]->name);
+			for (int j = 0; tokens->commands[i]->args[j]; j++){
+			printf("args  = %s\n",tokens->commands[i]->args[j]);}
+		}
 		e_status = execute_command(tokens, envp);
 		free_tokens(tokens);
     }
