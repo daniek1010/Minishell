@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/17 02:08:26 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/19 07:21:43 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	**copy_env(char *envp[])
 int mini_shell(char *envp[])
 {
     char	**token_array;
-	t_infos	*tokens;
+	// t_infos	*tokens;
 	int		e_status;
 
 	e_status = 0;
@@ -48,15 +48,16 @@ int mini_shell(char *envp[])
 		{
 			printf("%s\n",token_array[i]);
 		}
-		tokens = ft_sort(token_array, envp);
-		for (int i = 0; tokens->commands[i]; i++)
-		{
-			printf("%s\n",tokens->commands[i]->name);
-			for (int j = 0; tokens->commands[i]->args[j]; j++){
-			printf("args  = %s\n",tokens->commands[i]->args[j]);}
-		}
-		e_status = execute_command(tokens, envp);
-		free_tokens(tokens);
+		free (token_array);
+		// tokens = ft_sort(token_array, envp);
+		// for (int i = 0; tokens->commands[i]; i++)
+		// {
+		// 	printf("%s\n",tokens->commands[i]->name);
+		// 	for (int j = 0; tokens->commands[i]->args[j]; j++){
+		// 	printf("args  = %s\n",tokens->commands[i]->args[j]);}
+		// }
+		// e_status = execute_command(tokens, envp);
+		// free_tokens(tokens);
     }
 	return (e_status);
 }

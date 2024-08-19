@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/17 02:30:07 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/19 09:36:26 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ char	**ft_read_input(char *prompt)
 		free (input_read);
 		errors("No input read");
 	}
+	printf("%s\n", input_read);
 	// tokens = ft_split(input_read, delimter);
 	tokens = ft_spliter(input_read, ' ');
 	free (input_read);
