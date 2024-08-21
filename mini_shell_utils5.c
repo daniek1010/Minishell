@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 20:34:51 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 03:31:28 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,17 @@ void	free_tokens(t_infos *tokens)
 	tokens->commands = NULL;
 	free(tokens);
 	tokens = NULL;
+}
+
+char	*ft_strchr(const char *str, char c)
+{
+	if (!str)
+		return (NULL);
+	while (*str)
+	{
+		if (*str == c)
+			return ((char *) str);
+		str++;
+	}
+	return (NULL);
 }

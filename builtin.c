@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/16 18:34:41 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 17:22:47 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@ int	is_builtin(char *type)
 	return (0);
 }
 
+int	not_env(t_command *cmd, int i, int x)
+{
+	if (ft_strcmp(cmd->args[i], "404") == 0)
+	{
+		if (x == 1)
+			ft_putstr_fd("\n", STDOUT_FILENO);
+		return (1);
+	}
+	return (0);
+}
+
 int	builtin_echo(t_command *cmd)
 {
 	int	i;
@@ -29,6 +40,8 @@ int	builtin_echo(t_command *cmd)
 	if (ft_strcmp(cmd->args[1], "-n") == 0)
 	{
 		i = 2;
+		if (not_env(cmd, i, 0))
+			return (0);
 		while (cmd->args[i])
 		{
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
@@ -42,6 +55,8 @@ int	builtin_echo(t_command *cmd)
 		i = 1;
 		while (cmd->args[i])
 		{
+			if (not_env(cmd, i, 1))
+				return (0);
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 			if (cmd->args[i + 1] != NULL)
 				ft_putstr_fd(" ", STDOUT_FILENO);
@@ -68,8 +83,15 @@ int	builtin_env(char *envp[])
 int	builtin_export(char *envp[], char *key, char *value)
 {
 	if (key == NULL || value == NULL)
+	{
 		ft_putendl_fd("Error: Name and value must be non-null", STDERR_FILENO);
+		return (0);
+	}
 	set_env_var(&envp, key, value);
+	// for (int i = 0; envp[i]; i++)
+	// {
+	// 	printf("%s\n", envp[i]);
+	// }
 	return (0);
 }
 

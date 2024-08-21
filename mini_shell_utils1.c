@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 17:41:09 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 13:22:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*ft_strdup(const char *s)
 void	*ft_malloc(size_t n_size)
 {
 	void	*ptr;
-	
+
 	ptr = malloc(n_size);
 	if (!ptr)
 		perror("Malloc Failed");
@@ -54,7 +54,7 @@ void	ft_close(int fd)
 		close(fd);
 }
 
-t_infos	*ft_init(void)
+t_infos	*ft_init(t_var *var)
 {
 	t_infos	*data;
 
@@ -64,6 +64,8 @@ t_infos	*ft_init(void)
 	data->cmd_index = 0;
 	data->pipe_index = 0;
 	data->red_index = 0;
-	// data->commands = 0;
+	var->i = 0;
+	var->j = 0;
+	var->end = 0;
 	return (data);
 }

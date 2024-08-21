@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 19:03:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/19 16:30:23 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 17:30:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,124 +130,6 @@ char	**ft_split(char const *s, char *delimeter)
 			return (NULL);
 		start = -1;
 		result = write_str(s, delimeter, result, start);
-	}
-	return (result);
-}
-
-static int	count_wordsss(char const *s, char c)
-{
-	int	i;
-	int	count;
-	int	in_word;
-	int	single_quote;
-	int	double_quote;
-
-	i = 0;
-	count = 0;
-	in_word = 0;
-	single_quote = 0;
-	double_quote = 0;
-	while (s[i] != '\0')
-	{
-		if (s[i] == '"')
-			double_quote = !double_quote;
-		else if (s[i] == '\'')
-			single_quote = !single_quote;
-		else if (s[i] != c && !single_quote && !double_quote)
-		{
-			if (!in_word)
-			{
-				printf("******** from first string %c\n", s[i]);
-				count++;
-				in_word = 1;
-			}
-		}
-		else if (s[i] == c && !single_quote && !double_quote)
-		{
-			in_word = 0;
-		}
-		// else if (s[i] == c && (single_quote || double_quote))
-		// {
-		// 	// in_word = 0;
-		// }
-		else if (s[i] != c && (single_quote || double_quote))
-		{
-			if (!in_word)
-			{
-				printf("******** %c\n", s[i]);
-				count++;
-				in_word = 1;
-			}
-		}
-		i++;
-	}
-	printf("****what is count ******* %d\n", count);
-	return (count);
-}
-
-// static void	*free_strss(char **result)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (result[i])
-// 	{
-// 		free (result[i]);
-// 		i++;
-// 	}
-// 	free (result);
-// 	return (NULL);
-// }
-
-static char	**write_strss(char const *s, char c, char **result, int start)
-{
-	size_t	i;
-	int		j;	
-
-	i = 0;
-	j = 0;
-	while (i <= ft_strlen(s))
-	{
-		if (s[i] != c && start < 0) 
-			start = i;
-		else if ((s[i] == c || i == ft_strlen(s)) && start >= 0)
-		{
-			result[j++] = ft_substr(s, start, i - start);
-			if (result[j - 1] == NULL)
-			{
-				free_str (result);
-				return (NULL);
-			}
-			start = -1;
-		}
-		i++;
-	}
-	result[j] = NULL;
-	return (result);
-}
-
-char	**ft_spliter(char const *s, char c)
-{
-	int		size;
-	int		start;
-	char	**result;
-
-	size = count_wordsss(s, c);
-	if (!s || size == 0)
-	{
-		result = (char **)malloc(sizeof(char *) * (size + 1));
-		if (!result)
-			return (NULL);
-		*result = NULL;
-	}
-	else
-	{
-		printf("count ======== %d\n", size);
-		result = (char **)malloc(sizeof(char *) * (size + 1));
-		if (!result)
-			return (NULL);
-		start = -1;
-		result = write_strss(s, c, result, start);
 	}
 	return (result);
 }

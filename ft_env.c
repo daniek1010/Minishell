@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 18:38:43 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 17:24:07 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,39 +20,61 @@ int	compare_key(char ***envp, char *key, int i)
 	return (0);
 }
 
+int	set_env_var_helper(char *key, char *value, char ***envp, int i)
+{
+	char	*str;
+
+	if (compare_key(envp, key, i))
+	{
+		free ((*envp)[i]);
+		str = ft_strjoin(key, "=");
+		(*envp)[i] = ft_strjoin(str, value);
+		free (str);
+		return (1);
+	}
+	return (0);
+}
+
+char	**write_envp(int *j, int i, char **new_envp, char ***envp)
+{
+	while (*j < i)
+	{
+		new_envp[*j] = ft_strdup((*envp)[*j]);
+		(*j)++;
+	}
+	return (new_envp);
+}
+
 void	set_env_var(char ***envp, char *key, char *value)
 {
-	int	i;
-	int	j;
-	char *str;
-	char **new_envp;
+	int		i;
+	int		j;
+	char	*str;
+	char	**new_envp;
 
 	i = 0;
 	while ((*envp)[i] != NULL)
 	{
-		if (compare_key(envp, key, i))
-		{
-			free ((*envp)[i]);
-			str = ft_strjoin(key, "=");
-			(*envp)[i] = ft_strjoin(str, value);
-			free (str);
+		if (set_env_var_helper(key, value, envp, i))
 			return ;
-		}
 		i++;
 	}
 	new_envp = (char **)ft_malloc(sizeof(char *) * (i + 2));
 	j = 0;
-	while (j < i)
-	{
-		new_envp[j] = (*envp)[j];
-		j++;
-	}
+	new_envp = write_envp(&j, i, new_envp, envp);
 	str = ft_strjoin(key, "=");
 	new_envp[j] = ft_strjoin(str, value);
 	free (str);
 	new_envp[j + 1] = NULL;
-	free (*envp);
+	for (int i = 0; (*envp)[i]; i++)
+	{
+		free((*envp)[i]);
+	}
+	// ft_cleaner(*envp);
+	printf("from_set_value %s\n", (*envp)[i]);
 	*envp = new_envp;
+	printf("from_set_value %s\n", (*envp)[i]);
+	printf("from_set_value_new %s\n", new_envp[i]);
 	return ;
 }
 
@@ -89,19 +111,5 @@ int	builtin_cd(char *envp[], const char *path)
 	}
 	else
 		builtin_pwd();
-	return (0);
-}
-
-int	builtin_pwd(void)
-{
-	char	buffer[1024];
-
-	if (getcwd(buffer, sizeof(buffer)) != NULL)
-		ft_putendl_fd(buffer, STDOUT_FILENO);
-	else
-	{
-		perror("GETCWD");
-		return (22);
-	}
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils3.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:27:06 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/12 12:43:53 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 14:40:59 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ char	*ft_access(char *av, char *envp[])
 
 	splitted = ft_check_path(envp);
 	i = -1;
+	if (access(av, X_OK) == 0)
+		return (av);
 	while (splitted[++i] != NULL)
 	{
 		path = join(splitted[i], av);

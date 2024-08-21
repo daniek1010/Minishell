@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:40:31 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 16:23:55 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/21 03:28:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,14 @@ void	ft_cleaner(char *str[])
 	}
 	free(str);
 	return ;
+}
+
+int	is_redir(char *tokens[], int start)
+{
+	if (ft_strcmp(tokens[start], "<") == 0
+		|| ft_strcmp(tokens[start], ">") == 0
+		|| ft_strcmp(tokens[start], ">>") == 0
+		|| ft_strcmp(tokens[start], "<<") == 0)
+		return (1);
+	return (0);
 }
