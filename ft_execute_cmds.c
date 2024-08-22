@@ -6,13 +6,13 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 13:18:00 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:47:53 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	iterate_pipe_index(t_infos *tokens, char *envp[])
+int	iterate_pipe_index(t_infos *tokens, char **envp[])
 {
 	int		i;
 	int		e_status;
@@ -28,7 +28,7 @@ int	iterate_pipe_index(t_infos *tokens, char *envp[])
 	return (e_status);
 }
 
-int	handle_builtin_exit(t_command *cmd, t_infos *tokens, char *envp[])
+int	handle_builtin_exit(t_command *cmd, t_infos *tokens, char **envp[])
 {
 	int	e_status;
 
@@ -42,7 +42,7 @@ int	handle_builtin_exit(t_command *cmd, t_infos *tokens, char *envp[])
 	return (e_status);
 }
 
-int	run_child(t_infos *tokens, char *envp[])
+int	run_child(t_infos *tokens, char **envp[])
 {
 	int	e_status;
 
@@ -52,7 +52,7 @@ int	run_child(t_infos *tokens, char *envp[])
 	return (e_status);
 }
 
-int	execute_command(t_infos *tokens, char *envp[])
+int	execute_command(t_infos *tokens, char **envp[])
 {
 	pid_t	pid;
 	int		e_status;
@@ -80,7 +80,7 @@ int	execute_command(t_infos *tokens, char *envp[])
 	return (e_status);
 }
 
-int	ft_execute(t_command *command, char *envp[], t_infos *tokens)
+int	ft_execute(t_command *command, char **envp[], t_infos *tokens)
 {
 	char	*path;
 	int		e_status;
@@ -90,14 +90,14 @@ int	ft_execute(t_command *command, char *envp[], t_infos *tokens)
 		e_status = ft_check_builtin(command, envp);
 	else
 	{
-		path = ft_access(command->name, envp);
+		path = ft_access(command->name, (*envp));
 		if (path == NULL)
 		{
 			perror("PATH");
 			e_status = 2;
 			return (e_status);
 		}
-		if (execve(path, command->args, envp) == -1)
+		if (execve(path, command->args, (*envp)) == -1)
 		{
 			perror("EXECVE");
 			free(path);

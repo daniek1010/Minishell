@@ -6,13 +6,13 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 17:24:07 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 12:18:36 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	compare_key(char ***envp, char *key, int i)
+int	compare_key(char **envp[], char *key, int i)
 {
 	if ((ft_strncmp((*envp)[i], key, ft_strlen(key)) == 0)
 		&& (*envp)[i][ft_strlen(key)] == '=')
@@ -20,7 +20,7 @@ int	compare_key(char ***envp, char *key, int i)
 	return (0);
 }
 
-int	set_env_var_helper(char *key, char *value, char ***envp, int i)
+int	set_env_var_helper(char *key, char *value, char **envp[], int i)
 {
 	char	*str;
 
@@ -35,7 +35,7 @@ int	set_env_var_helper(char *key, char *value, char ***envp, int i)
 	return (0);
 }
 
-char	**write_envp(int *j, int i, char **new_envp, char ***envp)
+char	**write_envp(int *j, int i, char **new_envp, char **envp[])
 {
 	while (*j < i)
 	{
@@ -45,7 +45,7 @@ char	**write_envp(int *j, int i, char **new_envp, char ***envp)
 	return (new_envp);
 }
 
-void	set_env_var(char ***envp, char *key, char *value)
+void	set_env_var(char **envp[], char *key, char *value)
 {
 	int		i;
 	int		j;
@@ -66,15 +66,8 @@ void	set_env_var(char ***envp, char *key, char *value)
 	new_envp[j] = ft_strjoin(str, value);
 	free (str);
 	new_envp[j + 1] = NULL;
-	for (int i = 0; (*envp)[i]; i++)
-	{
-		free((*envp)[i]);
-	}
-	// ft_cleaner(*envp);
-	printf("from_set_value %s\n", (*envp)[i]);
-	*envp = new_envp;
-	printf("from_set_value %s\n", (*envp)[i]);
-	printf("from_set_value_new %s\n", new_envp[i]);
+	ft_cleaner(*envp);
+	(*envp) = new_envp;
 	return ;
 }
 
@@ -91,25 +84,4 @@ char	*get_env_var(char *envp[], char *key)
 		i++;
 	}
 	return (NULL);
-}
-
-int	builtin_cd(char *envp[], const char *path)
-{
-	const char	*home;
-
-	if (!path)
-	{
-		home = get_env_var(envp, "HOME");
-		if (!home)
-			errors("HOME path not set");
-		path = home;
-	}
-	if (chdir(path) != 0)
-	{
-		perror("CHDIR");
-		return (2);
-	}
-	else
-		builtin_pwd();
-	return (0);
 }

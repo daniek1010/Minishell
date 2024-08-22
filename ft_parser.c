@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 13:59:51 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:38:53 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	is_pipe_char(char *token_array[], char *envp[],
 	return ;
 }
 
-t_infos	*ft_sort(char *token_array[], char *envp[])
+t_infos	*ft_sort(char *token_array[], char **envp[])
 {
 	t_var		var;
 	t_infos		*tokens;
@@ -107,14 +107,14 @@ t_infos	*ft_sort(char *token_array[], char *envp[])
 	while (token_array[var.i])
 	{
 		if (ft_strcmp(token_array[var.i], "|") == 0)
-			is_pipe_char(token_array, envp, tokens, &var);
+			is_pipe_char(token_array, (*envp), tokens, &var);
 		else
 		{
 			var.start = var.i;
 			while (token_array[var.i] && ft_strcmp(token_array[var.i],
 					"|") != 0)
 				var.i++;
-			command = ft_create_cmd(var.start, var.i - 1, token_array, envp);
+			command = ft_create_cmd(var.start, var.i - 1, token_array, (*envp));
 			tokens->commands[tokens->cmd_index++] = command;
 			var.i--;
 		}

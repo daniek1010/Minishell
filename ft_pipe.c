@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 14:56:11 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:45:19 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	ft_dup(int pipefd[2], int fd)
 	}
 }
 
-void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char *envp[])
+void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[])
 {
 	int	e_status;
 
@@ -56,7 +56,7 @@ void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char *envp[])
 	exit (e_status);
 }
 
-int	ft_create_pipe(t_pipe *pipe, char *envp[], t_infos *tokens)
+int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens)
 {
 	int		pipefd[2];
 	int		e_status;

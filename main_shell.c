@@ -6,13 +6,13 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 17:05:10 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 13:15:48 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_check_builtin(t_command *command, char *envp[])
+int	ft_check_builtin(t_command *command, char **envp[])
 {
 	int	e_status;
 
@@ -24,7 +24,7 @@ int	ft_check_builtin(t_command *command, char *envp[])
 	else if (ft_strcmp("export", command->name) == 0)
 		e_status = builtin_export(envp, command->args[1], command->args[2]);
 	else if (ft_strcmp("unset", command->name) == 0)
-		e_status = builtin_unset(&envp, command->args[1]);
+		e_status = builtin_unset(envp, command->args[1]);
 	else if (ft_strcmp("cd", command->name) == 0)
 		e_status = builtin_cd(envp, command->args[1]);
 	else if (ft_strcmp("pwd", command->name) == 0)
@@ -56,46 +56,26 @@ char	**copy_env(char *envp[])
 	return (new_envp);	
 }
 
-int mini_shell(char *envp[])
+int mini_shell(char **envp[])
 {
     char	**token_array;
 	t_infos	*tokens;
 	int		e_status;
 
 	e_status = 0;
+	/* ONLY CTRL D breaks this loop or exit keyword*/
 	while (e_status != -5)
 	{
 		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
 			continue ;
 		tokens = ft_sort(token_array, envp);
-		// for (int i = 0; envp[i]; i++)
-		// {
-		// 	printf("%s\n", envp[i]);
-		// }
 		e_status = execute_command(tokens, envp);
-		// for (int i = 0; envp[i]; i++)
-		// {
-		// 	printf(" ********  %s\n", envp[i]);
-		// }
 		free_tokens(tokens);
     }
 	return (e_status);
 }
 
-int	builtin_pwd(void)
-{
-	char	buffer[1024];
-
-	if (getcwd(buffer, sizeof(buffer)) != NULL)
-		ft_putendl_fd(buffer, STDOUT_FILENO);
-	else
-	{
-		perror("GETCWD");
-		return (22);
-	}
-	return (0);
-}
 
 int main(int ac, char *av[], char *envp[])
 {
@@ -106,7 +86,7 @@ int main(int ac, char *av[], char *envp[])
 	status = 0;
 	(void)ac;
 	(void)av;
-	status = mini_shell(env);
+	status = mini_shell(&env);
 	ft_cleaner(env);
     return (status);
 }

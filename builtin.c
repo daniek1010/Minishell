@@ -6,42 +6,22 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/21 17:22:47 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 12:53:11 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_builtin(char *type)
-{
-	if (ft_strcmp("echo", type) == 0 || ft_strcmp("cd", type) == 0
-		|| ft_strcmp("export", type) == 0 || ft_strcmp("pwd", type) == 0
-		|| ft_strcmp("unset", type) == 0 || ft_strcmp("env", type) == 0
-		|| ft_strcmp("exit", type) == 0)
-		return (1);
-	return (0);
-}
-
-int	not_env(t_command *cmd, int i, int x)
-{
-	if (ft_strcmp(cmd->args[i], "404") == 0)
-	{
-		if (x == 1)
-			ft_putstr_fd("\n", STDOUT_FILENO);
-		return (1);
-	}
-	return (0);
-}
-
 int	builtin_echo(t_command *cmd)
 {
 	int	i;
+	int	e_status;
 
 	if (ft_strcmp(cmd->args[1], "-n") == 0)
 	{
 		i = 2;
-		if (not_env(cmd, i, 0))
-			return (0);
+		if (not_env_path(cmd, i, 0))
+			return (-1);
 		while (cmd->args[i])
 		{
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
@@ -49,63 +29,47 @@ int	builtin_echo(t_command *cmd)
 				ft_putstr_fd(" ", STDOUT_FILENO);
 			i++;
 		}
+		e_status = 0;
 	}
 	else
-	{
-		i = 1;
-		while (cmd->args[i])
-		{
-			if (not_env(cmd, i, 1))
-				return (0);
-			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
-			if (cmd->args[i + 1] != NULL)
-				ft_putstr_fd(" ", STDOUT_FILENO);
-			i++;
-		}
-		ft_putstr_fd("\n", STDOUT_FILENO);
-	}
-	return (0);
+		e_status = echo_new_line(cmd);
+	return (e_status);
 }
 
-int	builtin_env(char *envp[])
+int	builtin_env(char **envp[])
 {
 	int	i;
 
 	i = 0;
-	while (envp[i] != NULL)
+	while ((*envp)[i] != NULL)
 	{
-		ft_putendl_fd(envp[i], STDOUT_FILENO);
+		ft_putendl_fd((*envp)[i], STDOUT_FILENO);
 		i++;
 	}
 	return (0);
 }
 
-int	builtin_export(char *envp[], char *key, char *value)
+int	builtin_export(char **envp[], char *key, char *value)
 {
 	if (key == NULL || value == NULL)
 	{
 		ft_putendl_fd("Error: Name and value must be non-null", STDERR_FILENO);
-		return (0);
+		return (-1);
 	}
-	set_env_var(&envp, key, value);
-	// for (int i = 0; envp[i]; i++)
-	// {
-	// 	printf("%s\n", envp[i]);
-	// }
+	set_env_var(envp, key, value);
+	printf("varaible works here\n");
 	return (0);
 }
 
-int	builtin_unset(char ***envp, char *key)
+int	builtin_unset(char **envp[], char *key)
 {
 	int		i;
 	int		j;
-	int		k;
-	int		l;
+	int		e_status;
 	char	**new_envp;
 
 	i = 0;
 	j = 0;
-	l = 0;
 	while ((*envp)[j])
 		j++;
 	while ((*envp)[i])
@@ -118,18 +82,27 @@ int	builtin_unset(char ***envp, char *key)
 		}
 		i++;
 	}
-	k = 0;
-	if (new_envp)
+	e_status = builtin_unset_helper(new_envp, envp, j, i);
+	return (e_status);
+}
+
+int	builtin_cd(char **envp[], const char *path)
+{
+	const char	*home;
+
+	if (!path)
 	{
-		while (k < j)
-		{
-			if (k != i)
-				new_envp[l++] = (*envp)[k];
-			k++;
-		}
-		new_envp[j - 1] = NULL;
-		free ((*envp));
-		*envp = new_envp;
+		home = get_env_var((*envp), "HOME");
+		if (!home)
+			errors("HOME path not set");
+		path = home;
 	}
+	if (chdir(path) != 0)
+	{
+		perror("CHDIR");
+		return (2);
+	}
+	else
+		builtin_pwd();
 	return (0);
 }
