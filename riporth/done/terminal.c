@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 12:50:27 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/09 16:24:57 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/21 18:23:08 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,11 +175,7 @@ int	main()
 			perror("read");
 			exit(EXIT_FAILURE);
 		}
-		// Check for Ctrl+D (EOF) to exit the program
-		if (key == '\x03')
-		{
-			printf("Ctrl+key pressed!\n");
-		}
+
 		// Detect Ctrl+D (ASCII 4) - usually indicates end of input
 		else if (key == '\x04')
 		{
