@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 16:35:46 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/22 17:02:58 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/23 10:24:32 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*ft_cut(char *list)
 
 int main() {
     // Example input string
-    char list[] = "\"123456789\"Text"; // The new string will be "Sample"
+    char list[] = "\"123456789    hff\"Text"; // The new string will be "Sample"
 
     // Call the ft_cut function
     char *result = ft_cut(list);

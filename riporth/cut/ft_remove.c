@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 17:51:13 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/22 18:01:49 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/23 10:46:49 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ char	*make(char *list, int i)
 /* this re,oves all " but it dosent handel the
 	' " ' case in witch the " should not be removed!
 */
-char	*ft_remove(char	*str)
+char	*
+*ft_remove(char	*str)
 {
 	int		i;
 	int		j;
