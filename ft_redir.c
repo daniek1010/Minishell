@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/13 14:30:16 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:36:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,26 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	return (str);
 }
 
+void	redir_here_docs(char *prompt, char *delimeter)
+{
+	char	*input;
+	int		pipefd[2];
+
+	pipe_create(pipefd);
+	input = ft_read_input_here_doc(prompt, delimeter);
+	if (!input)
+	{
+		free (input);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return ;
+	}
+	write(pipefd[1], input, ft_strlen(input));
+	close(pipefd[1]);
+	dup2(pipefd[0], STDIN_FILENO);
+	close(pipefd[0]);
+}
+
 void	handle_redirections(t_command *cmd, t_infos *tokens)
 {
 	int	i;
@@ -52,25 +72,6 @@ void	handle_redirections(t_command *cmd, t_infos *tokens)
 			i++;
 		}
 	}
-}
-
-void	redir_here_docs(char *prompt, char *delimeter)
-{
-	char	*input;
-	int		pipefd[2];
-
-	pipe_create(pipefd);
-	input = ft_read_input_here_doc(prompt, delimeter);
-	if (!input)
-	{
-		free (input);
-		close(pipefd[0]);
-		close(pipefd[1]);
-	}
-	write(pipefd[1], input, ft_strlen(input));
-	close(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
 }
 
 void	redir_append_trunc(t_infos *tokens, int type, char *file)

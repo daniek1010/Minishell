@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 12:57:45 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 19:23:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 # define MINI_SHELL_H
 
+#include <signal.h>
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -34,7 +35,6 @@ typedef struct s_redir{
 	int		type;
 	int		fd;
 	char	*file;
-	// char	*delimeter;
 }t_redir;
 
 typedef struct s_command{

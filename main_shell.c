@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 13:15:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 23:59:48 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,25 @@ int mini_shell(char **envp[])
     char	**token_array;
 	t_infos	*tokens;
 	int		e_status;
-
+	
 	e_status = 0;
-	/* ONLY CTRL D breaks this loop or exit keyword*/
 	while (e_status != -5)
 	{
 		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
+		{
+			ft_putendl_fd("exit", STDOUT_FILENO);
+			exit (EXIT_SUCCESS);
+		}
+		if (token_array[0][0] == '\0')
+		{
+			ft_cleaner(token_array);
 			continue ;
+		}
+		// for (int i = 0; token_array[i]; i++)
+		// {
+		// 	printf("%s\n", token_array[i]);
+		// }
 		tokens = ft_sort(token_array, envp);
 		e_status = execute_command(tokens, envp);
 		free_tokens(tokens);
@@ -76,12 +87,27 @@ int mini_shell(char **envp[])
 	return (e_status);
 }
 
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+}
 
 int main(int ac, char *av[], char *envp[])
 {
-	int	status;
+	int		status;
 	char	**env;
 
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 	env = copy_env(envp);
 	status = 0;
 	(void)ac;

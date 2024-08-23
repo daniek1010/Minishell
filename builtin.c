@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/22 12:53:11 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 00:25:12 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,26 @@ int	builtin_env(char **envp[])
 
 int	builtin_export(char **envp[], char *key, char *value)
 {
+	int		i;
+	char	*str;
+
+	i = 0;
 	if (key == NULL || value == NULL)
 	{
-		ft_putendl_fd("Error: Name and value must be non-null", STDERR_FILENO);
+		while ((*envp)[i] != NULL)
+		{
+			str = ft_strchr((*envp)[i], '=');
+			if (str)
+			{
+				*str = '\0';
+				printf("declare -x %s=\"%s\"\n", (*envp)[i], str + 1);
+				*str = '=';
+			}
+			i++;
+		}
 		return (-1);
 	}
 	set_env_var(envp, key, value);
-	printf("varaible works here\n");
 	return (0);
 }
 

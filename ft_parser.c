@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 11:38:53 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/22 19:36:13 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,22 @@ char	**ft_read_input(char *prompt)
 	char	*input_read;
 	char	*delimter;
 	char	**tokens;
+	char	**empty_input;
 
 	delimter = " \t\r\n\a";
-	tokens = NULL;
 	input_read = readline(prompt);
-	if (input_read == NULL || input_read[0] == '\0')
+	if (input_read == NULL)
 	{
 		free (input_read);
-		return (tokens);
+		return (NULL);
+	}
+	if (input_read[0] == '\0')
+	{
+		empty_input = malloc(sizeof(char *) * 2);
+		empty_input[0] = ft_strdup("");
+		empty_input[1] = NULL;
+		free(input_read);
+		return (empty_input);
 	}
 	add_history(input_read);
 	tokens = ft_split(input_read, delimter);
