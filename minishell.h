@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 19:23:58 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:07:10 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_command{
 	char 	*name;
 	char 	**args;
 	t_redir	**redir_cmd;
-	int		redir_count;
+	int		redir_count;	
 	int		i;
 }t_command;
 
@@ -53,10 +53,11 @@ typedef struct s_pipe{
 typedef struct s_infos{
 	t_command	**commands;
 	t_pipe		**pipes;
-	int			pipe_index; 
-	int			cmd_index; 
+	int			pipe_index;
+	int			cmd_index;
 	int			red_index;
-	
+	int			e_code;
+
 }t_infos;
 
 typedef struct s_var{
@@ -67,6 +68,9 @@ typedef struct s_var{
 	
 }t_var;
 
+int	builtin_export_helper(char **key_value, char **envp[]);
+int	alpha_numeric(char *str);
+
 int	ft_check_builtin(t_command *command, char **envp[]);
 /*ft_split_minishell.c ....formatted*/
 char	**ft_split(char const *s, char *delimeter);
@@ -76,8 +80,8 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 
 /* builtin.c .... formated*/
-int		builtin_export(char **envp[], char *key, char *value);
-int		builtin_unset(char **envp[], char *key);
+int		builtin_export(char **envp[], char *key_value[]);
+int		builtin_unset(char **envp[], char *key[]);
 int		builtin_env(char **envp[]);
 int		builtin_echo(t_command *cmd);
 int		builtin_cd(char **envp[], const char *path);
@@ -96,7 +100,7 @@ pid_t	fork_process(void);
 void	ft_dup(int pipefd[2], int fd);
 void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]);
 
-/* ft_parser.c .... formatted*/
+/* ft_parser.c .... not formatted*/
 t_infos		*ft_sort(char *token_array[], char **envp[]);
 t_redir		*ft_create_redir(char *str, char *file);
 char		**ft_read_input(char *prompt);

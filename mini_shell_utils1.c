@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 13:22:39 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:04:06 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ t_infos	*ft_init(t_var *var)
 	data->cmd_index = 0;
 	data->pipe_index = 0;
 	data->red_index = 0;
+	data->e_code = 0;
 	var->i = 0;
 	var->j = 0;
 	var->end = 0;

@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 12:18:36 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 14:41:41 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*bool comparison to check if key was found */
 int	compare_key(char **envp[], char *key, int i)
 {
 	if ((ft_strncmp((*envp)[i], key, ft_strlen(key)) == 0)
@@ -20,6 +21,7 @@ int	compare_key(char **envp[], char *key, int i)
 	return (0);
 }
 
+/*bool to checks if key is found and then join the key + value*/
 int	set_env_var_helper(char *key, char *value, char **envp[], int i)
 {
 	char	*str;
@@ -35,6 +37,7 @@ int	set_env_var_helper(char *key, char *value, char **envp[], int i)
 	return (0);
 }
 
+/* copies envp into the new_envp, helper for set_env_var */
 char	**write_envp(int *j, int i, char **new_envp, char **envp[])
 {
 	while (*j < i)
@@ -45,6 +48,9 @@ char	**write_envp(int *j, int i, char **new_envp, char **envp[])
 	return (new_envp);
 }
 
+/* checks if key already exist,counts the envp found , creates 
+space with malloc for new_envp write into new_envp, free the envp
+ and then a pointer to new_envp  */
 void	set_env_var(char **envp[], char *key, char *value)
 {
 	int		i;
@@ -71,6 +77,7 @@ void	set_env_var(char **envp[], char *key, char *value)
 	return ;
 }
 
+/* loop tru the envp to get the key and then skip key and return value*/
 char	*get_env_var(char *envp[], char *key)
 {
 	int	i;

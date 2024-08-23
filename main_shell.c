@@ -3,14 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 23:59:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:06:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	alpha_numeric(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')
+		|| (str[i] >= '0' && str[i] <= '9'))
+		{
+			if ((str[0] >= '0' && str[0] <= '9'))
+				return (0);
+			i++;
+		}
+		else
+			return (0);
+	}
+	return (1);
+}
+
+int	builtin_export_helper(char **key_value, char **envp[])
+{
+	int		i;
+	char	*str;
+
+	i = 1;
+	while (key_value[i] != NULL)
+	{
+		str = ft_strchr(key_value[i], '=');
+		if (str)
+		{
+			*str = '\0';
+			if (alpha_numeric(key_value[i]))
+				set_env_var(envp, key_value[i], str + 1);
+			else
+			{
+				*str = '=';
+				printf("%s:\'%s\': not a valid identifier\n", key_value[0], key_value[i]);
+				return (1);
+			}
+		}
+		else
+		{
+			printf("%s:\'%s\': not a valid identifier\n", key_value[0], key_value[i]);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 
 int	ft_check_builtin(t_command *command, char **envp[])
 {
@@ -22,9 +74,9 @@ int	ft_check_builtin(t_command *command, char **envp[])
 	else if (ft_strcmp("env", command->name) == 0)
 		e_status = builtin_env(envp);
 	else if (ft_strcmp("export", command->name) == 0)
-		e_status = builtin_export(envp, command->args[1], command->args[2]);
+		e_status = builtin_export(envp, command->args);
 	else if (ft_strcmp("unset", command->name) == 0)
-		e_status = builtin_unset(envp, command->args[1]);
+		e_status = builtin_unset(envp, command->args);
 	else if (ft_strcmp("cd", command->name) == 0)
 		e_status = builtin_cd(envp, command->args[1]);
 	else if (ft_strcmp("pwd", command->name) == 0)

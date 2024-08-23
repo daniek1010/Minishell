@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils6.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 12:55:27 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:49:29 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,7 @@ int	is_builtin(char *type)
 int	not_env_path(t_command *cmd, int i, int x)
 {
 	if (ft_strcmp(cmd->args[i], "404") == 0)
-	{
-		if (x == 1)
-			ft_putstr_fd("\n", STDOUT_FILENO);
 		return (1);
-	}
 	return (0);
 }
 
@@ -41,7 +37,10 @@ int	echo_new_line(t_command *cmd)
 	while (cmd->args[i])
 	{
 		if (not_env_path(cmd, i, 1))
-			return (-1);
+		{
+			i++;
+			continue ;
+		}
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 		if (cmd->args[i + 1] != NULL)
 			ft_putstr_fd(" ", STDOUT_FILENO);
@@ -58,19 +57,22 @@ int	builtin_unset_helper(char **new_envp, char **envp[], int j, int i)
 
 	k = 0;
 	l = 0;
-	if (new_envp)
+	if (new_envp == NULL)
 	{
+		printf("here_helper j = %d   i = %d\n", j, i);
 		while (k < j)
 		{
 			if (k != i)
 				new_envp[l++] = (*envp)[k];
 			k++;
 		}
+		printf("here_helper j = %d   i = %d\n", j, i);
 		new_envp[j - 1] = NULL;
 		free ((*envp));
 		*envp = new_envp;
 		return (1);
 	}
+	printf("here_helper_end\n");
 	return (-1);
 }
 

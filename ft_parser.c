@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 19:36:13 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:00:08 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ char	**ft_read_input(char *prompt)
 	return (tokens);
 }
 
+/* checks for redir and simply return a value if found*/
 t_redir	*ft_create_redir(char *str, char *file)
 {
 	t_redir	*redir;
@@ -59,6 +60,8 @@ t_redir	*ft_create_redir(char *str, char *file)
 	return (redir);
 }
 
+/* creates the cmd, checks if $, redir and strdup the str found into
+the cmd->args every str is kept in cmd->args and the cmd struct is returned*/
 t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[])
 {
 	int			redir_status;
@@ -86,6 +89,9 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[])
 	return (cmd);
 }
 
+/* this creates the pipe struct which have the cmd1 and cmd2,
+the cmd1 keeps all cmd created from the start until a pipe and
+cmd2 keep all cmd after the pipe till the next pipe or NULL*/
 void	is_pipe_char(char *token_array[], char *envp[],
 		t_infos *tokens, t_var *var)
 {
@@ -103,6 +109,9 @@ void	is_pipe_char(char *token_array[], char *envp[],
 	return ;
 }
 
+/* this sorrt the token_array checking for the pipe and commands, it writes 
+into the cmd until a pipe is found and then it writes into a pipe->cmd1 and
+ cmd->2 and return tokens*/
 t_infos	*ft_sort(char *token_array[], char **envp[])
 {
 	t_var		var;
