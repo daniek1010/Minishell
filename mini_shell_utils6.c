@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 15:49:29 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 13:01:32 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,30 +50,29 @@ int	echo_new_line(t_command *cmd)
 	return (0);
 }
 
-int	builtin_unset_helper(char **new_envp, char **envp[], int j, int i)
+int	builtin_unset_helper(char ***new_envp, char **envp[], int j, int i)
 {
 	int	k;
 	int	l;
 
 	k = 0;
 	l = 0;
-	if (new_envp == NULL)
+	if ((*new_envp))
 	{
-		printf("here_helper j = %d   i = %d\n", j, i);
 		while (k < j)
 		{
 			if (k != i)
-				new_envp[l++] = (*envp)[k];
+			{
+				(*new_envp)[l++] = (*envp)[k];
+			}
 			k++;
 		}
-		printf("here_helper j = %d   i = %d\n", j, i);
-		new_envp[j - 1] = NULL;
+		(*new_envp)[j - 1] = NULL;
 		free ((*envp));
-		*envp = new_envp;
-		return (1);
+		*envp = (*new_envp);
+		return (0);
 	}
-	printf("here_helper_end\n");
-	return (-1);
+	return (0);
 }
 
 int	builtin_pwd(void)

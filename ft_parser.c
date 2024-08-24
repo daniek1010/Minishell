@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 15:00:08 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 16:55:44 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[])
 		else if (redir_status < 0)
 			break ;
 		cmd->args[cmd->i++] = ft_strdup(tokens[start++]);
+		cmd->e_status = 0;
 	}
 	cmd->args[cmd->i] = NULL;
 	cmd->redir_cmd[cmd->redir_count] = NULL;

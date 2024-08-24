@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redir.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/22 20:36:58 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 16:27:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,10 @@ void	redir_append_trunc(t_infos *tokens, int type, char *file)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		// tokens->e_code = 1;
 	}
 	dup2(fdout, STDOUT_FILENO);
+	// tokens->e_code = 0;
 }
 
 void	redir_input(t_infos *tokens, char *file)
@@ -105,6 +107,9 @@ void	redir_input(t_infos *tokens, char *file)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		// tokens->e_code = 1;
 	}
 	dup2(fdin, STDIN_FILENO);
+	// tokens->e_code = 0;
+
 }

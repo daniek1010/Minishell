@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/23 15:45:28 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 13:13:43 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ int	builtin_unset(char **envp[], char *key[])
 	int		i;
 	int		j;
 	int		k;
-	int		e_status;
 	char	**new_envp;
 
 	i = 0;
@@ -109,21 +108,18 @@ int	builtin_unset(char **envp[], char *key[])
 		{
 			if (compare_key(envp, key[k], i))
 			{
-				printf("%s\n", key[k]);
 				free ((*envp)[i]);
 				new_envp = (char **)ft_malloc(sizeof(char *) * (j));
-				new_envp = NULL;
+				builtin_unset_helper(&new_envp, envp, j, i);
 				break ;
 			}
 			i++;
 		}
-		printf("here\n");
-		e_status = builtin_unset_helper(new_envp, envp, j, i);
 		k++;
 		i = 0;
 		j = 0;
 	}
-	return (e_status);
+	return (0);
 }
 
 /*Check for path with chdir , if path is empty, i use my getter to find HOME

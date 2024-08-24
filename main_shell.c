@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 15:06:57 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 16:40:09 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int mini_shell(char **envp[])
 		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
 		{
+			e_status = 127;
 			ft_putendl_fd("exit", STDOUT_FILENO);
 			exit (EXIT_SUCCESS);
 		}
@@ -134,6 +135,7 @@ int mini_shell(char **envp[])
 		// }
 		tokens = ft_sort(token_array, envp);
 		e_status = execute_command(tokens, envp);
+		printf("parent home %d\n", tokens->e_code);
 		free_tokens(tokens);
     }
 	return (e_status);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils0.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 13:25:16 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 15:05:28 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,20 @@ char	*ft_write_env(char *value)
 	char	*env_key;
 
 	i = 0;
-	while (value[len] != ' ' && value[len] != '\0')
+	while (value[len] != ' ' && value[len] != '\''
+		&& value[len] != '"' && value[len] != '\0')
 		len++;
 	env_key = (char *)malloc(sizeof (char) * (len + 1));
 	if (!env_key)
 		return (NULL);
-	while (*value != ' ' && *value != '\0')
+	while (*value != ' ' && *value != '\'' && *value != '"'
+		&& *value != '\0')
 		env_key[i++] = *value++;
 	env_key[i] = '\0';
 	return (env_key);
 }
 
-char	*ft_special_char(char *envp[], const char *str)
+char	*ft_special_char(char *envp[], const char *str, t_command *cmd)
 {
 	char	*value;
 	char	*new_value;
@@ -42,7 +44,7 @@ char	*ft_special_char(char *envp[], const char *str)
 	{
 		value++;
 		if (ft_strncmp(value, "?", 1) == 0)
-			printf("what do i do ??\n");
+			new_value = ft_strdup(ft_itoa(cmd->e_status));
 		else
 		{
 			env_key = ft_write_env(value);
@@ -77,12 +79,12 @@ int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 	return (0);
 }
 
-int	is_dollar_char(t_command *cmd, char *token_array[], int *start, 
+int	is_dollar_char(t_command *cmd, char *token_array[], int *start,
 		char *envp[])
 {
 	char	*value;
 
-	value = ft_special_char(envp, token_array[*start]);
+	value = ft_special_char(envp, token_array[*start], cmd);
 	if (value)
 	{
 		cmd->args[cmd->i++] = value;

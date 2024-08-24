@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 15:07:10 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 16:39:32 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ typedef struct s_command{
 	char 	*name;
 	char 	**args;
 	t_redir	**redir_cmd;
-	int		redir_count;	
+	int		redir_count;
+	int		e_status;
 	int		i;
 }t_command;
 
@@ -68,6 +69,7 @@ typedef struct s_var{
 	
 }t_var;
 
+char	*ft_itoa(int n);
 int	builtin_export_helper(char **key_value, char **envp[]);
 int	alpha_numeric(char *str);
 
@@ -79,7 +81,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 
 
-/* builtin.c .... formated*/
+/* builtin.c .... not formated ... unset*/
 int		builtin_export(char **envp[], char *key_value[]);
 int		builtin_unset(char **envp[], char *key[]);
 int		builtin_env(char **envp[]);
@@ -124,7 +126,7 @@ void	redir_here_docs(char *prompt, char *delimeter);
 
 /*mini_shell_utils0.c....formated*/
 char	*ft_write_env(char *value);
-char	*ft_special_char(char *envp[], const char *str);
+char	*ft_special_char(char *envp[], const char *str, t_command *cmd);
 int		is_dollar_char(t_command *cmd, char *token_array[], int *start, 
 		char *envp[]);
 int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
@@ -170,7 +172,7 @@ int		is_builtin(char *type);
 int		builtin_pwd(void);
 int		not_env_path(t_command *cmd, int i, int x);
 int		echo_new_line(t_command *cmd);
-int		builtin_unset_helper(char **new_envp, char **envp[], int j, int i);
+int		builtin_unset_helper(char ***new_envp, char **envp[], int j, int i);
 
 
 
