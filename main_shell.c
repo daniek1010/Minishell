@@ -6,11 +6,14 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 16:40:09 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/25 04:47:36 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+volatile sig_atomic_t g_int = 0;
+
 
 int	alpha_numeric(char *str)
 {
@@ -115,12 +118,17 @@ int mini_shell(char **envp[])
 	int		e_status;
 	
 	e_status = 0;
-	while (e_status != -5)
+	while (1)
 	{
 		token_array = ft_read_input("Minishell> ");
+		if (g_int)
+		{
+			e_status = 130;
+			g_int = 0;
+			continue ;
+		}
 		if (token_array == NULL)
 		{
-			e_status = 127;
 			ft_putendl_fd("exit", STDOUT_FILENO);
 			exit (EXIT_SUCCESS);
 		}
@@ -129,13 +137,8 @@ int mini_shell(char **envp[])
 			ft_cleaner(token_array);
 			continue ;
 		}
-		// for (int i = 0; token_array[i]; i++)
-		// {
-		// 	printf("%s\n", token_array[i]);
-		// }
-		tokens = ft_sort(token_array, envp);
+		tokens = ft_sort(token_array, envp, e_status);
 		e_status = execute_command(tokens, envp);
-		printf("parent home %d\n", tokens->e_code);
 		free_tokens(tokens);
     }
 	return (e_status);
@@ -144,10 +147,18 @@ int mini_shell(char **envp[])
 void	handle_sigint(int sig)
 {
 	(void)sig;
+	g_int = 1;
 	rl_replace_line("", 0);
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	rl_on_new_line();
 	rl_redisplay();
+	// exit(130);
+}
+
+void	signal_handlers(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 }
 
 void	handle_sigquit(int sig)
@@ -159,9 +170,9 @@ int main(int ac, char *av[], char *envp[])
 {
 	int		status;
 	char	**env;
-
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
+	
+	signal_handlers();
+	
 	env = copy_env(envp);
 	status = 0;
 	(void)ac;

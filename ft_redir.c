@@ -6,31 +6,94 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 16:27:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/25 04:38:02 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_read_input_here_doc(char *prompt, char *delimeter)
-{
-	char	*input_read;
-	char	*str;
-
-	str = NULL;
-	while (1)
-	{
-		input_read = readline(prompt);
-		if (!input_read || ft_strcmp(input_read, delimeter) == 0)
-			break ;
-		add_history(input_read);
-		str = ft_strjoin_new_line(str, input_read);
-		free (input_read);
-	}
-	if (input_read)
-		free (input_read);
-	return (str);
+void handle_sigint_child(int sig) {
+    (void)sig;
+	rl_replace_line("", 0);
+	// ft_putstr_fd("\n", STDOUT_FILENO);
+	// rl_on_new_line();
+	rl_redisplay();
+    exit(130);  // Exit code 130 indicates termination by SIGINT
 }
+
+void setup_signal_handlers_child() {
+    signal(SIGINT, handle_sigint_child);
+    // signal(SIGQUIT, SIG_IGN);  // Ignore SIGQUIT in child if not needed
+}
+
+
+// char	*ft_read_input_here_doc(char *prompt, char *delimeter)
+// {
+// 	char	*input_read;
+// 	char	*str = NULL;
+// 	// int		e_status = 0;
+
+// 	str = NULL;
+// 	while (1)
+// 	{
+// 		if (g_int)
+// 		{
+// 			if (str)
+// 				free (str);
+// 			return NULL;
+// 		}
+// 		input_read = readline(prompt);
+// 		if (!input_read)
+// 		{
+// 			if (str)
+// 				free (str);
+// 			ft_putendl_fd("execpts delimiter", STDOUT_FILENO);
+// 			// return NULL;
+// 			exit(0);
+// 		}
+// 		if (ft_strcmp(input_read, delimeter) == 0)
+// 			break ;
+// 		add_history(input_read);
+// 		str = ft_strjoin_new_line(str, input_read);
+// 		free (input_read);
+// 	}
+// 	if (input_read)
+// 		free (input_read);
+// 	return (str);
+// }
+
+char *ft_read_input_here_doc(char *prompt, char *delimiter) {
+    char *input_read;
+    char *str = NULL;
+
+    while (1) {
+        if (g_int) {  // Check for interruption
+            if (str)
+                free(str);
+            return NULL;
+        }
+
+        input_read = readline(prompt);
+        if (!input_read) {
+            if (str)
+                free(str);
+            ft_putendl_fd("EOF detected", STDOUT_FILENO);
+            return NULL;  // Handle EOF
+        }
+
+        if (ft_strcmp(input_read, delimiter) == 0)
+            break;
+
+        add_history(input_read);
+        str = ft_strjoin_new_line(str, input_read);
+        free(input_read);
+    }
+
+    if (input_read)
+        free(input_read);
+    return str;
+}
+
 
 void	redir_here_docs(char *prompt, char *delimeter)
 {
@@ -52,7 +115,7 @@ void	redir_here_docs(char *prompt, char *delimeter)
 	close(pipefd[0]);
 }
 
-void	handle_redirections(t_command *cmd, t_infos *tokens)
+int	handle_redirections(t_command *cmd, t_infos *tokens)
 {
 	int	i;
 
@@ -63,18 +126,25 @@ void	handle_redirections(t_command *cmd, t_infos *tokens)
 		{
 			if (cmd->redir_cmd[i]->type == TRUNC
 				|| cmd->redir_cmd[i]->type == APPEND)
-				redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
-					cmd->redir_cmd[i]->file);
+			{
+				if (!redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
+					cmd->redir_cmd[i]->file))
+						break ;
+			}
 			else if (cmd->redir_cmd[i]->type == INPUT)
-				redir_input(tokens, cmd->redir_cmd[i]->file);
+			{
+				if (!redir_input(tokens, cmd->redir_cmd[i]->file))
+						break ;
+			}
 			else
-				redir_here_docs("heredoc> ", cmd->redir_cmd[i]->file);
+				redir_here_docs("> ", cmd->redir_cmd[i]->file);
 			i++;
 		}
 	}
+	return (tokens->e_code);
 }
 
-void	redir_append_trunc(t_infos *tokens, int type, char *file)
+int	redir_append_trunc(t_infos *tokens, int type, char *file)
 {
 	int	fdout;
 
@@ -90,13 +160,15 @@ void	redir_append_trunc(t_infos *tokens, int type, char *file)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
-		// tokens->e_code = 1;
+		tokens->e_code = 1;
+		return (0);
 	}
 	dup2(fdout, STDOUT_FILENO);
-	// tokens->e_code = 0;
+	tokens->e_code = 0;
+	return (1);
 }
 
-void	redir_input(t_infos *tokens, char *file)
+int	redir_input(t_infos *tokens, char *file)
 {
 	int	fdin;
 
@@ -107,9 +179,11 @@ void	redir_input(t_infos *tokens, char *file)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
-		// tokens->e_code = 1;
+		tokens->e_code = 1;
+		return (0);
 	}
 	dup2(fdin, STDIN_FILENO);
-	// tokens->e_code = 0;
+	tokens->e_code = 0;
+	return (1);
 
 }

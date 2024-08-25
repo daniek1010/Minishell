@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 16:39:32 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/25 04:10:01 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #define HEREDOC		3
 #define	INIT_SIZE	64
 
+extern volatile sig_atomic_t g_int;
+
 typedef struct s_redir{
 	int		type;
 	int		fd;
@@ -42,7 +44,6 @@ typedef struct s_command{
 	char 	**args;
 	t_redir	**redir_cmd;
 	int		redir_count;
-	int		e_status;
 	int		i;
 }t_command;
 
@@ -68,6 +69,16 @@ typedef struct s_var{
 	int	end;
 	
 }t_var;
+
+
+void setup_signal_handlers_child();
+void handle_sigint_child(int sig);
+
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+void	signal_handlers(void);
+
+
 
 char	*ft_itoa(int n);
 int	builtin_export_helper(char **key_value, char **envp[]);
@@ -103,10 +114,10 @@ void	ft_dup(int pipefd[2], int fd);
 void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]);
 
 /* ft_parser.c .... not formatted*/
-t_infos		*ft_sort(char *token_array[], char **envp[]);
+t_infos		*ft_sort(char *token_array[], char **envp[], int status);
 t_redir		*ft_create_redir(char *str, char *file);
 char		**ft_read_input(char *prompt);
-t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[]);
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[], char *envp[],  t_infos *tokens);
 void		is_pipe_char(char *token_array[], char *envp[],
 			t_infos *tokens, t_var *var);
 
@@ -119,16 +130,16 @@ int	run_child(t_infos *tokens, char **envp[]);
 
 /* ft_redir.c .... formatted*/
 char	*ft_read_input_here_doc(char *prompt, char *delimeter);
-void	handle_redirections(t_command *cmd, t_infos *tokens);
-void	redir_input(t_infos *tokens, char *file);
-void	redir_append_trunc(t_infos *tokens, int type, char *file);
+int		handle_redirections(t_command *cmd, t_infos *tokens);
+int		redir_input(t_infos *tokens, char *file);
+int		redir_append_trunc(t_infos *tokens, int type, char *file);
 void	redir_here_docs(char *prompt, char *delimeter);
 
 /*mini_shell_utils0.c....formated*/
 char	*ft_write_env(char *value);
-char	*ft_special_char(char *envp[], const char *str, t_command *cmd);
+char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens);
 int		is_dollar_char(t_command *cmd, char *token_array[], int *start, 
-		char *envp[]);
+		char *envp[], t_infos *tokens);
 int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
 void	destroy_cmd_use_pipe_cmd(t_infos *tokens);
 

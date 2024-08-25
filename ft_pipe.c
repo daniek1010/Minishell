@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 16:28:05 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/25 03:32:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,20 @@ void	ft_dup(int pipefd[2], int fd)
 
 void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[])
 {
-	// int	e_status;
-
 	ft_dup(pipefd, STDOUT_FILENO);
 	handle_redirections(pipe->cmd1, tokens);
-	pipe->cmd1->e_status = ft_execute(pipe->cmd1, envp, tokens);
-	exit (pipe->cmd1->e_status);
+	if (tokens->e_code == 1)
+		exit (tokens->e_code);
+	tokens->e_code = ft_execute(pipe->cmd1, envp, tokens);
+	exit (tokens->e_code);
 }
 
 int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens)
 {
 	int		pipefd[2];
-	// int		e_status;
 	pid_t	pid1;
 	pid_t	pid2;
 
-	// e_status = 0;
 	pipe_create(pipefd);
 	pid1 = fork_process();
 	if (pid1 == 0)
@@ -73,12 +71,14 @@ int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens)
 	{
 		ft_dup(pipefd, STDIN_FILENO);
 		handle_redirections(pipe->cmd2, tokens);
-		pipe->cmd2->e_status = ft_execute(pipe->cmd2, envp, tokens);
-		exit (pipe->cmd2->e_status);
+		if (tokens->e_code == 1)
+			exit (tokens->e_code);
+		tokens->e_code = ft_execute(pipe->cmd2, envp, tokens);
+		exit (tokens->e_code);
 	}
 	close(pipefd[0]);
 	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
-	return (pipe->cmd2->e_status);
+	return (tokens->e_code);
 }

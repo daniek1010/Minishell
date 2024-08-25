@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 15:05:28 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/24 17:19:01 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*ft_write_env(char *value)
 	return (env_key);
 }
 
-char	*ft_special_char(char *envp[], const char *str, t_command *cmd)
+char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens)
 {
 	char	*value;
 	char	*new_value;
@@ -44,7 +44,7 @@ char	*ft_special_char(char *envp[], const char *str, t_command *cmd)
 	{
 		value++;
 		if (ft_strncmp(value, "?", 1) == 0)
-			new_value = ft_strdup(ft_itoa(cmd->e_status));
+			new_value = ft_strdup(ft_itoa(tokens->e_code));
 		else
 		{
 			env_key = ft_write_env(value);
@@ -80,11 +80,11 @@ int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 }
 
 int	is_dollar_char(t_command *cmd, char *token_array[], int *start,
-		char *envp[])
+		char *envp[], t_infos *tokens)
 {
 	char	*value;
 
-	value = ft_special_char(envp, token_array[*start], cmd);
+	value = ft_special_char(envp, token_array[*start], cmd, tokens);
 	if (value)
 	{
 		cmd->args[cmd->i++] = value;
