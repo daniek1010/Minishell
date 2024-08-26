@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 11:44:18 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/23 16:46:45 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,25 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	char	*str;
 
 	str = NULL;
-	g_break = 0;
+	g_break = 1;
+	rl_catch_signals = 0;
 	while (1)
 	{
 		input_read = readline(prompt);
 		if (!input_read || ft_strcmp(input_read, delimeter) == 0)
 			break ;
-		if (g_break == 1)
-			break ;
+		if (g_break == 0)
+		{
+			free (input_read);
+			exit (0);
+		}
 		add_history(input_read);
 		str = ft_strjoin_new_line(str, input_read);
 		free (input_read);
 	}
 	if (input_read)
 		free (input_read);
+	rl_catch_signals = 1;
 	return (str);
 }
 

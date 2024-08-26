@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 11:20:47 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/23 16:46:26 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,19 @@ int mini_shell(char **envp[])
 
 void	handle_sigint(int sig)
 {
-	(void)sig;
-	g_break = 1;
-	rl_replace_line("", 0);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	rl_on_new_line();
-	rl_redisplay();
+	if (g_break == 1)
+	{
+		 write(1, "^C", 3);
+
+		g_break = 0;
+	}
+	else
+	{
+		rl_replace_line("", 0);
+		ft_putstr_fd("\n", STDOUT_FILENO);
+		rl_on_new_line();
+		rl_redisplay();
+	}
 }
 
 void	handle_sigquit(int sig)

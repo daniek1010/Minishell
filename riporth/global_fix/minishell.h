@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/23 11:15:57 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/23 12:20:48 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 # define MINI_SHELL_H
 
-#include <signal.h>
+#include  <signal.h>
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
