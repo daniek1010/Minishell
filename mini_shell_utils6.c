@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 13:01:32 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/26 16:25:12 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	echo_new_line(t_command *cmd)
 	return (0);
 }
 
-int	builtin_unset_helper(char ***new_envp, char **envp[], int j, int i)
+int	builtin_unset_helper(char ***new_envp, char ***envp, int j, int i)
 {
 	int	k;
 	int	l;

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/25 03:30:47 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/26 16:24:47 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void	is_pipe_char(char *token_array[], char *envp[],
 /* this sorrt the token_array checking for the pipe and commands, it writes 
 into the cmd until a pipe is found and then it writes into a pipe->cmd1 and
  cmd->2 and return tokens*/
-t_infos	*ft_sort(char *token_array[], char **envp[], int status)
+t_infos	*ft_sort(char *token_array[], char ***envp, int status)
 {
 	t_var		var;
 	t_infos		*tokens;

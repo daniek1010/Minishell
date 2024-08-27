@@ -6,14 +6,13 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/25 04:47:36 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 03:32:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t g_int = 0;
-
 
 int	alpha_numeric(char *str)
 {
@@ -35,7 +34,7 @@ int	alpha_numeric(char *str)
 	return (1);
 }
 
-int	builtin_export_helper(char **key_value, char **envp[])
+int	builtin_export_helper(char **key_value, char ***envp)
 {
 	int		i;
 	char	*str;
@@ -67,7 +66,7 @@ int	builtin_export_helper(char **key_value, char **envp[])
 }
 
 
-int	ft_check_builtin(t_command *command, char **envp[])
+int	ft_check_builtin(t_command *command, char ***envp)
 {
 	int	e_status;
 
@@ -111,7 +110,7 @@ char	**copy_env(char *envp[])
 	return (new_envp);	
 }
 
-int mini_shell(char **envp[])
+int mini_shell(char ***envp)
 {
     char	**token_array;
 	t_infos	*tokens;
@@ -120,13 +119,13 @@ int mini_shell(char **envp[])
 	e_status = 0;
 	while (1)
 	{
-		token_array = ft_read_input("Minishell> ");
 		if (g_int)
 		{
 			e_status = 130;
 			g_int = 0;
 			continue ;
 		}
+		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
 		{
 			ft_putendl_fd("exit", STDOUT_FILENO);
@@ -139,6 +138,8 @@ int mini_shell(char **envp[])
 		}
 		tokens = ft_sort(token_array, envp, e_status);
 		e_status = execute_command(tokens, envp);
+		dup2(tokens->save_fdout, STDOUT_FILENO);
+		dup2(tokens->save_fdin, STDOUT_FILENO);
 		free_tokens(tokens);
     }
 	return (e_status);
@@ -152,7 +153,6 @@ void	handle_sigint(int sig)
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	rl_on_new_line();
 	rl_redisplay();
-	// exit(130);
 }
 
 void	signal_handlers(void)
@@ -164,19 +164,28 @@ void	signal_handlers(void)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
+	rl_replace_line("", 0);
 }
 
 int main(int ac, char *av[], char *envp[])
 {
 	int		status;
 	char	**env;
+	char	*shlvl_get;
+	char	*shlvl_set;
+	int		shlvl_i;
 	
 	signal_handlers();
-	
+
 	env = copy_env(envp);
 	status = 0;
 	(void)ac;
 	(void)av;
+	shlvl_get = get_env_var((env), "SHLVL");
+	shlvl_i = atoi(shlvl_get);
+	shlvl_i += 1;
+	shlvl_set = ft_itoa(shlvl_i);
+	set_env_var(&env, "SHLVL", shlvl_set);
 	status = mini_shell(&env);
 	ft_cleaner(env);
     return (status);

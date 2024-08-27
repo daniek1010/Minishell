@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/25 00:24:56 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 02:54:21 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ t_infos	*ft_init(t_var *var)
 	data->pipe_index = 0;
 	data->red_index = 0;
 	// data->e_code = 0;
+	data->save_fdin = 0;
+	data->save_fdout = 0;
 	var->i = 0;
 	var->j = 0;
 	var->end = 0;

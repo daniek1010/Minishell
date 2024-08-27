@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/25 00:39:59 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 04:45:02 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	builtin_echo(t_command *cmd)
 }
 
 /*Iterate tru the envp and then print out to the screen */
-int	builtin_env(char **envp[])
+int	builtin_env(char ***envp)
 {
 	int	i;
 
@@ -61,7 +61,7 @@ int	builtin_env(char **envp[])
 function(simply checks for the = identifier to split to key and value 
 and then pass to set_env_var), if no key_value passed, simply search for
 the '=' and then wrap value in a single quotes and print */
-int	builtin_export(char **envp[], char *key_value[])
+int	builtin_export(char ***envp, char *key_value[])
 {
 	int		i;
 	int		e_status;
@@ -90,7 +90,7 @@ int	builtin_export(char **envp[], char *key_value[])
 /*Iterate tru the envp variables, searching for the Key, create new container
 if key is found, rewrite the envp into new container, free envp and then pointer
 to the new_envp*/
-int	builtin_unset(char **envp[], char *key[])
+int	builtin_unset(char ***envp, char *key[])
 {
 	int		i;
 	int		j;
@@ -124,9 +124,11 @@ int	builtin_unset(char **envp[], char *key[])
 
 /*Check for path with chdir , if path is empty, i use my getter to find HOME
 and return the path to the HOME dir and use pwd to printout */
-int	builtin_cd(char **envp[], const char *path)
+int	builtin_cd(char ***envp, const char *path)
 {
 	const char	*home;
+	char		*old_pwd;
+	char		*new_path;
 
 	if (!path)
 	{
@@ -141,6 +143,14 @@ int	builtin_cd(char **envp[], const char *path)
 		return (2);
 	}
 	else
-		builtin_pwd();
-	return (0);
+	{
+		old_pwd = get_env_var((*envp), "PWD");
+		set_env_var(envp, "OLDPWD", old_pwd);
+		new_path = getcwd(NULL, 0);
+		if (!new_path)	
+			return (3);
+		set_env_var(envp, "PWD", new_path);
+		free(new_path);
+		return (0);
+	}
 }

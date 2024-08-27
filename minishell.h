@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/25 04:10:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 03:30:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ typedef struct s_infos{
 	int			cmd_index;
 	int			red_index;
 	int			e_code;
+	int			save_fdin;
+	int			save_fdout;
 
 }t_infos;
 
@@ -74,6 +76,8 @@ typedef struct s_var{
 void setup_signal_handlers_child();
 void handle_sigint_child(int sig);
 
+
+
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	signal_handlers(void);
@@ -81,10 +85,10 @@ void	signal_handlers(void);
 
 
 char	*ft_itoa(int n);
-int	builtin_export_helper(char **key_value, char **envp[]);
+int	builtin_export_helper(char **key_value, char ***envp);
 int	alpha_numeric(char *str);
 
-int	ft_check_builtin(t_command *command, char **envp[]);
+int	ft_check_builtin(t_command *command, char ***envp);
 /*ft_split_minishell.c ....formatted*/
 char	**ft_split(char const *s, char *delimeter);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
@@ -93,28 +97,28 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 
 /* builtin.c .... not formated ... unset*/
-int		builtin_export(char **envp[], char *key_value[]);
-int		builtin_unset(char **envp[], char *key[]);
-int		builtin_env(char **envp[]);
+int		builtin_export(char ***envp, char *key_value[]);
+int		builtin_unset(char ***envp, char *key[]);
+int		builtin_env(char ***envp);
 int		builtin_echo(t_command *cmd);
-int		builtin_cd(char **envp[], const char *path);
+int		builtin_cd(char ***envp, const char *path);
 
 /* ft_env.c ....formated*/
-int		compare_key(char **envp[], char *key, int i);
-void	set_env_var(char **envp[], char *key, char *value);
-char	*get_env_var(char *envp[], char *key);
-int		set_env_var_helper(char *key, char *value, char **envp[], int i);
-char	**write_envp(int *j, int i, char **new_envp, char **envp[]);
+int		compare_key(char ***envp, char *key, int i);
+void	set_env_var(char ***envp, char *key, char *value);
+char	*get_env_var(char **envp, char *key);
+int		set_env_var_helper(char *key, char *value, char ***envp, int i);
+char	**write_envp(int *j, int i, char **new_envp, char ***envp);
 
 /* ft_pipe.c .... formated*/
-int		ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens);
+int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
 void	pipe_create(int pipefd[2]);
 pid_t	fork_process(void);
 void	ft_dup(int pipefd[2], int fd);
-void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]);
+void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char ***envp);
 
 /* ft_parser.c .... not formatted*/
-t_infos		*ft_sort(char *token_array[], char **envp[], int status);
+t_infos		*ft_sort(char *token_array[], char ***envp, int status);
 t_redir		*ft_create_redir(char *str, char *file);
 char		**ft_read_input(char *prompt);
 t_command	*ft_create_cmd(int start, int end, char *tokens_array[], char *envp[],  t_infos *tokens);
@@ -122,11 +126,11 @@ void		is_pipe_char(char *token_array[], char *envp[],
 			t_infos *tokens, t_var *var);
 
 /* ft_execute_cmds.c .... formatted*/
-int	ft_execute(t_command *command, char **envp[], t_infos *tokens);
-int	execute_command(t_infos *tokens, char **envp[]);
-int	iterate_pipe_index(t_infos *tokens, char **envp[]);
-int	handle_builtin_exit(t_command *cmd, t_infos *tokens, char **envp[]);
-int	run_child(t_infos *tokens, char **envp[]);
+int	ft_execute(t_command *command, char ***envp, t_infos *tokens);
+int	execute_command(t_infos *tokens, char ***envp);
+int	iterate_pipe_index(t_infos *tokens, char ***envp);
+int	handle_builtin(t_command *cmd, t_infos *tokens, char ***envp, int *status);
+int	run_child(t_infos *tokens, char ***envp);
 
 /* ft_redir.c .... formatted*/
 char	*ft_read_input_here_doc(char *prompt, char *delimeter);
@@ -183,7 +187,7 @@ int		is_builtin(char *type);
 int		builtin_pwd(void);
 int		not_env_path(t_command *cmd, int i, int x);
 int		echo_new_line(t_command *cmd);
-int		builtin_unset_helper(char ***new_envp, char **envp[], int j, int i);
+int		builtin_unset_helper(char ***new_envp, char ***envp, int j, int i);
 
 
 

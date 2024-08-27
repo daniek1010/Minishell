@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/25 03:32:39 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 06:21:47 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ pid_t	fork_process(void)
 
 	pid = fork();
 	if (pid == -1)
-		errors("couldn't fork");
+		ft_putendl_fd("couldn't fork",STDERR_FILENO);
 	return (pid);
 }
 
@@ -46,7 +46,7 @@ void	ft_dup(int pipefd[2], int fd)
 	}
 }
 
-void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[])
+void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char ***envp)
 {
 	ft_dup(pipefd, STDOUT_FILENO);
 	handle_redirections(pipe->cmd1, tokens);
@@ -56,13 +56,14 @@ void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[])
 	exit (tokens->e_code);
 }
 
-int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens)
+int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
 {
 	int		pipefd[2];
 	pid_t	pid1;
 	pid_t	pid2;
 
 	pipe_create(pipefd);
+	//check for p
 	pid1 = fork_process();
 	if (pid1 == 0)
 		handle_pid1(pipefd, pipe, tokens, envp);
@@ -82,3 +83,63 @@ int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens)
 	waitpid(pid2, NULL, 0);
 	return (tokens->e_code);
 }
+
+
+void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]) {
+    // Set up signal handlers for the first child
+    setup_signal_handlers_child();
+
+    ft_dup(pipefd, STDOUT_FILENO);
+    handle_redirections(pipe->cmd1, tokens);
+    if (tokens->e_code == 1)
+        exit(tokens->e_code);
+    tokens->e_code = ft_execute(pipe->cmd1, envp, tokens);
+    exit(tokens->e_code);
+}
+
+void	handle_pid2(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]) {
+    // Set up signal handlers for the second child
+	// int	i = 0;
+    setup_signal_handlers_child();
+
+    ft_dup(pipefd, STDIN_FILENO);
+	handle_redirections(pipe->cmd2, tokens);
+    if (tokens->e_code == 1)
+        exit(tokens->e_code);
+    tokens->e_code = ft_execute(pipe->cmd2, envp, tokens);
+    exit(tokens->e_code);
+}
+
+int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens) {
+    int pipefd[2];
+    pid_t pid1, pid2;
+    int status;
+
+    pipe_create(pipefd);
+    pid1 = fork_process();
+    if (pid1 == 0) {
+        handle_pid1(pipefd, pipe, tokens, envp);
+    }
+
+    pid2 = fork_process();
+    if (pid2 == 0) {
+        handle_pid2(pipefd, pipe, tokens, envp);
+    }
+
+    close(pipefd[0]);
+    close(pipefd[1]);
+
+    // Parent process waits for both child processes to complete
+    waitpid(pid1, &status, 0);
+    if (WIFSIGNALED(status)) {
+        tokens->e_code = 128 + WTERMSIG(status); // Handle signal-based termination
+    }
+
+    waitpid(pid2, &status, 0);
+    if (WIFSIGNALED(status)) {
+        tokens->e_code = 128 + WTERMSIG(status); // Handle signal-based termination
+    }
+
+    return tokens->e_code;
+}
+
