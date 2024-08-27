@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute_cmds.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 05:22:55 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 15:44:26 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	handle_builtin(t_command *cmd, t_infos *tokens, char ***envp, int *status)
 		{
 			*status = -5;
 			if (cmd->redir_count > 0)
+			ft_execute(cmd, envp, tokens);
 				handle_redirections(cmd, tokens);
 			ft_execute(cmd, envp, tokens);
 		}

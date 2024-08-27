@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 03:30:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:32:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
 void	pipe_create(int pipefd[2]);
 pid_t	fork_process(void);
 void	ft_dup(int pipefd[2], int fd);
-void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char ***envp);
+void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
 
 /* ft_parser.c .... not formatted*/
 t_infos		*ft_sort(char *token_array[], char ***envp, int status);
