@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/28 17:04:55 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:25:35 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,9 @@ char	**ft_token_fill(const char *str, char **list)
 {
 	int	i;
 	int	j;
-	int	in_word;
 
 	i = 0;
 	j = -1;
-	in_word = 0;
 	while (str[i] != '\0')
 	{
 		if (str[i] == '\'' || str[i] == '\"')

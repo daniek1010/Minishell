@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/28 17:17:50 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/28 17:24:28 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 char	**ft_read_input(char *prompt)
 {
 	char	*input_read;
-	char	*delimter;
 	char	**tokens;
 	char	**empty_input;
 
