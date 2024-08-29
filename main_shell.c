@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 14:50:03 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 02:08:44 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,29 @@ int	builtin_export_helper(char **key_value, char ***envp)
 }
 
 
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	g_int = 1;
+	rl_replace_line("", 0);
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+void	signal_handlers(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+}
+
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+}
+
+
 int	ft_check_builtin(t_command *command, char ***envp)
 {
 	int	e_status;
@@ -110,33 +133,34 @@ char	**copy_env(char *envp[])
 	return (new_envp);	
 }
 
-int mini_shell(char ***envp)
+int mini_shell(t_infos *tokens)
 {
-    char	**token_array;
-	t_infos	*tokens;
+    char	*input_read;
+	// t_infos	*tokens;
 	int		e_status;
+	char	**env;	
 	
 	e_status = 0;
 	while (1)
 	{
 		if (g_int)
 		{
-			e_status = 130;
+			tokens->e_code = 130;
 			g_int = 0;
 			continue ;
 		}
-		token_array = ft_read_input("Minishell> ");
-		if (token_array == NULL)
+		input_read = ft_read_input("Minishell> ");
+		if (input_read == NULL)
 		{
 			ft_putendl_fd("exit", STDOUT_FILENO);
 			exit (EXIT_SUCCESS);
 		}
-		if (token_array[0][0] == '\0')
+		if (input_read[0] == '\0')
 		{
-			ft_cleaner(token_array);
+			free (input_read);
 			continue ;
 		}
-		tokens = ft_sort(token_array, envp, e_status);
+		ft_sort(input_read, &tokens);
 		e_status = execute_command(tokens, envp);
 		dup2(tokens->save_fdout, STDOUT_FILENO);
 		dup2(tokens->save_fdin, STDOUT_FILENO);
@@ -145,39 +169,22 @@ int mini_shell(char ***envp)
 	return (e_status);
 }
 
-void	handle_sigint(int sig)
-{
-	(void)sig;
-	g_int = 1;
-	rl_replace_line("", 0);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	rl_on_new_line();
-	rl_redisplay();
-}
-
-void	signal_handlers(void)
-{
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-}
-
-void	handle_sigquit(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-}
 
 int main(int ac, char *av[], char *envp[])
 {
 	int		status;
 	char	**env;
+	t_infos	*tokens;
 	char	*shlvl_get;
 	char	*shlvl_set;
 	int		shlvl_i;
+	t_var	*var;
 	
 	signal_handlers();
-
 	env = copy_env(envp);
+	tokens = (t_infos *)ft_malloc(sizeof (t_infos));
+	tokens->envp = env;
+
 	status = 0;
 	(void)ac;
 	(void)av;
@@ -186,7 +193,7 @@ int main(int ac, char *av[], char *envp[])
 	shlvl_i += 1;
 	shlvl_set = ft_itoa(shlvl_i);
 	set_env_var(&env, "SHLVL", shlvl_set);
-	status = mini_shell(&env);
+	status = mini_shell(tokens);
 	ft_cleaner(env);
     return (status);
 }

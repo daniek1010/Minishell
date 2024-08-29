@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 21:46:27 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/28 23:01:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,41 @@ void	ft_dup(int pipefd[2], int fd)
 	}
 }
 
-void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio)
+void	handle_pid1(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp)
 {
-	char *str1 = ft_itoa(cmd->redir_count);
-	ft_putendl_fd(str1, STDERR_FILENO);
 	if (cmd->redir_count == 0)
-		ft_dup(pipefd, stdio);
-	handle_redirections(cmd, tokens);
-	if (tokens->e_code == 1)
-		exit (tokens->e_code);
+	{
+		//shouldl check and try reading from pipe read before writing into the pipewrite
+		ft_dup(pipefd, STDOUT_FILENO);//no redir and now info at the end of the pipe
+		
+	}
+	else
+	{
+		close (pipefd[0]);
+		close (pipefd[1]);
+		handle_redirections(cmd, tokens);//info connect to the file
+		if (tokens->e_code == 1)
+			exit (tokens->e_code);
+	}
+	tokens->e_code = ft_execute(cmd, envp, tokens);
+	exit (tokens->e_code);
+}
+
+void	handle_pid2(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp)
+{
+	if (cmd->redir_count == 0)
+	{
+		//should be resettin the STDOUT / next pipe if it exit
+		ft_dup(pipefd, STDIN_FILENO);
+	}
+	else
+	{
+		close (pipefd[0]);
+		close (pipefd[1]);
+		handle_redirections(cmd, tokens);
+		if (tokens->e_code == 1)
+			exit (tokens->e_code);	
+	}
 	tokens->e_code = ft_execute(cmd, envp, tokens);
 	exit (tokens->e_code);
 }
@@ -74,12 +100,16 @@ int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
 			if (tokens->save_fdout > 0)
 				close (tokens->save_fdout);
 			tokens->save_fdout = dup(STDOUT_FILENO);
-			char *str = ft_itoa(pipe->cmd1->redir_count);
-			ft_putendl_fd(str, STDERR_FILENO);
 			if (pipe->cmd1->redir_count == 0)
 				dup2(pipefd[1], STDOUT_FILENO);
-			handle_builtin(pipe->cmd1, tokens, envp, &status);
-			dup2(tokens->save_fdout, STDOUT_FILENO);
+			// else
+			// {
+			// 	close (pipefd[0]);
+			// 	close (pipefd[1]);
+				handle_builtin(pipe->cmd1, tokens, envp, &status);
+			// }
+			// if (pipe->cmd1->redir_count == 0)
+				dup2(tokens->save_fdout, STDOUT_FILENO);
 		}
 		else
 		{
@@ -87,7 +117,7 @@ int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
 			if (pid1 == 0)
 			{
 				
-				handle_pid(pipefd, pipe->cmd1, tokens, envp, STDOUT_FILENO);
+				handle_pid1(pipefd, pipe->cmd1, tokens, envp);
 				
 			}
 		}
@@ -102,14 +132,17 @@ int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
 			tokens->save_fdin = dup(STDIN_FILENO);
 			if (pipe->cmd2->redir_count == 0)
 				dup2(pipefd[0], STDIN_FILENO);
-			handle_builtin(pipe->cmd2, tokens, envp, &status);
 			dup2(tokens->save_fdin, STDIN_FILENO);
 		}
 		else
 		{
 			pid2 = fork_process();
 			if (pid2 == 0)
-				handle_pid(pipefd, pipe->cmd2, tokens, envp, STDIN_FILENO);
+			{
+				ft_putendl_fd("****pid2 here*****",STDERR_FILENO);
+				handle_pid2(pipefd, pipe->cmd2, tokens, envp);
+				
+			}
 		}
 	}
 	close(pipefd[1]);
@@ -120,6 +153,8 @@ int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
 		waitpid(pid2, NULL, 0);
 	return (tokens->e_code);
 }
+
+
 
 
 

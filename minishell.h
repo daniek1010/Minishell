@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 13:32:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 02:15:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,9 @@ typedef struct s_pipe{
 typedef struct s_infos{
 	t_command	**commands;
 	t_pipe		**pipes;
-	int			pipe_index;
-	int			cmd_index;
+	char		***envp;
+	int			pipe_count;
+	int			cmd_count;
 	int			red_index;
 	int			e_code;
 	int			save_fdin;
@@ -115,15 +116,24 @@ int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
 void	pipe_create(int pipefd[2]);
 pid_t	fork_process(void);
 void	ft_dup(int pipefd[2], int fd);
-void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
+void	handle_pid1(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp);
+void	handle_pid2(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp);
+
+
+
+
 
 /* ft_parser.c .... not formatted*/
-t_infos		*ft_sort(char *token_array[], char ***envp, int status);
+t_infos		*ft_sort(char *token_array[], t_infos *tokens);
 t_redir		*ft_create_redir(char *str, char *file);
-char		**ft_read_input(char *prompt);
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[], char *envp[],  t_infos *tokens);
+char		*ft_read_input(char *prompt);
+t_command	*ft_create_cmd(int start, int end, char *input_read, t_infos *tokens);
 void		is_pipe_char(char *token_array[], char *envp[],
 			t_infos *tokens, t_var *var);
+
+
+
+
 
 /* ft_execute_cmds.c .... formatted*/
 int	ft_execute(t_command *command, char ***envp, t_infos *tokens);
@@ -143,7 +153,7 @@ void	redir_here_docs(char *prompt, char *delimeter);
 char	*ft_write_env(char *value);
 char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens);
 int		is_dollar_char(t_command *cmd, char *token_array[], int *start, 
-		char *envp[], t_infos *tokens);
+		t_infos *tokens);
 int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
 void	destroy_cmd_use_pipe_cmd(t_infos *tokens);
 
@@ -152,7 +162,7 @@ void	errors(char *str);
 char	*ft_strdup(const char *s);
 void	*ft_malloc(size_t size);
 void	ft_close(int fd);
-t_infos	*ft_init(t_var *var);
+void	ft_init(t_var *var, t_infos *tokens);
 
 /*mini_shell_utils2.c ....formated*/
 void	ft_putstr_fd(char *s, int fd);

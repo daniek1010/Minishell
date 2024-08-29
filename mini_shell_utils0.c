@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/24 17:19:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 01:40:42 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,11 @@ int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 }
 
 int	is_dollar_char(t_command *cmd, char *token_array[], int *start,
-		char *envp[], t_infos *tokens)
+		t_infos *tokens)
 {
 	char	*value;
 
-	value = ft_special_char(envp, token_array[*start], cmd, tokens);
+	value = ft_special_char(tokens->envp, token_array[*start], cmd, tokens);
 	if (value)
 	{
 		cmd->args[cmd->i++] = value;

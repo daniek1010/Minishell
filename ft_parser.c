@@ -6,38 +6,24 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/26 16:24:47 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 06:02:21 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**ft_read_input(char *prompt)
+char	*ft_read_input(char *prompt)
 {
 	char	*input_read;
-	char	*delimter;
-	char	**tokens;
-	char	**empty_input;
 
-	delimter = " \t\r\n\a";
 	input_read = readline(prompt);
-	if (input_read == NULL)
+	if (!input_read)
 	{
 		free (input_read);
 		return (NULL);
 	}
-	if (input_read[0] == '\0')
-	{
-		empty_input = malloc(sizeof(char *) * 2);
-		empty_input[0] = ft_strdup("");
-		empty_input[1] = NULL;
-		free(input_read);
-		return (empty_input);
-	}
 	add_history(input_read);
-	tokens = ft_split(input_read, delimter);
-	free (input_read);
-	return (tokens);
+	return (input_read);
 }
 
 /* checks for redir and simply return a value if found*/
@@ -90,20 +76,66 @@ the cmd->args every str is kept in cmd->args and the cmd struct is returned*/
 // 	return (cmd);
 // }
 
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[], char *envp[], t_infos *tokens)
+void	rm_whitespace(char *str, int *start, int end)
+{
+	while (*start < end && str[*start] == ' ' || (str[*start] >= 9 && str[*start] <= 13))
+		(*start)++;
+}
+
+int	skip_redir(char *input_read, int start, int end)
+{
+	int	i;
+
+	i = 0;
+	rm_whitespace(input_read, &start, end);
+	while ((input_read[start] == '<' && input_read[start + 1] != '<')
+		||(input_read[start] == '>' && input_read[start + 1] != '>') 
+		||(input_read[start] == '<' && input_read[start + 1] == '<')
+		||(input_read[start] == '>' && input_read[start + 1] == '>'))
+	{
+		if (input_read[start + 1] == '<' || input_read[start + 1] == '>')
+			start += 2;
+		else
+			start++;
+		rm_whitespace(input_read, &start, end);
+		while (start < end && input_read[start] != ' ' && !(input_read[start] >= 9
+				&& input_read[start] <= 13) && input_read[start] != '<'
+				&& input_read[start] != '>')
+			start++;
+		rm_whitespace(input_read, &start, end);
+	}
+	return (start);
+}
+
+char	*get_cmd_name(int start, int end, char *input_read, t_command *cmd)
+{
+	int		i;
+	char	*name;
+
+	start = skip_redir(input_read, start, end);
+	i = start;
+	while (start < end && input_read[start] != ' ' && !(input_read[start] >= 9
+			&& input_read[start] <= 13) && input_read[start] != '<'
+			&& input_read[start] != '>')
+		start++;
+	cmd->name = ft_substr(input_read, i, start - i);
+	
+}
+
+t_command	*ft_create_cmd(int start, int end, char *input_read, t_infos *tokens)
 {
 	int			redir_status;
 	t_command	*cmd;
 
 	cmd = (t_command *)ft_malloc(sizeof(t_command));
 	cmd->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
-	cmd->name = ft_strdup(tokens_array[start]);
+	cmd->name = get_cmd_name(start, end, input_read);
 	cmd->args = (char **)ft_malloc(sizeof(char *) * (end - start + 2));
 	cmd->i = 0;
 	cmd->redir_count = 0;
 	while (start <= end)
 	{
-		if (is_dollar_char(cmd, tokens_array, &start, envp, tokens))
+		if (is_dollar_char(cmd, tokens_array, &start, tokens))
 			continue ;
 		redir_status = is_redirection_char(cmd, tokens_array, &start);
 		if (redir_status > 0)
@@ -140,30 +172,21 @@ void	is_pipe_char(char *token_array[], char *envp[],
 /* this sorrt the token_array checking for the pipe and commands, it writes 
 into the cmd until a pipe is found and then it writes into a pipe->cmd1 and
  cmd->2 and return tokens*/
-t_infos	*ft_sort(char *token_array[], char ***envp, int status)
+t_infos	*ft_sort(char *input_read, t_infos *tokens)
 {
 	t_var		var;
-	t_infos		*tokens;
 	t_command	*command;
 
-	if (!token_array)
-		return (NULL);
-	tokens = ft_init(&var);
-	tokens->e_code = status;
-	while (token_array[var.i])
+	ft_init(&var, tokens);
+	while (input_read[var.i] != '\0')
 	{
-		if (ft_strcmp(token_array[var.i], "|") == 0)
-			is_pipe_char(token_array, (*envp), tokens, &var);
-		else
-		{
-			var.start = var.i;
-			while (token_array[var.i] && ft_strcmp(token_array[var.i],
-					"|") != 0)
-				var.i++;
-			command = ft_create_cmd(var.start, var.i - 1, token_array, (*envp), tokens);
-			tokens->commands[tokens->cmd_index++] = command;
-			var.i--;
-		}
+		var.start = var.i;
+		while ((input_read[var.i] != '\0') && (input_read[var.i] != '|'))
+			var.i++;
+		command = ft_create_cmd(var.start, var.i - 1, input_read, tokens);
+		tokens->commands[tokens->cmd_count++] = command;
+		if (input_read[var.i] == '|')
+			tokens->pipe_count++;
 		var.i++;
 	}
 	ft_null(tokens);
