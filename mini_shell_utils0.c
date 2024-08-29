@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils0.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 01:40:42 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:31:21 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,63 +32,73 @@ char	*ft_write_env(char *value)
 	return (env_key);
 }
 
-char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens)
+// int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
+// {
+// 	t_redir	*redir_command;
+
+// 	if (is_redir(token_array, *start))
+// 	{
+// 		if (token_array[*start + 1])
+// 		{
+// 			redir_command = ft_create_redir(token_array[*start],
+// 					token_array[*start + 1]);
+// 			cmd->redir_cmd[cmd->redir_count++] = redir_command;
+// 			*start += 2;
+// 			return (1);
+// 		}
+// 		else
+// 			return (-1);
+// 	}
+// 	return (0);
+// }
+
+char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *tokens)
 {
 	char	*value;
 	char	*new_value;
 	char	*get_env;
 	char	*env_key;
+	int		j;
 
-	value = ft_strchr(str, '$');
+	value = ft_strchr(args, '$');
 	if (value)
 	{
+		*before_env = ft_substr(args, 0, (value - args));
 		value++;
 		if (ft_strncmp(value, "?", 1) == 0)
 			new_value = ft_strdup(ft_itoa(tokens->e_code));
 		else
 		{
 			env_key = ft_write_env(value);
-			get_env = get_env_var(envp, env_key);
+			get_env = get_env_var(tokens->envp, env_key);
+			while (value[j])
+				j++;
 			if (get_env == NULL)
-				new_value = ft_strdup("404");
+				return ("");
 			else
+			{
 				new_value = ft_strdup(get_env);
+				*after_env = ft_strdup(value + j);
+			}
 		}
 		return (new_value);
 	}
 	return (NULL);
 }
 
-int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
-{
-	t_redir	*redir_command;
-
-	if (is_redir(token_array, *start))
-	{
-		if (token_array[*start + 1])
-		{
-			redir_command = ft_create_redir(token_array[*start],
-					token_array[*start + 1]);
-			cmd->redir_cmd[cmd->redir_count++] = redir_command;
-			*start += 2;
-			return (1);
-		}
-		else
-			return (-1);
-	}
-	return (0);
-}
-
-int	is_dollar_char(t_command *cmd, char *token_array[], int *start,
-		t_infos *tokens)
+int	is_dollar_char(t_command *cmd, int i, t_infos *tokens)
 {
 	char	*value;
+	char	*before_env;
+	char	*after_env;
+	char	*new_args;
 
-	value = ft_special_char(tokens->envp, token_array[*start], cmd, tokens);
+	value = ft_special_char(cmd->args[i], &before_env, &after_env, tokens);
 	if (value)
 	{
-		cmd->args[cmd->i++] = value;
-		*start = *start + 1;
+		new_args = ft_strjoin(before_env, value);
+		free (cmd->args[i]);
+		cmd->args[i] = ft_strjoin(new_args, after_env);
 		return (1);
 	}
 	return (0);
@@ -99,7 +109,7 @@ void	destroy_cmd_use_pipe_cmd(t_infos *tokens)
 	int	k;
 
 	k = 0;
-	while (k < tokens->cmd_index)
+	while (k < tokens->cmd_count)
 	{
 		free_command(tokens->commands[k]);
 		k++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 01:22:50 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:25:18 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	ft_init(t_var *var, t_infos *tokens)
 	tokens->cmd_index = 0;
 	tokens->pipe_index = 0;
 	tokens->red_index = 0;
-	// data->e_code = 0;
+	tokens->e_code = 0;
 	tokens->save_fdin = 0;
 	tokens->save_fdout = 0;
 	var->i = 0;

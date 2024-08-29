@@ -6,28 +6,28 @@
 /*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 15:44:26 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:14:00 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* cchek and create the number of pipes we have in our token*/
-int	iterate_pipe_index(t_infos *tokens, char ***envp)
-{
-	int		i;
-	int		e_status;
-	t_pipe	*pipe;
+// int	iterate_pipe_index(t_infos *tokens, char ***envp)
+// {
+// 	int		i;
+// 	int		e_status;
+// 	t_pipe	*pipe;
 
-	i = 0;
-	while (i < tokens->pipe_index)
-	{
-		pipe = tokens->pipes[i];
-		e_status = ft_create_pipe(pipe, envp, tokens);
-		i++;
-	}
-	return (e_status);
-}
+// 	i = 0;
+// 	while (i < tokens->pipe_index)
+// 	{
+// 		pipe = tokens->pipes[i];
+// 		e_status = ft_create_pipe(pipe, envp, tokens);
+// 		i++;
+// 	}
+// 	return (e_status);
+// }
 
 /* check for redir, then handles redir before exit */
 int	handle_builtin(t_command *cmd, t_infos *tokens, char ***envp, int *status)
@@ -117,25 +117,25 @@ int	handle_parent_process(pid_t pid, t_infos *tokens)
 pipe->cmd1(start < pipe(position) and cmd2(pipe(position + 1) < NULL || next_pipe)) 
 sso if (pipe exist), we use pipe to process the cmds and exectute but if(!pipe exist)
 we use the copy of cmd and then set up child fork is necessary and then execute */
-int	execute_command(t_infos *tokens, char ***envp) {
-    pid_t	pid;
-	int		status;
+// int	execute_command(t_infos *tokens, char ***envp) {
+//     pid_t	pid;
+// 	int		status;
 
-	if (tokens->pipe_index > 0)
-		tokens->e_code = iterate_pipe_index(tokens, envp);
-	else
-	{
-		handle_builtin(tokens->commands[0], tokens, envp, &status);
-		if ((status == -5) || (status == 1))
-            return (status);
-        pid = handle_forked_process(tokens, envp);
-        if (pid > 0)
-		{
-			return (handle_parent_process(pid, tokens));
-		}
-	}
-	return (tokens->e_code);
-}
+// 	if (tokens->pipe_index > 0)
+// 		tokens->e_code = iterate_pipe_index(tokens, envp);
+// 	else
+// 	{
+// 		handle_builtin(tokens->commands[0], tokens, envp, &status);
+// 		if ((status == -5) || (status == 1))
+//             return (status);
+//         pid = handle_forked_process(tokens, envp);
+//         if (pid > 0)
+// 		{
+// 			return (handle_parent_process(pid, tokens));
+// 		}
+// 	}
+// 	return (tokens->e_code);
+// }
 
 /* my data was stored in cmd , but if pipe exist then we store in
 pipe->cmd1(start < pipe(position) and cmd2(pipe(position + 1) < NULL || next_pipe)) 
