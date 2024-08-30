@@ -9,3 +9,4 @@ char	**ft_token_fill(const char *str, char **list);
 int		count_qoute(const char *str, int i, char a);
 int		token_count_words(const char *str);
 char	**ft_token_split(char const *s);
+char	*fill_direct(const char *str, char *list, int *i);

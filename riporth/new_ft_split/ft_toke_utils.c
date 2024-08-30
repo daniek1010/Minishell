@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 12:07:24 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 12:15:16 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ char	**ft_token_fill(const char *str, char **list)
 		else if (str[i] == '|' || str[i] == '>' || str[i] == '<')
 		{
 			j++;
-			list[j] = fill_direct;
+			list[j] = fill_direct(str, list[j], &i);
 		}
 		else if ((str[i] <= 13 && str[i] >= 9) || str[i] == 32)
 			i++;

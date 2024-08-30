@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:13:08 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 11:56:23 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 12:35:46 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	token_count_words(const char *str)
 		if (str[i] == '|' || str[i] == '>' || str[i] == '<')
 		{
 			count++;
+			in_word = 0;
 			if(str[i + 1] == '>' || str[i + 1] == '<')
 				i++;
 		}
@@ -63,6 +64,36 @@ int	token_count_words(const char *str)
 
 // fill function
 
+char	**ft_token_fill(const char *str, char **list)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = -1;
+	while (str[i] != '\0')
+	{
+		if (str[i] == '\'' || str[i] == '\"')
+		{
+			j++;
+			list[j] = fill_qoute_case(str, list[j], &i, str[i]);
+		}
+		else if (str[i] == '|' || str[i] == '>' || str[i] == '<')
+		{
+			j++;
+			list[j] = fill_direct(str, list[j], &i);
+		}
+		else if ((str[i] <= 13 && str[i] >= 9) || str[i] == 32)
+			i++;
+		else
+		{
+			j++;
+			list[j] = fill_word(str, list[j], &i);
+		}
+	}
+	return (list);
+}
+
 char	**ft_token_split(char const *s)
 {
 	int		i;
@@ -78,21 +109,30 @@ char	**ft_token_split(char const *s)
 }
 
 /*
-int main()
+int main() 
 {
-    // Example input string
-    const char *str = "Hello 'world of quotes' this is \"a test\" of split";
-    // Use the ft_split function to split the string into tokens
-    char **result = ft_split(str);
-    // Print the tokens
-    int i = 0;
-    while (result[i] != NULL)
-    {
-        printf("Token %d: -%s-\n", i + 1, result[i]);
-        free(result[i]); // Free each token after printing it
-        i++;
+    // Test string that includes quotes, pipes, redirections, and whitespace
+    const char *input = "echo\"hello      \'is\'    world\"|grep'lo'<<>>output.txt";
+
+    // Tokenize the input string
+    char **tokens = ft_token_split(input);
+
+    // Print out the tokens
+    if (tokens) {
+        printf("Tokens:\n");
+        for (int i = 0; tokens[i] != NULL; i++) {
+            printf("[%d]: %s\n", i, tokens[i]);
+            free(tokens[i]); // Don't forget to free each token after use
+        }
+        free(tokens); // Free the array of tokens
     }
 
-    free(result); // Free the array of tokens
     return 0;
-} */
+}
+
+/*
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
+#include <stdlib.h>
+*/
