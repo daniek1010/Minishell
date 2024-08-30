@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 14:26:50 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 22:40:22 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,20 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *toke
 			break ;
 		if (flag)
 		{
-			cmd->name = ft_strdup(tokens_array[start]);
+			char *str = tokens_array[start];
+			if (str[0] == '"' || str[0] == '\'')
+				str++;
+			cmd->name = ft_strdup(str);
 			flag = 0;
 		}
-		cmd->args[cmd->i++] = ft_strdup(tokens_array[start++]);
+		else
+		{
+			char *str = tokens_array[start];
+			if (str[0] == '"' || str[0] == '\'')
+				str++;
+			cmd->args[cmd->i++] = ft_strdup(str);
+			start++;
+		}
 	}
 	cmd->args[cmd->i] = NULL;
 	cmd->redir_cmd[cmd->redir_count] = NULL;

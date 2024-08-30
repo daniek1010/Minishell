@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 15:20:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 22:58:00 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,26 +135,8 @@ int mini_shell(t_infos *tokens)
 			ft_cleaner(token_array);
 			continue ;
 		}
-		for (int i = 0; token_array[i]; i++)
-			printf("%s\n", token_array[i]);
-		// ft_sort(tokens, token_array);
-		// for (int i = 0; tokens->commands[i]; i++)
-		// {
-		// 	for (int j = 0; tokens->commands[i]->args[j]; j++)
-		// 	{
-		// 		printf("cmd->name = %s     cmd.args[%d] = %s\n", tokens->commands[i]->name, j, tokens->commands[i]->args[j] );
-		// 	}
-		// 	printf("*****************redir comad *************\n");
-		// 	for (int j = 0; tokens->commands[i]->redir_cmd[j]; j++)
-		// 	{
-		// 		printf("redir->type = %d     redir.args[%d] = %s\n", tokens->commands[i]->redir_cmd[j]->type, j, tokens->commands[i]->redir_cmd[j]->file );
-		// 		printf("%ld", ft_strlen(tokens->commands[i]->redir_cmd[j]->file));
-		// 	}
-		// 	printf("*****************next comad *************\n");
-
-			
-		// }
-		// execute_command(tokens, tokens->envp);
+		ft_sort(tokens, token_array);
+		execute_command(tokens, tokens->envp);
 		// dup2(tokens->save_fdout, STDOUT_FILENO);
 		// dup2(tokens->save_fdin, STDOUT_FILENO);
 		free_tokens(tokens);

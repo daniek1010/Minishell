@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 15:19:23 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 22:44:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,15 @@ int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *tokens)
 {
 	char	*value;
-	char	*new_value;
+	char	*new_value = NULL;
 	char	*get_env;
 	char	*env_key;
 
-	// printf("??? %s\n", args);
-
-	
 	value = ft_strchr(args, '$');
-	// printf("after sserch%s\n", args);
 	if (value)
 	{
+		if (args[0] == '\'')
+			return (new_value);
 		*before_env = ft_substr(args, 0, (value - args));
 		value++;
 		if (ft_strncmp(value, "?", 1) == 0)
@@ -85,11 +83,9 @@ char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *
 				*after_env = ft_strdup(value + ft_strlen(env_key));
 			}
 		}
-		// return (new_value);
-		printf("found\n");
-		return (value);
+		return (new_value);
 	}
-	return (NULL);
+	return (new_value);
 }
 
 int	is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *tokens)
@@ -102,9 +98,11 @@ int	is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *token
 	value = ft_special_char(token_array, &before_env, &after_env, tokens);
 	if (value)
 	{
-		printf("does it get here\n");
+		if (before_env[0] == '"')
+			before_env++;
 		new_args = ft_strjoin(before_env, value);
 		cmd->args[cmd->i++] = ft_strjoin(new_args, after_env);
+		(*start)++;
 		return (1);
 	}
 	return (0);
