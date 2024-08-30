@@ -6,24 +6,35 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:13:08 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 12:35:46 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 13:49:18 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_qoute(const char *str, int i, char a)
+int	token_special_char(const char *str, int i)
 {
-	i++;
-	while (str[i] != '\0')
+	if (str[i] == '|' || str[i] == '>' || str[i] == '<')
 	{
-		if (str[i] == a)
-		{
-			break ;
-		}
 		i++;
+		if (str[i] == '>' || str[i] == '<')
+			i++;
+	}
+	else
+	{
+		i++;
+		i = count_qoute(str, i, str[i]);
 	}
 	return (i);
+}
+
+int	check_special_char(const char *str, int i)
+{
+	if (str[i] == '|' || str[i] == '>' || str[i] == '<')
+		return (1);
+	else if (str[i] == '\'' || str[i] == '\"')
+		return (1);
+	return (0);
 }
 
 int	token_count_words(const char *str)
@@ -37,18 +48,11 @@ int	token_count_words(const char *str)
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == '\'' || str[i] == '\"')
+		if (check_special_char(str, i))
 		{
 			count++;
 			in_word = 1;
-			i = count_qoute(str, i, str[i]);
-		}
-		if (str[i] == '|' || str[i] == '>' || str[i] == '<')
-		{
-			count++;
-			in_word = 0;
-			if(str[i + 1] == '>' || str[i + 1] == '<')
-				i++;
+			i = token_special_char(str, i);
 		}
 		else if (((str[i] <= 13 && str[i] >= 9) || str[i] == 32))
 			in_word = 0;
@@ -78,17 +82,15 @@ char	**ft_token_fill(const char *str, char **list)
 			j++;
 			list[j] = fill_qoute_case(str, list[j], &i, str[i]);
 		}
-		else if (str[i] == '|' || str[i] == '>' || str[i] == '<')
-		{
-			j++;
-			list[j] = fill_direct(str, list[j], &i);
-		}
 		else if ((str[i] <= 13 && str[i] >= 9) || str[i] == 32)
 			i++;
 		else
 		{
 			j++;
-			list[j] = fill_word(str, list[j], &i);
+			if (str[i] == '|' || str[i] == '>' || str[i] == '<')
+				list[j] = fill_direct(str, list[j], &i);
+			else
+				list[j] = fill_word(str, list[j], &i);
 		}
 	}
 	return (list);
@@ -112,7 +114,7 @@ char	**ft_token_split(char const *s)
 int main() 
 {
     // Test string that includes quotes, pipes, redirections, and whitespace
-    const char *input = "echo\"hello      \'is\'    world\"|grep'lo'<<>>output.txt";
+    const char *input = "echo\"hello \'is\'    world\"|grep'lo'<<>>output.txt";
 
     // Tokenize the input string
     char **tokens = ft_token_split(input);
