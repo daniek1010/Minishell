@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/28 17:25:35 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 12:07:24 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,37 @@ char	*fill_word(const char *str, char *list, int *i)
 	{
 		if (str[*i] == '\'' || str[*i] == '\"')
 			break ;
+		if (str[*i] == '|' || str[*i] == '>' || str[*i] == '<')
+		{
+			break ;
+		}
 		if ((str[*i] <= 13 && str[*i] >= 9) || str[*i] == 32)
 			break ;
 		list[x] = str[*i];
 		x++;
 		(*i)++;
 	}
+	return (list);
+}
+
+char	*fill_direct(const char *str, char *list, int *i)
+{
+	int	x;
+
+	x = 1;
+	if (str[*i + 1] == '>' || str[*i + 1] == '<')
+		x++;
+	list = (char *)malloc(sizeof(char) * (x + 1));
+	if (!list)
+		return (NULL);
+	list[x] = '\0';
+	list[0] = str[*i];
+	if (str[*i + 1] == '>' || str[*i + 1] == '<')
+	{
+		(*i)++;
+		list[1] = str[*i];
+	}
+	(*i)++;
 	return (list);
 }
 
@@ -86,6 +111,11 @@ char	**ft_token_fill(const char *str, char **list)
 		{
 			j++;
 			list[j] = fill_qoute_case(str, list[j], &i, str[i]);
+		}
+		else if (str[i] == '|' || str[i] == '>' || str[i] == '<')
+		{
+			j++;
+			list[j] = fill_direct;
 		}
 		else if ((str[i] <= 13 && str[i] >= 9) || str[i] == 32)
 			i++;

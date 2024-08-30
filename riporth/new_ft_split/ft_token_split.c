@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:13:08 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/28 17:14:27 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 11:56:23 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,13 @@ int	token_count_words(const char *str)
 			in_word = 1;
 			i = count_qoute(str, i, str[i]);
 		}
-		if (((str[i] <= 13 && str[i] >= 9) || str[i] == 32))
+		if (str[i] == '|' || str[i] == '>' || str[i] == '<')
+		{
+			count++;
+			if(str[i + 1] == '>' || str[i + 1] == '<')
+				i++;
+		}
+		else if (((str[i] <= 13 && str[i] >= 9) || str[i] == 32))
 			in_word = 0;
 		else if (in_word == 0)
 		{
@@ -70,6 +76,7 @@ char	**ft_token_split(char const *s)
 	list = ft_token_fill(s, list);
 	return (list);
 }
+
 /*
 int main()
 {
