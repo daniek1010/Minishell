@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils2.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:24:55 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/16 14:22:35 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 13:06:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_null(t_infos *data)
 {
-	data->pipes[data->pipe_index] = NULL;
+	// data->pipes[data->pipe_index] = NULL;
 	data->commands[data->cmd_index] = NULL;
 }
 

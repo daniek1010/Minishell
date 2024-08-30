@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils3.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:27:06 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 14:40:59 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 13:36:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 	unsigned int	index;
 
 	index = 0;
+	if (!s1)
+		return (1);
 	while ((s1[index] != '\0') || (s2[index] != '\0'))
 	{
 		if (s1[index] != s2[index])
