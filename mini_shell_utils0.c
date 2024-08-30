@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 14:36:50 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:19:23 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,29 +60,31 @@ char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *
 	char	*env_key;
 
 	// printf("??? %s\n", args);
+
+	
 	value = ft_strchr(args, '$');
 	// printf("after sserch%s\n", args);
 	if (value)
 	{
-		// *before_env = ft_substr(args, 0, (value - args));
-		// value++;
-		// if (ft_strncmp(value, "?", 1) == 0)
-		// {
-		// 	*after_env = ft_strdup(value + 1);
-		// 	new_value = ft_strdup(ft_itoa(tokens->e_code));
-		// }
-		// else
-		// {
-		// 	env_key = ft_write_env(value);
-		// 	get_env = get_env_var(*(tokens->envp), env_key);
-		// 	if (get_env == NULL)
-		// 		return ("");
-		// 	else
-		// 	{
-		// 		new_value = ft_strdup(get_env);
-		// 		*after_env = ft_strdup(value + ft_strlen(env_key));
-		// 	}
-		// }
+		*before_env = ft_substr(args, 0, (value - args));
+		value++;
+		if (ft_strncmp(value, "?", 1) == 0)
+		{
+			*after_env = ft_strdup(value + 1);
+			new_value = ft_strdup(ft_itoa(tokens->e_code));
+		}
+		else
+		{
+			env_key = ft_write_env(value);
+			get_env = get_env_var(*(tokens->envp), env_key);
+			if (get_env == NULL)
+				return ("");
+			else
+			{
+				new_value = ft_strdup(get_env);
+				*after_env = ft_strdup(value + ft_strlen(env_key));
+			}
+		}
 		// return (new_value);
 		printf("found\n");
 		return (value);
@@ -101,8 +103,8 @@ int	is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *token
 	if (value)
 	{
 		printf("does it get here\n");
-		// new_args = ft_strjoin(before_env, value);
-		// cmd->args[cmd->i++] = ft_strjoin(new_args, after_env);
+		new_args = ft_strjoin(before_env, value);
+		cmd->args[cmd->i++] = ft_strjoin(new_args, after_env);
 		return (1);
 	}
 	return (0);

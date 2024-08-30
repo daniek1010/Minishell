@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 14:19:33 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:18:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ char	*list_length_create(const char *str, const int *i)
 
 	y = *i;
 	if (str[*i] == '\'' || str[*i] == '\"')
+	{
 		y = count_qoute (str, y, str[*i]);
+		y++;
+	}
 	else
 	{
 		while (!((str[y] <= 13 && str[y] >= 9) || str[y] == 32)
@@ -57,6 +60,8 @@ char	*fill_qoute_case(const char *str, char *list, int *i, char a)
 
 	x = 0;
 	list = list_length_create(str, i);
+	list[x] = str[*i];
+	x++;
 	(*i)++;
 	if (!list)
 		return (NULL);

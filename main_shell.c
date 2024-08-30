@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 14:23:35 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:20:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,9 @@ int mini_shell(t_infos *tokens)
 			ft_cleaner(token_array);
 			continue ;
 		}
-		ft_sort(tokens, token_array);
+		for (int i = 0; token_array[i]; i++)
+			printf("%s\n", token_array[i]);
+		// ft_sort(tokens, token_array);
 		// for (int i = 0; tokens->commands[i]; i++)
 		// {
 		// 	for (int j = 0; tokens->commands[i]->args[j]; j++)
