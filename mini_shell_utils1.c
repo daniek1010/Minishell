@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 20:25:18 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 01:57:07 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,10 @@ void	ft_close(int fd)
 
 void	ft_init(t_var *var, t_infos *tokens)
 {
-	// t_infos	*data;
 
-	// data = (t_infos *)ft_malloc(sizeof(t_infos));
 	tokens->commands = (t_command **)ft_malloc(sizeof(t_command) * INIT_SIZE);
-	// tokens->pipes = (t_pipe **)ft_malloc(sizeof(t_pipe) * INIT_SIZE);
-	tokens->cmd_index = 0;
-	tokens->pipe_index = 0;
+	tokens->cmd_count = 0;
+	tokens->pipe_count = 0;
 	tokens->red_index = 0;
 	tokens->e_code = 0;
 	tokens->save_fdin = 0;
@@ -70,5 +67,7 @@ void	ft_init(t_var *var, t_infos *tokens)
 	var->i = 0;
 	var->j = 0;
 	var->end = 0;
-	// return (data);
+
+
+	tokens->e_code = 0;
 }

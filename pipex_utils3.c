@@ -6,107 +6,89 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 20:43:49 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/06 02:52:02 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 00:56:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// int	redirect_input_output(int infile, int outfile, int pipefd[2], int x)
-// {
-// 	if (x == 1)
-// 	{
-// 		if (dup2(infile, STDIN_FILENO) == -1)
-// 			error();
-// 		close(infile);
-// 		close(pipefd[0]);
-// 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-// 			error();
-// 		close(pipefd[1]);
-// 	}
-// 	else if (x == 2)
-// 	{
-// 		close(pipefd[1]);
-// 		if (dup2(pipefd[0], STDIN_FILENO) == -1)
-// 			error();
-// 		close(pipefd[0]);
-// 		if (dup2(outfile, STDOUT_FILENO) == -1)
-// 			error();
-// 		close(outfile);
-// 	}
-// 	return (0);
-// }
+static char	*extract_quoted_content(char *input, int *pos, int end)
+{
+	char	quote_char;
+	int		start;
 
-// void	execute_command(char *av[], char *envp[], int pipefd[], int process)
-// {
-// 	int	infile;
-// 	int	outfile;
+	quote_char = input[*pos];
+	start = ++(*pos);
+	while (*pos < end && input[*pos] != quote_char)
+		(*pos)++;
+	return (ft_substr(input, start, *pos - start));
+}
 
-// 	if (process == 1)
-// 	{
-// 		infile = ft_file(av[1], 0);
-// 		redirect_input_output(infile, 0, pipefd, 1);
-// 		close(infile);
-// 		ft_execute(av, envp, 2);
-// 	}
-// 	else if (process == 2)
-// 	{
-// 		outfile = ft_file(av[4], 1);
-// 		redirect_input_output(0, outfile, pipefd, 2);
-// 		close(outfile);
-// 		ft_execute(av, envp, 3);
-// 	}
-// }
+static char	*extract_unquoted_content(char *input, int *pos, int end)
+{
+	int	start;
 
-// void	ft_execute(char *av[], char *envp[], int x)
-// {
-// 	char	*path;
-// 	char	**cmd;
+	start = *pos;
+	while (*pos < end && input[*pos] != ' ' && input[*pos] != '<' &&
+		input[*pos] != '>' && input[*pos] != '"' && input[*pos] != '\'')
+		(*pos)++;
+	return (ft_substr(input, start, *pos - start));
+}
 
-// 	path = ft_access(av[x], envp);
-// 	if (path == NULL)
-// 		bad_arg(x);
-// 	cmd = ft_split(av[x], ' ');
-// 	if (execve(path, cmd, envp) == -1)
-// 	{
-// 		free(cmd);
-// 		free(path);
-// 		error();
-// 	}
-// }
+static char	*join_and_free(char *s1, char *s2)
+{
+	char	*result;
 
-// char	*ft_access(char *av, char *envp[])
-// {
-// 	char	**splitted;
-// 	char	*path;
-// 	int		i;
+	result = ft_strjoin(s1, s2);
+	free(s1);
+	free(s2);
+	return (result);
+}
 
-// 	splitted = check_path(envp);
-// 	i = -1;
-// 	while (splitted[++i] != NULL)
-// 	{
-// 		path = join(splitted[i], av);
-// 		if (access(path, X_OK) == 0)
-// 			break ;
-// 		free(path);
-// 	}
-// 	if (splitted[i] == NULL)
-// 	{
-// 		ft_cleaner(splitted);
-// 		return (NULL);
-// 	}
-// 	return (path);
-// }
+static char	*extract_argument(char *input, int *pos, int end)
+{
+	char	*arg;
+	char	*temp;
 
-// char	*join(char *str, char *av)
-// {
-// 	char	*path;
-// 	char	**cmd;
+	arg = NULL;
+	while (*pos < end)
+	{
+		if (input[*pos] == '"' || input[*pos] == '\'')
+			temp = extract_quoted_content(input, pos, end);
+		else
+			temp = extract_unquoted_content(input, pos, end);
+		if (arg == NULL)
+			arg = temp;
+		else
+			arg = join_and_free(arg, temp);
+		if (*pos < end && (input[*pos] == '"' || input[*pos] == '\''))
+			continue;
+		else
+			break;
+	}
+	return (arg);
+}
 
-// 	cmd = ft_split(av, ' ');
-// 	str = ft_strjoin(str, "/");
-// 	path = ft_strjoin(str, cmd[0]);
-// 	free(str);
-// 	ft_cleaner(cmd);
-// 	return (path);
-// }
+void	get_cmd_name_args(int start, int end, char *input_read, t_command *cmd)
+{
+	int		i;
+	char	*arg;
+
+	i = skip_redir(input_read, start, end);
+	cmd->args_count = 0;
+	cmd->name = extract_argument(input_read, &i, end);
+	cmd->args = (char **)malloc(sizeof(char *) * (end - start + 2));
+	cmd->args[cmd->args_count++] = ft_strdup(cmd->name);
+	while (i < end)
+	{
+		i = skip_redir(input_read, i, end);
+		if (i >= end)
+			break;
+		arg = extract_argument(input_read, &i, end);
+		if (arg && *arg)
+			cmd->args[cmd->args_count++] = arg;
+		else
+			free(arg);
+	}
+	cmd->args[cmd->args_count] = NULL;
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils5.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/21 03:31:28 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 01:30:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,44 +59,25 @@ void	free_command(t_command *cmd)
 	}
 }
 
-void	free_pipes(t_infos *tokens)
-{
-	int	i;
-
-	i = 0;
-	while (i < tokens->pipe_index)
-	{
-		free_command(tokens->pipes[i]->cmd1);
-		free_command(tokens->pipes[i]->cmd2);
-		free(tokens->pipes[i]);
-		tokens->pipes[i] = NULL;
-		i++;
-	}
-}
-
 void	free_tokens(t_infos *tokens)
 {
 	int	i;
 
 	if (!tokens)
 		return ;
-	if (tokens->pipe_index > 0)
-		free_pipes(tokens);
-	if (tokens->cmd_index > 0)
+	if (tokens->cmd_count > 0)
 	{
 		i = 0;
-		while (i < tokens->cmd_index)
+		while (i < tokens->cmd_count)
 		{
 			free_command(tokens->commands[i]);
 			i++;
 		}
 	}
-	free(tokens->pipes);
-	tokens->pipes = NULL;
 	free(tokens->commands);
 	tokens->commands = NULL;
-	free(tokens);
-	tokens = NULL;
+	// free(tokens); should be transfered into main to free envp;
+	// tokens = NULL;
 }
 
 char	*ft_strchr(const char *str, char c)

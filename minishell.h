@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 20:26:16 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 03:20:31 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct s_pipe{
 typedef struct s_infos{
 	t_command	**commands;
 	t_pipe		**pipes;
-	char		**envp;
+	char		***envp;
 	int			pipe_count;
 	int			cmd_count;
 	int			red_index;
@@ -78,6 +78,10 @@ typedef struct s_var{
 	
 }t_var;
 
+int	execute_commander(t_infos *tokens);
+
+void	get_cmd_name_args(int start, int end, char *input_read, t_command *cmd);
+int	skip_redir(char *input_read, int start, int end);
 
 void setup_signal_handlers_child();
 void handle_sigint_child(int sig);
@@ -141,8 +145,8 @@ void		is_pipe_char(char *token_array[], char *envp[],
 
 
 /* ft_execute_cmds.c .... formatted*/
-int	ft_execute(t_command *command, char ***envp, t_infos *tokens);
-int	execute_command(t_infos *tokens, char ***envp);
+int	ft_execute(t_command *command, t_infos *tokens);
+int	execute_command(t_infos *tokens);
 int	iterate_pipe_index(t_infos *tokens, char ***envp);
 int	handle_builtin(t_command *cmd, t_infos *tokens, char ***envp, int *status);
 int	run_child(t_infos *tokens, char ***envp);

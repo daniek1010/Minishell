@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 20:50:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 03:41:21 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,11 +136,7 @@ char	**copy_env(char *envp[])
 int mini_shell(t_infos *tokens)
 {
     char	*input_read;
-	// t_infos	*tokens;
-	// int		e_status;
-	// char	**env;	
-	
-	// e_status = 0;
+
 	while (1)
 	{
 		if (g_int)
@@ -152,33 +148,19 @@ int mini_shell(t_infos *tokens)
 		input_read = ft_read_input("Minishell> ");
 		if (input_read == NULL)
 		{
-			ft_putendl_fd("exit", STDOUT_FILENO);
+			printf("what are  up here? %d\n", tokens->e_code);
+			ft_putendl_fd("exiter", STDOUT_FILENO);
 			exit (EXIT_SUCCESS);
 		}
-		printf("got her\n");
 		if (input_read[0] == '\0')
 		{
 			free (input_read);
 			continue ;
 		}
-		// for (int i = 0; tokens->envp[i]; i++)
-		// 	printf("%s\n", tokens->envp[i]);
 		ft_sort(input_read, tokens);
-		for (int i = 0; tokens->commands[i]; i++)
-		{
-			for (int j = 0; tokens->commands[i]->args[j]; j++)
-			{
-				printf("cmd ->name = %s     cmd->args[%d] = %s\n", tokens->commands[i]->name, j, tokens->commands[i]->args[j]);
-			}
-
-			printf("\n\n");
-			for (int j = 0; tokens->commands[i]->redir_cmd[j]; j++)
-				printf("cmd ->redir.type = %d     cmd->args[%d] = %s\n", tokens->commands[i]->redir_cmd[j]->type, j, tokens->commands[i]->redir_cmd[j]->file);
-		}
-		// e_status = execute_command(tokens, envp);
-		// dup2(tokens->save_fdout, STDOUT_FILENO);
-		// dup2(tokens->save_fdin, STDOUT_FILENO);
+		tokens->e_code = execute_commander(tokens);
 		// free_tokens(tokens);
+
     }
 	return (0);
 }
@@ -197,7 +179,7 @@ int main(int ac, char *av[], char *envp[])
 	signal_handlers();
 	env = copy_env(envp);
 	tokens = (t_infos *)ft_malloc(sizeof (t_infos));
-	tokens->envp = env;
+	tokens->envp = &env;
 
 	status = 0;
 	(void)ac;
@@ -208,6 +190,9 @@ int main(int ac, char *av[], char *envp[])
 	shlvl_set = ft_itoa(shlvl_i);
 	set_env_var(&env, "SHLVL", shlvl_set);
 	status = mini_shell(tokens);
+	ft_cleaner(*(tokens->envp));
+	free (tokens);
+	tokens = NULL;
 	ft_cleaner(env);
     return (status);
 }

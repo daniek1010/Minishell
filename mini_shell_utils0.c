@@ -3,34 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils0.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/29 20:31:21 by danevans         ###   ########.fr       */
+/*   Updated: 2024/08/30 03:17:53 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	*ft_write_env(char *value)
-{
-	int		i;
-	int		len;
-	char	*env_key;
-
-	i = 0;
-	while (value[len] != ' ' && value[len] != '\''
-		&& value[len] != '"' && value[len] != '\0')
-		len++;
-	env_key = (char *)malloc(sizeof (char) * (len + 1));
-	if (!env_key)
-		return (NULL);
-	while (*value != ' ' && *value != '\'' && *value != '"'
-		&& *value != '\0')
-		env_key[i++] = *value++;
-	env_key[i] = '\0';
-	return (env_key);
-}
 
 // int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 // {
@@ -52,13 +32,33 @@ char	*ft_write_env(char *value)
 // 	return (0);
 // }
 
+char	*ft_write_env(char *value)
+{
+	int		i;
+	int		len;
+	char	*env_key;
+
+	i = 0;
+	len = 0;
+	while (value[len] != ' ' && value[len] != '\''
+		&& value[len] != '"' && value[len] != '\0')
+		len++;
+	env_key = (char *)malloc(sizeof (char) * (len + 1));
+	if (!env_key)
+		return (NULL);
+	while (*value != ' ' && *value != '\'' && *value != '"'
+		&& *value != '\0')
+		env_key[i++] = *value++;
+	env_key[i] = '\0';
+	return (env_key);
+}
+
 char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *tokens)
 {
 	char	*value;
 	char	*new_value;
 	char	*get_env;
 	char	*env_key;
-	int		j;
 
 	value = ft_strchr(args, '$');
 	if (value)
@@ -66,19 +66,20 @@ char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *
 		*before_env = ft_substr(args, 0, (value - args));
 		value++;
 		if (ft_strncmp(value, "?", 1) == 0)
+		{
+			*after_env = ft_strdup(value + 1);
 			new_value = ft_strdup(ft_itoa(tokens->e_code));
+		}
 		else
 		{
 			env_key = ft_write_env(value);
-			get_env = get_env_var(tokens->envp, env_key);
-			while (value[j])
-				j++;
+			get_env = get_env_var(*(tokens->envp), env_key);
 			if (get_env == NULL)
 				return ("");
 			else
 			{
 				new_value = ft_strdup(get_env);
-				*after_env = ft_strdup(value + j);
+				*after_env = ft_strdup(value + ft_strlen(env_key));
 			}
 		}
 		return (new_value);
