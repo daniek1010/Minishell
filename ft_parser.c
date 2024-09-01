@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 22:40:22 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/01 01:11:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ char	**ft_read_input(char *prompt)
 	input_read = readline(prompt);
 	if (input_read == NULL)
 	{
+		printf("prompt ???\n");
 		free (input_read);
 		return (NULL);
 	}
@@ -177,6 +178,6 @@ void	*ft_sort(t_infos *tokens, char **token_array)
 		}
 	}
 	ft_null(tokens);
-	ft_cleaner(token_array);
+	// ft_cleaner(token_array);
 	return (tokens);
 }

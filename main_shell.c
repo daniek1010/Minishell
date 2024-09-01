@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 22:58:00 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/01 03:25:45 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,11 @@ int	ft_check_builtin(t_command *command, char ***envp)
 	e_status = 0;
 	if (ft_strcmp("echo", command->name) == 0)
 		e_status = builtin_echo(command);
-	else if (ft_strcmp("env", command->name) == 0)
+	else if (ft_strcmp("env", command->name) == 0){
+		ft_putendl_fd("inside env_call before ", STDERR_FILENO);
 		e_status = builtin_env(envp);
+		ft_putendl_fd("inside env_call after ", STDERR_FILENO);
+		}
 	else if (ft_strcmp("export", command->name) == 0)
 		e_status = builtin_export(envp, command->args);
 	else if (ft_strcmp("unset", command->name) == 0)
@@ -127,7 +130,7 @@ int mini_shell(t_infos *tokens)
 		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
 		{
-			ft_putendl_fd("exit", STDOUT_FILENO);
+			ft_putendl_fd("exiter", STDOUT_FILENO);
 			exit (EXIT_SUCCESS);
 		}
 		if (token_array[0][0] == '\0')
@@ -136,10 +139,29 @@ int mini_shell(t_infos *tokens)
 			continue ;
 		}
 		ft_sort(tokens, token_array);
-		execute_command(tokens, tokens->envp);
+		ft_cleaner(token_array);
+		// for (int i = 0; tokens->commands[i]; i++)
+		// {
+		// 	for (int j = 0; tokens->commands[i]->args[j]; j++)
+		// 	{
+		// 		printf("cmd->name = %s     cmd.args[%d] = %s\n", tokens->commands[i]->name, j, tokens->commands[i]->args[j] );
+		// 	}
+		// 	printf("*****************redir comad *************\n");
+		// 	for (int j = 0; tokens->commands[i]->redir_cmd[j]; j++)
+		// 	{
+		// 		printf("redir->type = %d     redir.args[%d] = %s\n", tokens->commands[i]->redir_cmd[j]->type, j, tokens->commands[i]->redir_cmd[j]->file );
+		// 		printf("%ld", ft_strlen(tokens->commands[i]->redir_cmd[j]->file));
+		// 	}
+		// 	printf("*****************next comad *************\n");
+
+			
+		// }
+		// execute_command(tokens, tokens->envp);
+		execute_commander(tokens);
 		// dup2(tokens->save_fdout, STDOUT_FILENO);
 		// dup2(tokens->save_fdin, STDOUT_FILENO);
 		free_tokens(tokens);
+		// printf("%s\n", )
     }
 	return (0);
 }

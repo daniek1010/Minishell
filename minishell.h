@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 14:27:51 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/01 00:59:33 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	signal_handlers(void);
 
-
+int	execute_commander(t_infos *tokens);
+int	ft_executer(t_command *command, t_infos *tokens);
 
 char	*ft_itoa(int n);
 int	builtin_export_helper(char **key_value, char ***envp);
