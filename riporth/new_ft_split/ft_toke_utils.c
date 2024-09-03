@@ -6,11 +6,11 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 13:47:36 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/03 14:35:07 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "change_the_file.h"
 
 char	*list_length_create(const char *str, const int *i)
 {
@@ -20,12 +20,17 @@ char	*list_length_create(const char *str, const int *i)
 
 	y = *i;
 	if (str[*i] == '\'' || str[*i] == '\"')
+	{
 		y = count_qoute (str, y, str[*i]);
+		y++;
+	}
 	else
 	{
 		while (!((str[y] <= 13 && str[y] >= 9) || str[y] == 32)
 			&& str[y] != '\0')
+		{
 			y ++;
+		}
 	}
 	x = y - *i;
 	list = (char *)malloc(sizeof(char) * (x + 1));
@@ -41,7 +46,9 @@ char	*fill_qoute_case(const char *str, char *list, int *i, char a)
 
 	x = 0;
 	list = list_length_create(str, i);
+	list[x] = str[*i];
 	(*i)++;
+	x++;
 	if (!list)
 		return (NULL);
 	while (str[*i] != '\0' && str[*i] != a)
@@ -97,7 +104,7 @@ char	*fill_direct(const char *str, char *list, int *i)
 	(*i)++;
 	return (list);
 }
-
+/*
 char	**ft_token_fill(const char *str, char **list)
 {
 	int	i;
@@ -125,3 +132,4 @@ char	**ft_token_fill(const char *str, char **list)
 	}
 	return (list);
 }
+*/

@@ -6,11 +6,11 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:47:59 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 13:48:23 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:08:13 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "change_the_file.h"
 
 int	count_qoute(const char *str, int i, char a)
 {

@@ -6,11 +6,11 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:13:08 by riporth           #+#    #+#             */
-/*   Updated: 2024/08/30 13:49:18 by riporth          ###   ########.fr       */
+/*   Updated: 2024/08/30 15:14:09 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "change_the_file.h"
 
 int	token_special_char(const char *str, int i)
 {
@@ -48,6 +48,7 @@ int	token_count_words(const char *str)
 	i = 0;
 	while (str[i] != '\0')
 	{
+		printf("hi\n");
 		if (check_special_char(str, i))
 		{
 			count++;
@@ -61,6 +62,7 @@ int	token_count_words(const char *str)
 			in_word = 1;
 			count++;
 		}
+		printf("count %d\n",count);
 		i++;
 	}
 	return (count);
@@ -102,6 +104,7 @@ char	**ft_token_split(char const *s)
 	char	**list;
 
 	i = token_count_words(s);
+	printf("count %d",i);
 	list = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!list)
 		return (NULL);
@@ -110,7 +113,7 @@ char	**ft_token_split(char const *s)
 	return (list);
 }
 
-/*
+
 int main() 
 {
     // Test string that includes quotes, pipes, redirections, and whitespace
