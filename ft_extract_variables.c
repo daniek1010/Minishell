@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:55:55 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/03 16:08:25 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/03 16:59:33 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,38 @@ int	ft_isalnum(int c)
 		|| (c >= 48 && c <= 57));
 }
 
+int	count_sub_occ(char *str, char *substr)
+{
+	int		count;
+	char	*temp;
+
+	count = 0;
+	temp = str;
+	temp = ft_strstr(temp, substr);
+	while (temp != NULL)
+	{
+		count++;
+		temp += strlen(substr);
+		temp = ft_strstr(temp, substr);
+	}
+	return (count);
+}
+
 char	*replace_substring(char *str, char *to_replace, char *replacement)
 {
 	char	*pos;
 	char	*new_str;
 	int		new_len;
 	int		prefix_len;
+	int		x;
 
-	*pos = ft_strstr(str, to_replace);
+	pos = ft_strstr(str, to_replace);
+	if (!pos)
+		return (str);
 	new_len = ft_strlen(str) - ft_strlen(to_replace) + ft_strlen(replacement);
-	new_str = malloc((new_len + 1) * sizeof(char *));
+	new_str = malloc((new_len + 1) * sizeof(char));
 	if (!new_str)
-		return (NULL);
+		return (str);
 	prefix_len = pos - str;
 	ft_strcpy(new_str, str);
 	new_str[prefix_len] = '\0';
@@ -58,7 +78,7 @@ char	*isolate_variable(char *str, int i)
 	length = i - start;
 	if (length == 0)
 		return (NULL);
-	var = malloc((length + 1) * sizeof(char *));
+	var = malloc((length + 1) * sizeof(char));
 	if (!var)
 		return (NULL);
 	ft_strncpy(var, str + start, length);
@@ -82,20 +102,20 @@ char	*add_var(char *str, int *i, t_infos *tokens)
 		replace = get_env_var(*(tokens->envp), var);
 	if (!replace)
 	{
-		i += ft_strlen(var);
+		*i += ft_strlen(var);
 		return (str);
 	}
 	new = replace_substring(str, var, replace);
-	i += strlen(replace);
-	free (str);
+	free (var);
+	*i += ft_strlen(replace);
+	free (replace); // is this legal
+	free(str);
 	return (new);
 }
 
 char	*ft_extract_variables(char *str, t_infos *tokens)
 {
-	char	*new;
 	int		i;
-	char	*var;
 
 	i = 0;
 	if (str[0] == '\'' || (ft_strchr(str, '$')) == 0)
@@ -103,10 +123,9 @@ char	*ft_extract_variables(char *str, t_infos *tokens)
 	while (str[i] != '\0')
 	{
 		if (str[i] == '$')
-			new = add_var(str, &i, tokens);
+			str = add_var(str, &i, tokens);
 		else
 			i++;
 	}
-	free (str);
-	return (new);
+	return (str);
 }
