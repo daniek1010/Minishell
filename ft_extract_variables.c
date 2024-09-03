@@ -6,11 +6,21 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:55:55 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/03 16:02:20 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/03 16:06:22 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+//#include "minishell.h"
+#include <signal.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 int	ft_isalnum(int c)
 {
@@ -66,15 +76,16 @@ char	*isolate_variable(char *str, int i)
 	return (var);
 }
 
-char	*addvar(char *str, int *i, t_infos *tokens)
+char	*add_var(char *str, int *i, t_infos *tokens)
 {
 	char	*new;
 	char	*var;
 	char	*replace;
 	int		x;
 
-	x += i + 1;
-	var = isolate_variable(str, i);
+	x = *i;
+	var = isolate_variable(str, x);
+	x ++;
 	if (str[x] == '?')
 		replace = ft_strdup(ft_itoa(tokens->e_code));
 	else
