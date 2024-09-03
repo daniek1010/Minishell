@@ -6,21 +6,11 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:55:55 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/03 16:06:22 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/03 16:08:25 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include "minishell.h"
-#include <signal.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <fcntl.h>
-# include <sys/wait.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+#include "minishell.h"
 
 int	ft_isalnum(int c)
 {
