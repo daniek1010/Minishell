@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/01 01:11:39 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/03 18:53:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ char	**ft_read_input(char *prompt)
 	input_read = readline(prompt);
 	if (input_read == NULL)
 	{
-		printf("prompt ???\n");
 		free (input_read);
 		return (NULL);
 	}

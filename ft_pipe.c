@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.fr>          +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 21:46:27 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:47:27 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,165 +18,59 @@ void	pipe_create(int pipefd[2])
 		errors("Couldnt create pipe\n");
 }
 
-pid_t	fork_process(void)
+void	init_pipe(t_infos *tokens)
 {
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-		ft_putendl_fd("couldn't fork",STDERR_FILENO);
-	return (pid);
+	tokens->prev_pipefd[0] = -1;
+	tokens->prev_pipefd[1] = -1;
 }
 
-void	ft_dup(int pipefd[2], int fd)
+void	close_pipe(t_infos *tokens, int flag)
 {
-	if (fd == STDOUT_FILENO)
+	if (flag == 0)
 	{
-		close(pipefd[0]);
-		if (dup2(pipefd[1], fd) == -1)
-			errors("dup2 failed\n");
-		close(pipefd[1]);
+		close (tokens->pipefd[0]);
+		close (tokens->pipefd[1]);
 	}
-	else if (fd == STDIN_FILENO)
+	else if (flag == 1)
 	{
-		close(pipefd[1]);
-		if (dup2(pipefd[0], fd) == -1)
-			errors("dup2 failed\n");
-		close(pipefd[0]);
+		close (tokens->prev_pipefd[0]);
+		close (tokens->prev_pipefd[1]);
+		init_pipe(tokens);
+	}
+	else
+	{
+		close (tokens->pipefd[0]);
+		close (tokens->pipefd[1]);
+		close (tokens->prev_pipefd[0]);
+		close (tokens->prev_pipefd[1]);
+		init_pipe(tokens);
+		init_pipe(tokens);
 	}
 }
 
-void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio)
+void	setup_pipes(t_infos *tokens, int is_last_command, int *flag)
 {
-	char *str1 = ft_itoa(cmd->redir_count);
-	ft_putendl_fd(str1, STDERR_FILENO);
-	if (cmd->redir_count == 0)
-		ft_dup(pipefd, stdio);
-	handle_redirections(cmd, tokens);
-	if (tokens->e_code == 1)
-		exit (tokens->e_code);
-	tokens->e_code = ft_execute(cmd, envp, tokens);
-	exit (tokens->e_code);
+	if (tokens->pipefd[0] > 0)
+		close_pipe(tokens, 0);
+	if (!is_last_command)
+	{
+		pipe_create(tokens->pipefd);
+		*flag = 1;
+	}
 }
 
-int	ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens)
+void	builtin_handler(t_command *cmd, t_infos *tokens)
 {
-	int		pipefd[2];
-	pid_t	pid1;
-	pid_t	pid2;
-	int status;
-
-	pipe_create(pipefd);
-	if (pipe->cmd1->name)
+	if (is_builtin(cmd->name))
 	{
-		if (is_builtin(pipe->cmd1->name))
+		if (cmd->redir_count > 0)
+			handle_redirections(cmd, tokens);
+		exec_builtin_path(cmd, tokens);
+		if (tokens->e_code == -5)
 		{
-			if (tokens->save_fdout > 0)
-				close (tokens->save_fdout);
-			tokens->save_fdout = dup(STDOUT_FILENO);
-			char *str = ft_itoa(pipe->cmd1->redir_count);
-			ft_putendl_fd(str, STDERR_FILENO);
-			if (pipe->cmd1->redir_count == 0)
-				dup2(pipefd[1], STDOUT_FILENO);
-			handle_builtin(pipe->cmd1, tokens, envp, &status);
-			dup2(tokens->save_fdout, STDOUT_FILENO);
-		}
-		else
-		{
-			pid1 = fork_process();
-			if (pid1 == 0)
-			{
-				
-				handle_pid(pipefd, pipe->cmd1, tokens, envp, STDOUT_FILENO);
-				
-			}
-		}
-    }
-	ft_putendl_fd("fuck here", STDERR_FILENO);
-	if (pipe->cmd2->name)
-	{
-		if (is_builtin(pipe->cmd2->name))
-		{
-			if (tokens->save_fdin > 0)
-				close (tokens->save_fdin);
-			tokens->save_fdin = dup(STDIN_FILENO);
-			if (pipe->cmd2->redir_count == 0)
-				dup2(pipefd[0], STDIN_FILENO);
-			handle_builtin(pipe->cmd2, tokens, envp, &status);
-			dup2(tokens->save_fdin, STDIN_FILENO);
-		}
-		else
-		{
-			pid2 = fork_process();
-			if (pid2 == 0)
-				handle_pid(pipefd, pipe->cmd2, tokens, envp, STDIN_FILENO);
+			// decide if i should reset the e_code to 0 or still leave as -5 for further flag
+			// tokens->e_code = 0;
+			return ;
 		}
 	}
-	close(pipefd[1]);
-	close(pipefd[0]);
-	if (!is_builtin(pipe->cmd1->name))
-		waitpid(pid1, NULL, 0);
-	if (!is_builtin(pipe->cmd2->name))
-		waitpid(pid2, NULL, 0);
-	return (tokens->e_code);
 }
-
-
-
-// void	handle_pid1(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]) {
-//     // Set up signal handlers for the first child
-//     setup_signal_handlers_child();
-
-//     ft_dup(pipefd, STDOUT_FILENO);
-//     handle_redirections(pipe->cmd1, tokens);
-//     if (tokens->e_code == 1)
-//         exit(tokens->e_code);
-//     tokens->e_code = ft_execute(pipe->cmd1, envp, tokens);
-//     exit(tokens->e_code);
-// }
-
-// void	handle_pid2(int pipefd[2], t_pipe *pipe, t_infos *tokens, char **envp[]) {
-//     // Set up signal handlers for the second child
-// 	// int	i = 0;
-//     setup_signal_handlers_child();
-
-//     ft_dup(pipefd, STDIN_FILENO);
-// 	handle_redirections(pipe->cmd2, tokens);
-//     if (tokens->e_code == 1)
-//         exit(tokens->e_code);
-//     tokens->e_code = ft_execute(pipe->cmd2, envp, tokens);
-//     exit(tokens->e_code);
-// }
-
-// int	ft_create_pipe(t_pipe *pipe, char **envp[], t_infos *tokens) {
-//     int pipefd[2];
-//     pid_t pid1, pid2;
-//     int status;
-
-//     pipe_create(pipefd);
-//     pid1 = fork_process();
-//     if (pid1 == 0) {
-//         handle_pid1(pipefd, pipe, tokens, envp);
-//     }
-
-//     pid2 = fork_process();
-//     if (pid2 == 0) {
-//         handle_pid2(pipefd, pipe, tokens, envp);
-//     }
-
-//     close(pipefd[0]);
-//     close(pipefd[1]);
-
-//     // Parent process waits for both child processes to complete
-//     waitpid(pid1, &status, 0);
-//     if (WIFSIGNALED(status)) {
-//         tokens->e_code = 128 + WTERMSIG(status); // Handle signal-based termination
-//     }
-
-//     waitpid(pid2, &status, 0);
-//     if (WIFSIGNALED(status)) {
-//         tokens->e_code = 128 + WTERMSIG(status); // Handle signal-based termination
-//     }
-
-//     return tokens->e_code;
-// }

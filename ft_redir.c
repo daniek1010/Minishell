@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/01 02:33:13 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 11:51:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void	redir_here_docs(char *prompt, char *delimeter)
 	}
 	write(pipefd[1], input, ft_strlen(input));
 	close(pipefd[1]);
+	free (input);
 	dup2(pipefd[0], STDIN_FILENO);
 	close(pipefd[0]);
 }
@@ -92,12 +93,14 @@ int	handle_redirections(t_command *cmd, t_infos *tokens)
 			if (cmd->redir_cmd[i]->type == TRUNC
 				|| cmd->redir_cmd[i]->type == APPEND)
 			{
+				// close_pipe(tokens, 0);
 				if (!redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
 					cmd->redir_cmd[i]->file))
 						break ;
 			}
 			else if (cmd->redir_cmd[i]->type == INPUT)
 			{
+				// close_pipe(tokens, 1);
 				if (!redir_input(tokens, cmd->redir_cmd[i]->file))
 						break ;
 			}

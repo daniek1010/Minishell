@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/01 03:25:45 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:56:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,30 +65,28 @@ int	builtin_export_helper(char **key_value, char ***envp)
 	return (0);
 }
 
-
-int	ft_check_builtin(t_command *command, char ***envp)
+void	ft_check_builtin(t_command *command, t_infos *tokens)
 {
-	int	e_status;
-
-	e_status = 0;
+	tokens->e_code = 0;
 	if (ft_strcmp("echo", command->name) == 0)
-		e_status = builtin_echo(command);
-	else if (ft_strcmp("env", command->name) == 0){
-		ft_putendl_fd("inside env_call before ", STDERR_FILENO);
-		e_status = builtin_env(envp);
-		ft_putendl_fd("inside env_call after ", STDERR_FILENO);
-		}
+		tokens->e_code = builtin_echo(command);
+	else if (ft_strcmp("env", command->name) == 0)
+		tokens->e_code = builtin_env(tokens->envp);
 	else if (ft_strcmp("export", command->name) == 0)
-		e_status = builtin_export(envp, command->args);
+		tokens->e_code = builtin_export(tokens->envp, command->args);
 	else if (ft_strcmp("unset", command->name) == 0)
-		e_status = builtin_unset(envp, command->args);
+		tokens->e_code = builtin_unset(tokens->envp, command->args);
 	else if (ft_strcmp("cd", command->name) == 0)
-		e_status = builtin_cd(envp, command->args[1]);
+		tokens->e_code = builtin_cd(tokens->envp, command->args[1]);
 	else if (ft_strcmp("pwd", command->name) == 0)
-		e_status = builtin_pwd();
+		tokens->e_code = builtin_pwd();
 	else if (ft_strcmp("exit", command->name) == 0)
-		exit (0);
-	return (e_status);
+	{
+		ft_putendl_fd("exiting", STDOUT_FILENO);
+		tokens->e_code = -5;
+		exit(0);
+		// this should signal exit and then return and then reset to 0 for exit status
+	}
 }
 
 char	**copy_env(char *envp[])
@@ -115,18 +113,10 @@ char	**copy_env(char *envp[])
 
 int mini_shell(t_infos *tokens)
 {
-     char	**token_array;
-	// int		e_status;
-	
-	// e_status = 0;
+	char	**token_array;
+
 	while (1)
 	{
-		if (g_int)
-		{
-			// e_status = 130;
-			g_int = 0;
-			continue ;
-		}
 		token_array = ft_read_input("Minishell> ");
 		if (token_array == NULL)
 		{
@@ -140,28 +130,7 @@ int mini_shell(t_infos *tokens)
 		}
 		ft_sort(tokens, token_array);
 		ft_cleaner(token_array);
-		// for (int i = 0; tokens->commands[i]; i++)
-		// {
-		// 	for (int j = 0; tokens->commands[i]->args[j]; j++)
-		// 	{
-		// 		printf("cmd->name = %s     cmd.args[%d] = %s\n", tokens->commands[i]->name, j, tokens->commands[i]->args[j] );
-		// 	}
-		// 	printf("*****************redir comad *************\n");
-		// 	for (int j = 0; tokens->commands[i]->redir_cmd[j]; j++)
-		// 	{
-		// 		printf("redir->type = %d     redir.args[%d] = %s\n", tokens->commands[i]->redir_cmd[j]->type, j, tokens->commands[i]->redir_cmd[j]->file );
-		// 		printf("%ld", ft_strlen(tokens->commands[i]->redir_cmd[j]->file));
-		// 	}
-		// 	printf("*****************next comad *************\n");
-
-			
-		// }
-		// execute_command(tokens, tokens->envp);
 		execute_commander(tokens);
-		// dup2(tokens->save_fdout, STDOUT_FILENO);
-		// dup2(tokens->save_fdin, STDOUT_FILENO);
-		free_tokens(tokens);
-		// printf("%s\n", )
     }
 	return (0);
 }
@@ -197,7 +166,6 @@ int main(int ac, char *av[], char *envp[])
 	char	*shlvl_get;
 	char	*shlvl_set;
 	int		shlvl_i;
-	// t_var	*var;
 	
 	signal_handlers();
 	env = copy_env(envp);
@@ -212,70 +180,10 @@ int main(int ac, char *av[], char *envp[])
 	shlvl_i += 1;
 	shlvl_set = ft_itoa(shlvl_i);
 	set_env_var(&env, "SHLVL", shlvl_set);
-	status = mini_shell(tokens);
+	tokens->e_code = mini_shell(tokens);
 	ft_cleaner(*(tokens->envp));
 	free (tokens);
 	tokens = NULL;
 	ft_cleaner(env);
     return (status);
 }
-
-// int main(int ac, char *av[], char *envp[])
-// {
-// 	int		status;
-// 	char	**env;
-// 	char	*shlvl_get;
-// 	char	*shlvl_set;
-// 	int		shlvl_i;
-	
-// 	signal_handlers();
-
-// 	env = copy_env(envp);
-// 	status = 0;
-// 	(void)ac;
-// 	(void)av;
-// 	shlvl_get = get_env_var((env), "SHLVL");
-// 	shlvl_i = atoi(shlvl_get);
-// 	shlvl_i += 1;
-// 	shlvl_set = ft_itoa(shlvl_i);
-// 	set_env_var(&env, "SHLVL", shlvl_set);
-// 	status = mini_shell(&env);
-// 	ft_cleaner(env);
-//     return (status);
-// }
-
-
-// int mini_shell(char ***envp)
-// {
-//     char	**token_array;
-// 	t_infos	*tokens;
-// 	int		e_status;
-	
-// 	e_status = 0;
-// 	while (1)
-// 	{
-// 		if (g_int)
-// 		{
-// 			e_status = 130;
-// 			g_int = 0;
-// 			continue ;
-// 		}
-// 		token_array = ft_read_input("Minishell> ");
-// 		if (token_array == NULL)
-// 		{
-// 			ft_putendl_fd("exit", STDOUT_FILENO);
-// 			exit (EXIT_SUCCESS);
-// 		}
-// 		if (token_array[0][0] == '\0')
-// 		{
-// 			ft_cleaner(token_array);
-// 			continue ;
-// 		}
-// 		tokens = ft_sort(token_array, envp, e_status);
-// 		e_status = execute_command(tokens, envp);
-// 		dup2(tokens->save_fdout, STDOUT_FILENO);
-// 		dup2(tokens->save_fdin, STDOUT_FILENO);
-// 		free_tokens(tokens);
-//     }
-// 	return (e_status);
-// }

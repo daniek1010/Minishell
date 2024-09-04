@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/01 00:59:33 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:49:18 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ typedef struct s_infos{
 	int			e_code;
 	int			save_fdin;
 	int			save_fdout;
+	int			pipefd[2];
+	int			prev_pipefd[2];
 
 }t_infos;
 
@@ -74,6 +76,18 @@ typedef struct s_var{
 	
 }t_var;
 
+/* norm.c ...file name should be renamed*/
+void	redirect_io(int is_last_command, t_infos *tokens);
+void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens, int flag);
+void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag);
+int		execute_commander(t_infos *tokens);
+int		exec_builtin_path(t_command *command, t_infos *tokens);
+
+
+
+
+
+
 
 void setup_signal_handlers_child();
 void handle_sigint_child(int sig);
@@ -84,14 +98,13 @@ void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	signal_handlers(void);
 
-int	execute_commander(t_infos *tokens);
-int	ft_executer(t_command *command, t_infos *tokens);
+
 
 char	*ft_itoa(int n);
 int	builtin_export_helper(char **key_value, char ***envp);
 int	alpha_numeric(char *str);
 
-int	ft_check_builtin(t_command *command, char ***envp);
+void	ft_check_builtin(t_command *command, t_infos *tokens);
 /*ft_split_minishell.c ....formatted*/
 char	**ft_split(char const *s, char *delimeter);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
@@ -113,12 +126,27 @@ char	*get_env_var(char **envp, char *key);
 int		set_env_var_helper(char *key, char *value, char ***envp, int i);
 char	**write_envp(int *j, int i, char **new_envp, char ***envp);
 
+// /* ft_pipe.c .... formated*/
+// int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
+// void	pipe_create(int pipefd[2]);
+// pid_t	fork_process(void);
+// void	ft_dup(int pipefd[2], int fd);
+// void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
+
 /* ft_pipe.c .... formated*/
-int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
+void	close_pipe(t_infos *tokens, int flag);
+void	init_pipe(t_infos *tokens);
 void	pipe_create(int pipefd[2]);
-pid_t	fork_process(void);
-void	ft_dup(int pipefd[2], int fd);
-void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
+void	setup_pipes(t_infos *tokens, int is_last_command, int *flag);
+void	builtin_handler(t_command *cmd, t_infos *tokens);
+
+pid_t	fork_process(void); //not sure needed
+
+
+// void	ft_dup(int pipefd[2], int fd);
+// void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
+
+
 
 /* ft_parser.c .... not formatted*/
 void		*ft_sort(t_infos *tokens, char **token_array);

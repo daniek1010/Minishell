@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/01 03:36:16 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/03 18:56:30 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,7 @@ int	builtin_env(char ***envp)
 	i = 0;
 	while ((*envp)[i] != NULL)
 	{
-	ft_putendl_fd("before env_ ", STDERR_FILENO);
 		ft_putendl_fd((*envp)[i], STDOUT_FILENO);
-		ft_putendl_fd("after env_ ", STDERR_FILENO);
 		i++;
 	}
 	return (0);
