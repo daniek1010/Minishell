@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 12:53:03 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 23:08:09 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,7 @@ void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens,
 	pid_t	pid;
 
 	if ((is_last_command) && (flag == 0))
-	{
-		// tokens->save_fdout = dup(STDOUT_FILENO);
-		// simply means it hasnt created a pipe , so we can run directly in the parent
 		builtin_handler(cmd, tokens);
-		// dup2(tokens->save_fdout, STDOUT_FILENO);
-		// printf("geret\n");
-	}
 	else
 	{
 		pid = fork_process();
@@ -60,7 +54,14 @@ void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens,
 			exit (tokens->e_code);
 		}
 		else if (pid > 0)
+		{
 			waitpid(pid, NULL, 0);
+			if (tokens->prev_pipefd[0] != -1)
+				close_pipe(tokens, 1);
+			if (!is_last_command)
+				close (tokens->pipefd[1]);
+		}
+		
 	}
 }
 
@@ -79,6 +80,8 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 		{
 			redirect_io(is_last_command, tokens);
 			handle_redirections(cmd, tokens);
+			if (tokens->e_code == 1)
+				exit (0);
 			exec_builtin_path(cmd, tokens);
 			exit(tokens->e_code);
 		}

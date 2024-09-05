@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_execute_cmds.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/03 11:57:53 by danevans         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "minishell.h"
-
 // /* cchek and create the number of pipes we have in our token*/
 // int	iterate_pipe_index(t_infos *tokens, char ***envp)
 // {
@@ -217,3 +203,174 @@ if(!builtin) it check if path is in Path and then execute.*/
 // 	}
 // 	return (tokens->e_code);
 // }
+
+
+// int	is_dollar_char(t_command *cmd, char *token_array[], int *start,
+// 		char *envp[], t_infos *tokens)
+// {
+// 	char	*value;
+
+// 	value = ft_special_char(envp, token_array[*start], cmd, tokens);
+// 	if (value)
+// 	{
+// 		cmd->args[cmd->i++] = value;
+// 		*start = *start + 1;
+// 		return (1);
+// 	}
+// 	return (0);
+// }
+
+// char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens)
+// {
+// 	char	*value;
+// 	char	*new_value;
+// 	char	*get_env;
+// 	char	*env_key;
+
+// 	value = ft_strchr(str, '$');
+// 	if (value)
+// 	{
+// 		value++;
+// 		if (ft_strncmp(value, "?", 1) == 0)
+// 			new_value = ft_strdup(ft_itoa(tokens->e_code));
+// 		else
+// 		{
+// 			env_key = ft_write_env(value);
+// 			get_env = get_env_var(envp, env_key);
+// 			if (get_env == NULL)
+// 				new_value = ft_strdup("404");
+// 			else
+// 				new_value = ft_strdup(get_env);
+// 		}
+// 		return (new_value);
+// 	}
+// 	return (NULL);
+// }
+
+// char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *tokens)
+// {
+// 	char	*value;
+// 	char	*new_value = NULL;
+// 	char	*get_env;
+// 	char	*env_key;
+
+// 	value = ft_strchr(args, '$');
+// 	if (value)
+// 	{
+// 		if (args[0] == '\'')
+// 			return (new_value);
+// 		*before_env = ft_substr(args, 0, (value - args));
+// 		value++;
+// 		if (ft_strncmp(value, "?", 1) == 0)
+// 		{
+// 			*after_env = ft_strdup(value + 1);
+// 			new_value = ft_strdup(ft_itoa(tokens->e_code));
+// 		}
+// 		else
+// 		{
+// 			env_key = ft_write_env(value);
+// 			get_env = get_env_var(*(tokens->envp), env_key);
+// 			if (get_env == NULL)
+// 				return ("");
+// 			else
+// 			{
+// 				new_value = ft_strdup(get_env);
+// 				*after_env = ft_strdup(value + ft_strlen(env_key));
+// 			}
+// 		}
+// 		return (new_value);
+// 	}
+// 	return (new_value);
+// }
+
+// int	is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *tokens)
+// {
+// 	char	*value;
+// 	char	*before_env;
+// 	char	*after_env;
+// 	char	*new_args;
+
+// 	value = ft_special_char(token_array, &before_env, &after_env, tokens);
+// 	if (value)
+// 	{
+// 		if (before_env[0] == '"')
+// 			before_env++;
+// 		new_args = ft_strjoin(before_env, value);
+// 		cmd->args[cmd->i++] = ft_strjoin(new_args, after_env);
+// 		(*start)++;
+// 		return (1);
+// 	}
+// 	return (0);
+// }
+
+
+
+/* this creates the pipe struct which have the cmd1 and cmd2,
+the cmd1 keeps all cmd created from the start until a pipe and
+cmd2 keep all cmd after the pipe till the next pipe or NULL*/
+// void	is_pipe_char(char *token_array[], char *envp[],
+// 		t_infos *tokens, t_var *var)
+// {
+// 	t_pipe		*pipe;
+
+// 	pipe = (t_pipe *)ft_malloc(sizeof(t_pipe));
+// 	pipe->cmd1 = ft_create_cmd(var->j, var->i - 1, token_array, envp, tokens);
+// 	var->end = var->i + 1;
+// 	while (token_array[var->end] && (ft_strcmp(token_array[var->end],
+// 				"|") != 0))
+// 		var->end++;
+// 	pipe->cmd2 = ft_create_cmd(var->i + 1, var->end - 1, token_array, envp, tokens);
+// 	tokens->pipes[tokens->pipe_index++] = pipe;
+// 	var->j = var->i + 1;
+// 	return ;
+// }
+
+/* creates the cmd, checks if $, redir and strdup the str found into
+the cmd->args every str is kept in cmd->args and the cmd struct is returned*/
+// t_command	*ft_create_cmd(int start, int end, char *tokens[], char *envp[], t_var *var)
+// {
+// 	int			redir_status;
+// 	t_command	*cmd;
+
+// 	cmd = (t_command *)ft_malloc(sizeof(t_command));
+// 	cmd->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
+// 	cmd->name = ft_strdup(tokens[start]);
+// 	cmd->args = (char **)ft_malloc(sizeof(char *) * (end - start + 2));
+// 	cmd->i = 0;
+// 	cmd->redir_count = 0;
+// 	while (start <= end)
+// 	{
+// 		if (is_dollar_char(cmd, tokens, &start, envp))
+// 			continue ;
+// 		redir_status = is_redirection_char(cmd, tokens, &start);
+// 		if (redir_status > 0)
+// 			continue ;
+// 		else if (redir_status < 0)
+// 			break ;
+// 		cmd->args[cmd->i++] = ft_strdup(tokens[start++]);
+// 		cmd->e_status = 0;
+// 	}
+// 	cmd->args[cmd->i] = NULL;
+// 	cmd->redir_cmd[cmd->redir_count] = NULL;
+// 	return (cmd);
+// }
+
+char	*ft_write_env(char *value)
+{
+	int		i;
+	int		len;
+	char	*env_key;
+
+	i = 0;
+	while (value[len] != ' ' && value[len] != '\''
+		&& value[len] != '"' && value[len] != '\0')
+		len++;
+	env_key = (char *)malloc(sizeof (char) * (len + 1));
+	if (!env_key)
+		return (NULL);
+	while (*value != ' ' && *value != '\'' && *value != '"'
+		&& *value != '\0')
+		env_key[i++] = *value++;
+	env_key[i] = '\0';
+	return (env_key);
+}

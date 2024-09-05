@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 11:51:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 23:00:09 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,14 @@ int	handle_redirections(t_command *cmd, t_infos *tokens)
 			if (cmd->redir_cmd[i]->type == TRUNC
 				|| cmd->redir_cmd[i]->type == APPEND)
 			{
-				// close_pipe(tokens, 0);
 				if (!redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
 					cmd->redir_cmd[i]->file))
-						break ;
+						return (0) ;
 			}
 			else if (cmd->redir_cmd[i]->type == INPUT)
 			{
-				// close_pipe(tokens, 1);
 				if (!redir_input(tokens, cmd->redir_cmd[i]->file))
-						break ;
+						return (0) ;
 			}
 			else
 				redir_here_docs("> ", cmd->redir_cmd[i]->file);

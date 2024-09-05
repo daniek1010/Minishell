@@ -6,13 +6,36 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 12:56:35 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:36:12 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t g_int = 0;
+
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	g_int = 1;
+	rl_replace_line("", 0);
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+void	signal_handlers(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+}
+
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+}
+
 
 int	alpha_numeric(char *str)
 {
@@ -84,8 +107,6 @@ void	ft_check_builtin(t_command *command, t_infos *tokens)
 	{
 		ft_putendl_fd("exiting", STDOUT_FILENO);
 		tokens->e_code = -5;
-		exit(0);
-		// this should signal exit and then return and then reset to 0 for exit status
 	}
 }
 
@@ -111,6 +132,20 @@ char	**copy_env(char *envp[])
 	return (new_envp);	
 }
 
+void	destroy_cmd_use_pipe_cmd(t_infos *tokens)
+{
+	int	k;
+
+	k = 0;
+	while (k < tokens->cmd_index)
+	{
+		free_command(tokens->commands[k]);
+		k++;
+	}
+	free(tokens->commands);
+}
+
+
 int mini_shell(t_infos *tokens)
 {
 	char	**token_array;
@@ -129,61 +164,46 @@ int mini_shell(t_infos *tokens)
 			continue ;
 		}
 		ft_sort(tokens, token_array);
-		ft_cleaner(token_array);
 		execute_commander(tokens);
+		if (tokens->e_code == -5)
+		{
+			tokens->e_code = 0;
+			free_tokens(tokens);
+			break;
+		}
+		// free_tokens(tokens);
     }
 	return (0);
 }
 
-void	handle_sigint(int sig)
+void	add_shlvl(t_infos *tokens)
 {
-	(void)sig;
-	g_int = 1;
-	rl_replace_line("", 0);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	rl_on_new_line();
-	rl_redisplay();
-}
-
-void	signal_handlers(void)
-{
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-}
-
-void	handle_sigquit(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-}
-
-
-int main(int ac, char *av[], char *envp[])
-{
-	int		status;
-	char	**env;
-	t_infos	*tokens;
 	char	*shlvl_get;
 	char	*shlvl_set;
 	int		shlvl_i;
-	
+
+	shlvl_get = get_env_var(*(tokens->envp), "SHLVL");
+	shlvl_i = atoi(shlvl_get);
+	shlvl_i += 1;
+	shlvl_set = ft_itoa(shlvl_i);
+	set_env_var(tokens->envp, "SHLVL", shlvl_set);	
+}
+
+int main(int ac, char *av[], char *envp[])
+{
+	char	**env;
+	t_infos	*tokens;
+
+	(void)ac;
+	(void)av;
 	signal_handlers();
 	env = copy_env(envp);
 	tokens = (t_infos *)ft_malloc(sizeof (t_infos));
 	tokens->envp = &env;
-
-	status = 0;
-	(void)ac;
-	(void)av;
-	shlvl_get = get_env_var((env), "SHLVL");
-	shlvl_i = atoi(shlvl_get);
-	shlvl_i += 1;
-	shlvl_set = ft_itoa(shlvl_i);
-	set_env_var(&env, "SHLVL", shlvl_set);
+	add_shlvl(tokens);
 	tokens->e_code = mini_shell(tokens);
-	ft_cleaner(*(tokens->envp));
+	ft_cleaner(env);
 	free (tokens);
 	tokens = NULL;
-	ft_cleaner(env);
-    return (status);
+    return (0);
 }

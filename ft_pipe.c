@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 12:47:27 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:55:00 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,5 @@ void	builtin_handler(t_command *cmd, t_infos *tokens)
 		if (cmd->redir_count > 0)
 			handle_redirections(cmd, tokens);
 		exec_builtin_path(cmd, tokens);
-		if (tokens->e_code == -5)
-		{
-			// decide if i should reset the e_code to 0 or still leave as -5 for further flag
-			// tokens->e_code = 0;
-			return ;
-		}
 	}
 }

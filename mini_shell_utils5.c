@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 13:09:19 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:43:58 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,6 @@ void	free_tokens(t_infos *tokens)
 	}
 	free(tokens->commands);
 	tokens->commands = NULL;
-	// free(tokens); should be transfered into main to free envp;
-	// tokens = NULL;
 }
 
 char	*ft_strchr(const char *str, char c)

@@ -6,13 +6,16 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 12:49:18 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:54:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_SHELL_H
 
 # define MINI_SHELL_H
+
+#include <string.h> // used it for strcat
+
 
 #include <signal.h>
 # include <stdio.h>
@@ -76,6 +79,61 @@ typedef struct s_var{
 	
 }t_var;
 
+
+
+
+void setup_signal_handlers_child();
+void handle_sigint_child(int sig);
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+void	signal_handlers(void);
+
+
+void	destroy_cmd_use_pipe_cmd(t_infos *tokens);  //used ?? wherere
+pid_t	fork_process(void); //not sure needed
+
+
+char	*ft_itoa(int n);
+int	builtin_export_helper(char **key_value, char ***envp);
+int	alpha_numeric(char *str);
+
+
+
+void	ft_check_builtin(t_command *command, t_infos *tokens);
+
+/*ft_split_minishell.c ....formatted*/
+char	**ft_split(char const *s, char *delimeter);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+
+
+/* ft_parser.c .... not formatted*/
+void		*ft_sort(t_infos *tokens, char **token_array);
+t_redir		*ft_create_redir(char *str, char *file);
+char		**ft_read_input(char *prompt);
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *tokens);
+
+
+/*mini_shell_utils5.c....not full formated*/ 
+void	free_command(t_command *cmd);
+void	free_tokens(t_infos *tokens);
+void	free_name_args(t_command *cmd);
+char	*ft_strchr(const char *str, char c);
+
+/* ft_toke_utils.c not formatted*/
+char	*list_length_create(const char *str, const int *i);
+char	*fill_qoute_case(const char *str, char *list, int *i, char a);
+char	*fill_word(const char *str, char *list, int *i);
+char	**ft_token_fill(const char *str, char **list);
+
+/* ft_token_split.c not formatted */
+int		count_qoute(const char *str, int i, char a);
+int		token_count_words(const char *str);
+char	**ft_token_split(char const *s);
+char	*fill_direct(const char *str, char *list, int *i);
+
+
+
+
 /* norm.c ...file name should be renamed*/
 void	redirect_io(int is_last_command, t_infos *tokens);
 void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens, int flag);
@@ -85,32 +143,21 @@ int		exec_builtin_path(t_command *command, t_infos *tokens);
 
 
 
+// ***********done formated ************
 
+/* ft_expand_var.c .... formatted*/
+char	*replace_substring(char *str, char *to_replace, char *replacement);
+char	*isolate_variable(char *str, int i);
+char	*add_var(char *str, int *i, t_infos *tokens);
+char	*expand_var(t_infos *tokens, char *str, int x, int *flag);
+char	*ft_extract_variables(char *str, t_infos *tokens);
 
-
-
-void setup_signal_handlers_child();
-void handle_sigint_child(int sig);
-
-
-
-void	handle_sigint(int sig);
-void	handle_sigquit(int sig);
-void	signal_handlers(void);
-
-
-
-char	*ft_itoa(int n);
-int	builtin_export_helper(char **key_value, char ***envp);
-int	alpha_numeric(char *str);
-
-void	ft_check_builtin(t_command *command, t_infos *tokens);
-/*ft_split_minishell.c ....formatted*/
-char	**ft_split(char const *s, char *delimeter);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-
-
-
+/*ft_redir_dollar.c.... formatted*/
+int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
+char	*ft_strstr(char *haystack, char *needle);
+int		is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *tokens);
+int		ft_isalnum(int c);
+int		is_valid_var_char(char c);
 
 /* builtin.c .... not formated ... unset*/
 int		builtin_export(char ***envp, char *key_value[]);
@@ -126,13 +173,6 @@ char	*get_env_var(char **envp, char *key);
 int		set_env_var_helper(char *key, char *value, char ***envp, int i);
 char	**write_envp(int *j, int i, char **new_envp, char ***envp);
 
-// /* ft_pipe.c .... formated*/
-// int		ft_create_pipe(t_pipe *pipe, char ***envp, t_infos *tokens);
-// void	pipe_create(int pipefd[2]);
-// pid_t	fork_process(void);
-// void	ft_dup(int pipefd[2], int fd);
-// void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
-
 /* ft_pipe.c .... formated*/
 void	close_pipe(t_infos *tokens, int flag);
 void	init_pipe(t_infos *tokens);
@@ -140,49 +180,12 @@ void	pipe_create(int pipefd[2]);
 void	setup_pipes(t_infos *tokens, int is_last_command, int *flag);
 void	builtin_handler(t_command *cmd, t_infos *tokens);
 
-pid_t	fork_process(void); //not sure needed
-
-
-// void	ft_dup(int pipefd[2], int fd);
-// void	handle_pid(int pipefd[2], t_command *cmd, t_infos *tokens, char ***envp, int stdio);
-
-
-
-/* ft_parser.c .... not formatted*/
-void		*ft_sort(t_infos *tokens, char **token_array);
-t_redir		*ft_create_redir(char *str, char *file);
-char		**ft_read_input(char *prompt);
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *tokens);
-void		is_pipe_char(char *token_array[], char *envp[],
-			t_infos *tokens, t_var *var);
-
-/* ft_execute_cmds.c .... formatted*/
-int	ft_execute(t_command *command, char ***envp, t_infos *tokens);
-int	execute_command(t_infos *tokens, char ***envp);
-int	iterate_pipe_index(t_infos *tokens, char ***envp);
-int	handle_builtin(t_command *cmd, t_infos *tokens, char ***envp, int *status);
-int	run_child(t_infos *tokens, char ***envp);
-
 /* ft_redir.c .... formatted*/
 char	*ft_read_input_here_doc(char *prompt, char *delimeter);
 int		handle_redirections(t_command *cmd, t_infos *tokens);
 int		redir_input(t_infos *tokens, char *file);
 int		redir_append_trunc(t_infos *tokens, int type, char *file);
 void	redir_here_docs(char *prompt, char *delimeter);
-
-/*mini_shell_utils0.c....formated*/
-char	*ft_write_env(char *value);
-// char	*ft_special_char(char *envp[], const char *str, t_command *cmd, t_infos *tokens);
-// int		is_dollar_char(t_command *cmd, char *token_array[], int *start, 
-// 		char *envp[], t_infos *tokens);
-
-
-char	*ft_special_char(char *args, char **before_env, char **after_env, t_infos *tokens);
-int		is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *tokens);
-
-
-int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
-void	destroy_cmd_use_pipe_cmd(t_infos *tokens);
 
 /*mini_shell_utils1.c ....formated*/
 void	errors(char *str);
@@ -212,41 +215,11 @@ size_t	ft_strlen(const char *s);
 void	ft_cleaner(char *str[]);
 int		is_redir(char *tokens[], int start);
 
-/*mini_shell_utils5.c....formated*/ 
-void	free_command(t_command *cmd);
-void	free_tokens(t_infos *tokens);
-void	free_pipes(t_infos *tokens);
-void	free_name_args(t_command *cmd);
-char	*ft_strchr(const char *str, char c);
-
 /* mini_shell_utils6 .... formated*/
 int		is_builtin(char *type);
 int		builtin_pwd(void);
 int		not_env_path(t_command *cmd, int i, int x);
 int		echo_new_line(t_command *cmd);
 int		builtin_unset_helper(char ***new_envp, char ***envp, int j, int i);
-
-
-
-/* ft_toke_utils.c */
-char	*list_length_create(const char *str, const int *i);
-char	*fill_qoute_case(const char *str, char *list, int *i, char a);
-char	*fill_word(const char *str, char *list, int *i);
-char	**ft_token_fill(const char *str, char **list);
-
-/* ft_token_split.c */
-int		count_qoute(const char *str, int i, char a);
-int		token_count_words(const char *str);
-char	**ft_token_split(char const *s);
-char	*fill_direct(const char *str, char *list, int *i);
-
-
-void	error();
-void	bad_arg(int x);
-int		ft_file(char *file, int mode);
-int		redirect_input_output(int infile, int outfile, int pipefd[2], int x);
-void	close_fd(int pipefd[2], int x);
-int		less_args(void);
-
 
 #endif
