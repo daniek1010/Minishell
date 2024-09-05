@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 14:44:20 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:27:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 {
 	char	*input_read;
-	char	*str = NULL;
+	char	*str;
 
 	str = NULL;
 	g_int = 1;
@@ -85,13 +85,13 @@ int	handle_redirections(t_command *cmd, t_infos *tokens)
 				|| cmd->redir_cmd[i]->type == APPEND)
 			{
 				if (!redir_append_trunc(tokens, cmd->redir_cmd[i]->type,
-					cmd->redir_cmd[i]->file))
-						return (0) ;
+						cmd->redir_cmd[i]->file))
+					return (0);
 			}
 			else if (cmd->redir_cmd[i]->type == INPUT)
 			{
 				if (!redir_input(tokens, cmd->redir_cmd[i]->file))
-						return (0) ;
+					return (0);
 			}
 			else
 				redir_here_docs("> ", cmd->redir_cmd[i]->file, tokens);
@@ -146,5 +146,4 @@ int	redir_input(t_infos *tokens, char *file)
 	close (fdin);
 	tokens->e_code = 0;
 	return (1);
-
 }

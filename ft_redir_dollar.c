@@ -6,22 +6,11 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 18:11:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:22:50 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	is_filename(char *token_array[], int start)
-{
-	if (is_redir(token_array, start))
-		return (0);
-	else if (ft_strcmp(token_array[start], "|") == 0
-		|| ft_strcmp(token_array[start], "*") == 0
-		|| ft_strcmp(token_array[start], "?") == 0)
-		return (0);
-	return (1);
-}
 
 int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 {

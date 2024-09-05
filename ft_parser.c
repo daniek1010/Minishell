@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:44:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 21:17:54 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,37 @@ t_redir	*ft_create_redir(char *str, char *file)
 	return (redir);
 }
 
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *tokens)
+void	save_name_args(t_command *cmd, int *flag,
+			int *start, char *tokens_array[])
+{
+	char	*str;
+
+	if (*flag)
+	{
+		str = tokens_array[*start];
+		if (str[0] == '"' || str[0] == '\'')
+			str++;
+		cmd->name = ft_strdup(str);
+		(*flag) = 0;
+	}
+	else
+	{
+		str = tokens_array[*start];
+		if (str[0] == '"' || str[0] == '\'')
+			str++;
+		cmd->args[cmd->i++] = ft_strdup(str);
+		(*start)++;
+	}
+}
+
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
+	t_infos *tokens)
 {
 	int			redir_status;
 	t_command	*cmd;
-	int 		flag = 1;
+	int			flag;
 
-	cmd = (t_command *)ft_malloc(sizeof(t_command));
-	cmd->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
-	cmd->args = (char **)ft_malloc(sizeof(char *) * INIT_SIZE);
-	cmd->i = 0;
-	cmd->redir_count = 0;
+	cmd = init_cmd(&flag);
 	while (start <= end)
 	{
 		if (is_dollar_char(cmd, tokens_array[start], &start, tokens))
@@ -80,22 +100,7 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *toke
 			continue ;
 		else if (redir_status < 0)
 			break ;
-		if (flag)
-		{
-			char *str = tokens_array[start];
-			if (str[0] == '"' || str[0] == '\'')
-				str++;
-			cmd->name = ft_strdup(str);
-			flag = 0;
-		}
-		else
-		{
-			char *str = tokens_array[start];
-			if (str[0] == '"' || str[0] == '\'')
-				str++;
-			cmd->args[cmd->i++] = ft_strdup(str);
-			start++;
-		}
+		save_name_args(cmd, &flag, &start, tokens_array);
 	}
 	cmd->args[cmd->i] = NULL;
 	cmd->redir_cmd[cmd->redir_count] = NULL;

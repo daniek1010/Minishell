@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:46:59 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 21:14:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void	signal_handlers(void)
 	signal(SIGQUIT, handle_sigquit);
 }
 
-
-
 int	builtin_export_helper(char **key_value, char ***envp)
 {
 	int		i;
@@ -76,4 +74,17 @@ int	builtin_export_helper(char **key_value, char ***envp)
 		i++;
 	}
 	return (0);
+}
+
+t_command	*init_cmd(int *flag)
+{
+	t_command	*cmd;
+
+	cmd = (t_command *)ft_malloc(sizeof(t_command));
+	cmd->redir_cmd = (t_redir **)ft_malloc(sizeof(t_redir *) * INIT_SIZE);
+	cmd->args = (char **)ft_malloc(sizeof(char *) * INIT_SIZE);
+	cmd->i = 0;
+	cmd->redir_count = 0;
+	*flag = 1;
+	return (cmd);
 }

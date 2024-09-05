@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:32:05 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:07:27 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,7 @@
 
 volatile	sig_atomic_t	g_int = 0;
 
-char	**copy_env(char *envp[])
-{
-	int		i;
-	int		len;
-	char	**new_envp;
 
-	len = 0;
-	i = 0;
-	while (envp[len])
-		len++;
-	new_envp = (char **)malloc(sizeof(char *) * (len + 1));
-	if (!new_envp)
-		return (NULL);
-	while (i < len)
-	{
-		new_envp[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	new_envp[len] = NULL;
-	return (new_envp);
-}
 
 int	mini_shell(t_infos *tokens)
 {
@@ -68,20 +48,6 @@ int	mini_shell(t_infos *tokens)
 		free_tokens(tokens);
 	}
 	return (0);
-}
-
-void	add_shlvl(t_infos *tokens)
-{
-	char	*shlvl_get;
-	char	*shlvl_set;
-	int		shlvl_i;
-
-	shlvl_get = get_env_var(*(tokens->envp), "SHLVL");
-	shlvl_i = atoi(shlvl_get);
-	shlvl_i += 1;
-	shlvl_set = ft_itoa(shlvl_i);
-	set_env_var(tokens->envp, "SHLVL", shlvl_set);
-	free(shlvl_set);
 }
 
 int	main(int ac, char *av[], char *envp[])

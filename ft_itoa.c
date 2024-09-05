@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:39:45 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 15:05:32 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:24:48 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,15 @@ void	ft_check_builtin(t_command *command, t_infos *tokens)
 		ft_putendl_fd("exiting", STDOUT_FILENO);
 		tokens->e_code = -5;
 	}
+}
+
+int	is_filename(char *token_array[], int start)
+{
+	if (is_redir(token_array, start))
+		return (0);
+	else if (ft_strcmp(token_array[start], "|") == 0
+		|| ft_strcmp(token_array[start], "*") == 0
+		|| ft_strcmp(token_array[start], "?") == 0)
+		return (0);
+	return (1);
 }

@@ -6,18 +6,17 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:56:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 21:17:18 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_SHELL_H
+#ifndef MINISHELL_H
 
-# define MINI_SHELL_H
+# define MINISHELL_H
 
 #include <string.h> // used it for strcat
 
-
-#include <signal.h>
+# include <signal.h>
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -28,36 +27,33 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-#define INPUT		0
-#define TRUNC		1
-#define APPEND		2
-#define HEREDOC		3
-#define	INIT_SIZE	64
+# define INPUT		0
+# define TRUNC		1
+# define APPEND		2
+# define HEREDOC		3
+# define INIT_SIZE	64
 
-extern volatile sig_atomic_t g_int;
+extern volatile sig_atomic_t	g_int;
 
-typedef struct s_redir{
+typedef struct s_redir
+{
 	int		type;
 	int		fd;
 	char	*file;
-}t_redir;
+}	t_redir;
 
-typedef struct s_command{
-	char 	*name;
-	char 	**args;
+typedef struct s_command
+{
+	char	*name;
+	char	**args;
 	t_redir	**redir_cmd;
 	int		redir_count;
 	int		i;
-}t_command;
+}	t_command;
 
-typedef struct s_pipe{
-	t_command *cmd1;
-	t_command *cmd2;
-}t_pipe;
-
-typedef struct s_infos{
+typedef struct s_infos
+{
 	t_command	**commands;
-
 	char		***envp;
 	int			pipe_index;
 	int			cmd_index;
@@ -68,52 +64,28 @@ typedef struct s_infos{
 	int			pipefd[2];
 	int			prev_pipefd[2];
 
-}t_infos;
+}	t_infos;
 
-typedef struct s_var{
-	int	i;
-	int	j;
-	int	start;
-	int	end;
-	
-}t_var;
+/* builtin.c .... not formated ... unset*/
+int		builtin_export(char ***envp, char *key_value[]);
+int		builtin_unset(char ***envp, char *key[]);
+int		builtin_env(char ***envp);
+int		builtin_echo(t_command *cmd);
+int		builtin_cd(char ***envp, const char *path);
 
+/* ft_parser.c .... not formatted*/
+int		ft_sort(t_infos *tokens, char **token_array);
+char	**ft_read_input(char *prompt);
+t_redir	*ft_create_redir(char *str, char *file);
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
+			t_infos *tokens);
+
+/* utils_holders.c .... not formatted*/
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	signal_handlers(void);
-
-
-/*ft_itoa.c ....  4func  formatted*/
-char	*ft_itoa(int n);
-void	ft_check_builtin(t_command *command, t_infos *tokens);
-int		alpha_numeric(char *str);
-
-
-
-int		builtin_export_helper(char **key_value, char ***envp);
-
-
-
-char	**ft_split(char const *s, char c);
-
-
-/*ft_split_minishell.c ....formatted*/
-// char	**ft_split(char const *s, char *delimeter);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-
-
-/* ft_parser.c .... not formatted*/
-int ft_sort(t_infos *tokens, char **token_array);
-t_redir		*ft_create_redir(char *str, char *file);
-char		**ft_read_input(char *prompt);
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *tokens);
-
-
-/*mini_shell_utils5.c....not full formated*/ 
-void	free_command(t_command *cmd);
-void	free_tokens(t_infos *tokens);
-void	free_name_args(t_command *cmd);
-char	*ft_strchr(const char *str, char c);
+int		builtin_export_helper(char **key_value, char ***envp); //too large
+t_command	*init_cmd(int *flag);
 
 /* ft_toke_utils.c not formatted*/
 char	*list_length_create(const char *str, const int *i);
@@ -121,26 +93,22 @@ char	*fill_qoute_case(const char *str, char *list, int *i, char a);
 char	*fill_word(const char *str, char *list, int *i);
 char	**ft_token_fill(const char *str, char **list);
 
-/* ft_token_split.c not formatted */
-int	count_qoute_f(const char *str, int i);
+/* ft_token_split.c formatted */
+int		count_qoute_f(const char *str, int i);
 int		token_count_words(const char *str);
 char	**ft_token_split(char const *s);
 char	*fill_direct(const char *str, char *list, int *i);
 
-
-
-
 /* norm.c ...file name should be renamed*/
 void	redirect_io(int is_last_command, t_infos *tokens);
-void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens, int flag);
-void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag);
+void	exec_cmd_builtin(t_command *cmd, int is_last_command,
+			t_infos *tokens, int flag);
+void	exec_cmd(t_command *cmd, int is_last_command,
+			t_infos *tokens, int flag);
 int		execute_commander(t_infos *tokens);
 int		exec_builtin_path(t_command *command, t_infos *tokens);
 
-
-
 // ***********done formated ************
-
 /* ft_expand_var.c .... formatted*/
 char	*replace_substring(char *str, char *to_replace, char *replacement);
 char	*isolate_variable(char *str, int i);
@@ -155,19 +123,22 @@ int		is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *toke
 int		ft_isalnum(int c);
 int		is_valid_var_char(char c);
 
-/* builtin.c .... not formated ... unset*/
-int		builtin_export(char ***envp, char *key_value[]);
-int		builtin_unset(char ***envp, char *key[]);
-int		builtin_env(char ***envp);
-int		builtin_echo(t_command *cmd);
-int		builtin_cd(char ***envp, const char *path);
-
 /* ft_env.c ....formated*/
 int		compare_key(char ***envp, char *key, int i);
 void	set_env_var(char ***envp, char *key, char *value);
 char	*get_env_var(char **envp, char *key);
 int		set_env_var_helper(char *key, char *value, char ***envp, int i);
 char	**write_envp(int *j, int i, char **new_envp, char ***envp);
+
+/*ft_itoa.c ....  formatted*/
+char	*ft_itoa(int n);
+void	ft_check_builtin(t_command *command, t_infos *tokens);
+int		alpha_numeric(char *str);
+int		is_filename(char *token_array[], int start);
+
+/*ft_split_minishell.c ....formatted*/
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	**ft_split(char const *s, char c);
 
 /* ft_pipe.c .... formated*/
 void	close_pipe(t_infos *tokens, int flag);
@@ -206,10 +177,17 @@ char	**ft_check_path(char *envp[]);
 
 /*mini_shell_utils4.c ....formated*/
 void	ft_strcpy(char *s1, char *s2);
-int		is_type(const char *s, char *c, int start, int i);
+char	**copy_env(char *envp[]);
 size_t	ft_strlen(const char *s);
 void	ft_cleaner(char *str[]);
 int		is_redir(char *tokens[], int start);
+
+/*mini_shell_utils5.c....not full formated*/
+void	free_command(t_command *cmd);
+void	free_tokens(t_infos *tokens);
+void	free_name_args(t_command *cmd);
+char	*ft_strchr(const char *str, char c);
+void	add_shlvl(t_infos *tokens);
 
 /* mini_shell_utils6 .... formated*/
 int		is_builtin(char *type);

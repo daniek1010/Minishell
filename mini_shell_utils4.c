@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 12:40:31 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:56:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:12:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,6 @@ void	ft_strcpy(char *s1, char *s2)
 	}
 	s1[i] = '\0';
 }
-
-// int	is_type(const char *s, char c, int start, int i)
-// {
-// 	if (((s[i] == c[0] || s[i] == c[1] || s[i] == c[2]
-// 				|| s[i] == c[3] || s[i] == c[4] || s[i] == c[5])
-// 			|| i == ft_strlen(s)) && start >= 0)
-// 		return (1);
-// 	return (0);
-// }
 
 size_t	ft_strlen(const char *s)
 {
@@ -73,4 +64,26 @@ int	is_redir(char *tokens[], int start)
 		|| ft_strcmp(tokens[start], ">|") == 0)
 		return (1);
 	return (0);
+}
+
+char	**copy_env(char *envp[])
+{
+	int		i;
+	int		len;
+	char	**new_envp;
+
+	len = 0;
+	i = 0;
+	while (envp[len])
+		len++;
+	new_envp = (char **)malloc(sizeof(char *) * (len + 1));
+	if (!new_envp)
+		return (NULL);
+	while (i < len)
+	{
+		new_envp[i] = ft_strdup(envp[i]);
+		i++;
+	}
+	new_envp[len] = NULL;
+	return (new_envp);
 }

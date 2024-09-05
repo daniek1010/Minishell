@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 15:38:26 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:17:56 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 		{
 			waitpid(pid, NULL, 0);
 			if (tokens->prev_pipefd[0] != -1)
-				close_pipe(tokens, 1); ///posbibe
+				close_pipe(tokens, 1);
 			if (!is_last_command)
 				close_fd (tokens->pipefd[1]);
 		}
@@ -115,7 +115,7 @@ int	execute_commander(t_infos *tokens)
 			tokens->pipefd[1] = -1;
 		}
 		else
-			close_pipe(tokens, 2); //possible
+			close_pipe(tokens, 2);
 		i++;
 	}
 	return (tokens->e_code);

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 19:30:29 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:12:46 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,4 +90,18 @@ char	*ft_strchr(const char *str, char c)
 		str++;
 	}
 	return (NULL);
+}
+
+void	add_shlvl(t_infos *tokens)
+{
+	char	*shlvl_get;
+	char	*shlvl_set;
+	int		shlvl_i;
+
+	shlvl_get = get_env_var(*(tokens->envp), "SHLVL");
+	shlvl_i = atoi(shlvl_get);
+	shlvl_i += 1;
+	shlvl_set = ft_itoa(shlvl_i);
+	set_env_var(tokens->envp, "SHLVL", shlvl_set);
+	free(shlvl_set);
 }
