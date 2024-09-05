@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 22:23:55 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:44:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ t_redir	*ft_create_redir(char *str, char *file)
 		redir->type = APPEND;
 	else if (ft_strcmp(str, "<<") == 0)
 		redir->type = HEREDOC;
+	else if (ft_strcmp(str, ">|") == 0)
+		redir->type = TRUNC;
 	else
 		return (NULL);
 	redir->file = ft_strdup(file);
@@ -100,37 +102,34 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *toke
 	return (cmd);
 }
 
-
-
-
-
 /* this sorrt the token_array checking for the pipe and commands, it writes 
 into the cmd until a pipe is found and then it writes into a pipe->cmd1 and
  cmd->2 and return tokens*/
-void	*ft_sort(t_infos *tokens, char **token_array)
+int	ft_sort(t_infos *tokens, char **token_array)
 {
-	t_var		var;
+	int			i;
+	int			start;
 	t_command	*command;
 
-	if (!token_array)
-		return (NULL);
-	ft_init(&var, tokens);
-	while (token_array[var.i] != NULL)
+	ft_init(tokens);
+	i = 0;
+	while (token_array[i] != NULL)
 	{
-		var.start = var.i;
-		while (token_array[var.i] && ft_strcmp(token_array[var.i],
+		start = i;
+		while (token_array[i] && ft_strcmp(token_array[i],
 				"|") != 0)
-			var.i++;
-		command = ft_create_cmd(var.start, var.i - 1, token_array, tokens);
+			i++;
+		command = ft_create_cmd(start, i - 1, token_array, tokens);
+		if (!command)
+			return (0);
 		tokens->commands[tokens->cmd_index++] = command;
-		if (ft_strcmp(token_array[var.i], "|") == 0)
+		if (ft_strcmp(token_array[i], "|") == 0)
 		{
 			tokens->pipe_index++;
-			var.i++;
+			i++;
 		}
 	}
-	ft_null(tokens);
-	// ft_cleaner(token_array);
-	return (tokens);
+	tokens->commands[tokens->cmd_index] = NULL;
+	ft_cleaner(token_array);
+	return (1);
 }
-

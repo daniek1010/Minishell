@@ -6,17 +6,11 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:24:55 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 13:06:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:45:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	ft_null(t_infos *data)
-{
-	// data->pipes[data->pipe_index] = NULL;
-	data->commands[data->cmd_index] = NULL;
-}
 
 void	ft_putstr_fd(char *s, int fd)
 {
@@ -96,4 +90,14 @@ char	*ft_strjoin_new_line(char const *s1, char const *s2)
 	str[s1_len + s2_len] = '\n';
 	str[s1_len + s2_len + 1] = '\0';
 	return (str);
+}
+
+pid_t	fork_process(void)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+		ft_putendl_fd("couldn't fork",STDERR_FILENO);
+	return (pid);
 }

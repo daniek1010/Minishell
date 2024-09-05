@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 22:55:00 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 15:37:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	pipe_create(int pipefd[2])
 
 void	init_pipe(t_infos *tokens)
 {
+	tokens->pipefd[0] = -1;
+	tokens->pipefd[1] = -1;
 	tokens->prev_pipefd[0] = -1;
 	tokens->prev_pipefd[1] = -1;
 }
@@ -28,23 +30,20 @@ void	close_pipe(t_infos *tokens, int flag)
 {
 	if (flag == 0)
 	{
-		close (tokens->pipefd[0]);
-		close (tokens->pipefd[1]);
+		close_fd (tokens->pipefd[0]);
+		close_fd (tokens->pipefd[1]);
 	}
 	else if (flag == 1)
 	{
-		close (tokens->prev_pipefd[0]);
-		close (tokens->prev_pipefd[1]);
-		init_pipe(tokens);
+		close_fd (tokens->prev_pipefd[0]);
+		close_fd (tokens->prev_pipefd[1]);
 	}
 	else
 	{
-		close (tokens->pipefd[0]);
-		close (tokens->pipefd[1]);
-		close (tokens->prev_pipefd[0]);
-		close (tokens->prev_pipefd[1]);
-		init_pipe(tokens);
-		init_pipe(tokens);
+		close_fd (tokens->pipefd[0]);
+		close_fd (tokens->pipefd[1]);
+		close_fd (tokens->prev_pipefd[0]);
+		close_fd(tokens->prev_pipefd[1]);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 22:43:58 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:30:29 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,19 +63,20 @@ void	free_tokens(t_infos *tokens)
 {
 	int	i;
 
-	if (!tokens)
-		return ;
-	if (tokens->cmd_index > 0)
+	if (tokens)
 	{
-		i = 0;
-		while (i < tokens->cmd_index)
+		if (tokens->cmd_index > 0)
 		{
-			free_command(tokens->commands[i]);
-			i++;
+			i = 0;
+			while (i < tokens->cmd_index)
+			{
+				free_command(tokens->commands[i]);
+				i++;
+			}
 		}
+		free(tokens->commands);
+		tokens->commands = NULL;
 	}
-	free(tokens->commands);
-	tokens->commands = NULL;
 }
 
 char	*ft_strchr(const char *str, char c)

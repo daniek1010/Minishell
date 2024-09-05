@@ -6,15 +6,20 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:13:08 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/04 22:41:29 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 18:14:29 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_qoute(const char *str, int i, char a)
+int	count_qoute(const char *str, int i, int *count, int	*in_word)
 {
+	char	a;
+
+	a = str[i];
 	i++;
+	*in_word = 0;
+	*count += 1;
 	while (str[i] != '\0')
 	{
 		if (str[i] == a)
@@ -23,6 +28,19 @@ int	count_qoute(const char *str, int i, char a)
 		}
 		i++;
 	}
+	return (i);
+}
+
+int	pipe_count(const char *str, int i, int *count, int *in_word)
+{
+	*count += 1;
+	in_word = 0;
+	if (str[i] == '>' && str[i + 1] == '>')
+		i++;
+	else if (str[i] == '<' && str[i + 1] == '<')
+		i++;
+	else if (str[i] == '>' && str[i + 1] == '|')
+		i++;
 	return (i);
 }
 
@@ -38,18 +56,9 @@ int	token_count_words(const char *str)
 	while (str[i] != '\0')
 	{
 		if (str[i] == '\'' || str[i] == '\"')
-		{
-			count++;
-			in_word = 1;
-			i = count_qoute(str, i, str[i]);
-		}
+			i = count_qoute(str, i, &count, &in_word);
 		if (str[i] == '|' || str[i] == '>' || str[i] == '<')
-		{
-			count++;
-			in_word = 0;
-			if(str[i + 1] == '>' || str[i + 1] == '<')
-				i++;
-		}
+			i = pipe_count(str, i, &count, &in_word);
 		else if (((str[i] <= 13 && str[i] >= 9) || str[i] == 32))
 			in_word = 0;
 		else if (in_word == 0)

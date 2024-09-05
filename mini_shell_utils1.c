@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/30 13:03:49 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:47:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,25 +48,22 @@ void	*ft_malloc(size_t n_size)
 	return (ptr);
 }
 
-void	ft_close(int fd)
+void	close_fd(int fd)
 {
-	if (fd > 0)
-		close(fd);
+	if (fd >= 0)
+	{
+		close (fd);
+	}
+	fd = -1;
 }
 
-void	ft_init(t_var *var, t_infos *tokens)
+void	ft_init(t_infos *tokens)
 {
-	// data = (t_infos *)ft_malloc(sizeof(t_infos));
 	tokens->commands = (t_command **)ft_malloc(sizeof(t_command) * INIT_SIZE);
-	// tokensata->pipes = (t_pipe **)ft_malloc(sizeof(t_pipe) * INIT_SIZE);
 	tokens->cmd_index = 0;
 	tokens->pipe_index = 0;
 	tokens->red_index = 0;
-	// tokensata->e_code = 0;
+	tokens->e_code = 0;
 	tokens->save_fdin = 0;
 	tokens->save_fdout = 0;
-	var->i = 0;
-	var->j = 0;
-	var->end = 0;
 }
-	// return (data);

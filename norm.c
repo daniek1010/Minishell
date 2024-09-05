@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 23:08:09 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 15:38:26 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,13 @@ void	redirect_io(int is_last_command, t_infos *tokens)
 {
 	if (tokens->prev_pipefd[0] != -1)
 	{
-		close (tokens->prev_pipefd[1]);
+		close_fd(tokens->prev_pipefd[1]);
 		if (dup2(tokens->prev_pipefd[0], STDIN_FILENO) == -1)
 		{
 			perror ("dup2???? failed");
 			exit(EXIT_FAILURE);
 		}
-		close (tokens->prev_pipefd[0]);
-		init_pipe(tokens);
+		close_fd(tokens->prev_pipefd[0]);
 	}
 	if (!is_last_command)
 	{
@@ -59,9 +58,8 @@ void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens,
 			if (tokens->prev_pipefd[0] != -1)
 				close_pipe(tokens, 1);
 			if (!is_last_command)
-				close (tokens->pipefd[1]);
+				close_fd (tokens->pipefd[1]);
 		}
-		
 	}
 }
 
@@ -70,9 +68,7 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 	pid_t	pid;
 
 	if (is_builtin(cmd->name))
-	{
 		exec_cmd_builtin(cmd, is_last_command, tokens, flag);
-	}
 	else
 	{
 		pid = fork();
@@ -83,15 +79,15 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 			if (tokens->e_code == 1)
 				exit (0);
 			exec_builtin_path(cmd, tokens);
-			exit(tokens->e_code);
+			exit (tokens->e_code);
 		}
 		else if (pid > 0)
 		{
 			waitpid(pid, NULL, 0);
 			if (tokens->prev_pipefd[0] != -1)
-				close_pipe(tokens, 1);
+				close_pipe(tokens, 1); ///posbibe
 			if (!is_last_command)
-				close (tokens->pipefd[1]);
+				close_fd (tokens->pipefd[1]);
 		}
 	}
 }
@@ -119,7 +115,7 @@ int	execute_commander(t_infos *tokens)
 			tokens->pipefd[1] = -1;
 		}
 		else
-			close_pipe(tokens, 2);
+			close_pipe(tokens, 2); //possible
 		i++;
 	}
 	return (tokens->e_code);

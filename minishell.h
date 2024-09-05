@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 22:54:03 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:56:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ typedef struct s_infos{
 	t_command	**commands;
 
 	char		***envp;
-	t_pipe		**pipes;
 	int			pipe_index;
 	int			cmd_index;
 	int			red_index;
@@ -79,35 +78,32 @@ typedef struct s_var{
 	
 }t_var;
 
-
-
-
-void setup_signal_handlers_child();
-void handle_sigint_child(int sig);
 void	handle_sigint(int sig);
 void	handle_sigquit(int sig);
 void	signal_handlers(void);
 
 
-void	destroy_cmd_use_pipe_cmd(t_infos *tokens);  //used ?? wherere
-pid_t	fork_process(void); //not sure needed
-
-
+/*ft_itoa.c ....  4func  formatted*/
 char	*ft_itoa(int n);
-int	builtin_export_helper(char **key_value, char ***envp);
-int	alpha_numeric(char *str);
-
-
-
 void	ft_check_builtin(t_command *command, t_infos *tokens);
+int		alpha_numeric(char *str);
+
+
+
+int		builtin_export_helper(char **key_value, char ***envp);
+
+
+
+char	**ft_split(char const *s, char c);
+
 
 /*ft_split_minishell.c ....formatted*/
-char	**ft_split(char const *s, char *delimeter);
+// char	**ft_split(char const *s, char *delimeter);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 
 /* ft_parser.c .... not formatted*/
-void		*ft_sort(t_infos *tokens, char **token_array);
+int ft_sort(t_infos *tokens, char **token_array);
 t_redir		*ft_create_redir(char *str, char *file);
 char		**ft_read_input(char *prompt);
 t_command	*ft_create_cmd(int start, int end, char *tokens_array[], t_infos *tokens);
@@ -126,7 +122,7 @@ char	*fill_word(const char *str, char *list, int *i);
 char	**ft_token_fill(const char *str, char **list);
 
 /* ft_token_split.c not formatted */
-int		count_qoute(const char *str, int i, char a);
+int	count_qoute_f(const char *str, int i);
 int		token_count_words(const char *str);
 char	**ft_token_split(char const *s);
 char	*fill_direct(const char *str, char *list, int *i);
@@ -185,19 +181,19 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter);
 int		handle_redirections(t_command *cmd, t_infos *tokens);
 int		redir_input(t_infos *tokens, char *file);
 int		redir_append_trunc(t_infos *tokens, int type, char *file);
-void	redir_here_docs(char *prompt, char *delimeter);
+void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens);
 
 /*mini_shell_utils1.c ....formated*/
 void	errors(char *str);
 char	*ft_strdup(const char *s);
 void	*ft_malloc(size_t size);
-void	ft_close(int fd);
-void	ft_init(t_var *var, t_infos *tokens);
+void	close_fd(int fd);
+void	ft_init(t_infos *tokens);
 
 /*mini_shell_utils2.c ....formated*/
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
-void	ft_null(t_infos *data);
+pid_t	fork_process(void);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strjoin_new_line(char const *s1, char const *s2);
 

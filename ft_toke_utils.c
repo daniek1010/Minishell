@@ -6,11 +6,28 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 17:00:40 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/04 22:40:08 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 17:41:16 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	count_qoute_f(const char *str, int i)
+{
+	char	a;
+
+	a = str[i];
+	i++;
+	while (str[i] != '\0')
+	{
+		if (str[i] == a)
+		{
+			break ;
+		}
+		i++;
+	}
+	return (i);
+}
 
 char	*list_length_create(const char *str, const int *i)
 {
@@ -20,24 +37,19 @@ char	*list_length_create(const char *str, const int *i)
 
 	y = *i;
 	if (str[*i] == '\'' || str[*i] == '\"')
-	{
-		y = count_qoute (str, y, str[*i]);
-		y++;
-	}
+		y = count_qoute_f (str, y);
 	else
 	{
 		while (!((str[y] <= 13 && str[y] >= 9) || str[y] == 32)
 			&& str[y] != '\0')
-			{
-				if (str[y] == '|' || str[y] == '>' || str[y] == '<')
-					break ;
+		{
+			if (str[y] == '|' || str[y] == '>' || str[y] == '<')
+				break ;
 			y ++;
-			}
+		}
 	}
 	x = y - *i;
 	list = (char *)malloc(sizeof(char) * (x + 1));
-	if (!list)
-		return (NULL);
 	list[x] = '\0';
 	return (list);
 }
@@ -91,14 +103,18 @@ char	*fill_direct(const char *str, char *list, int *i)
 	int	x;
 
 	x = 1;
-	if (str[*i + 1] == '>' || str[*i + 1] == '<')
+	if (str[*i] == '>' && str[*i + 1] == '>')
+		x++;
+	else if (str[*i] == '<' && str[*i + 1] == '<')
+		x++;
+	else if (str[*i] == '>' && str[*i + 1] == '|')
 		x++;
 	list = (char *)malloc(sizeof(char) * (x + 1));
 	if (!list)
 		return (NULL);
 	list[x] = '\0';
 	list[0] = str[*i];
-	if (str[*i + 1] == '>' || str[*i + 1] == '<')
+	if (x == 2)
 	{
 		(*i)++;
 		list[1] = str[*i];
@@ -116,21 +132,18 @@ char	**ft_token_fill(const char *str, char **list)
 	j = -1;
 	while (str[i] != '\0')
 	{
+		j++;
 		if (str[i] == '\'' || str[i] == '\"')
-		{
-			j++;
 			list[j] = fill_qoute_case(str, list[j], &i, str[i]);
-		}
 		else if (str[i] == '|' || str[i] == '>' || str[i] == '<')
-		{
-			j++;
 			list[j] = fill_direct(str, list[j], &i);
-		}
 		else if ((str[i] <= 13 && str[i] >= 9) || str[i] == 32)
+		{
+			j--;
 			i++;
+		}
 		else
 		{
-			j++;
 			list[j] = fill_word(str, list[j], &i);
 		}
 	}

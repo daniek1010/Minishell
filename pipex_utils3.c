@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 20:43:49 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 12:29:56 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 19:43:00 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,15 +112,7 @@
 // }
 
 
-pid_t	fork_process(void)
-{
-	pid_t	pid;
 
-	pid = fork();
-	if (pid == -1)
-		ft_putendl_fd("couldn't fork",STDERR_FILENO);
-	return (pid);
-}
 
 // void	ft_dup(int pipefd[2], int fd)
 // {

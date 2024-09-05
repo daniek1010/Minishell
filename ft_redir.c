@@ -6,32 +6,11 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 23:00:09 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/05 14:44:20 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	handle_sigint_child(int sig)
-{
-	(void)sig;
-	g_int = 0;
-	rl_replace_line("", 0);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-    exit(130);
-}
-
-void	handle_sig_ignore(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-}
-
-void	setup_signal_handlers_child()
-{
-	signal(SIGINT, handle_sigint_child);
-	signal(SIGQUIT, handle_sig_ignore);
-}
 
 char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 {
@@ -39,6 +18,7 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	char	*str = NULL;
 
 	str = NULL;
+	g_int = 1;
 	while (1)
 	{
 		input_read = readline(prompt);
@@ -57,12 +37,14 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	}
 	if (input_read)
 		free (input_read);
+	g_int = 0;
 	return (str);
 }
 
-void	redir_here_docs(char *prompt, char *delimeter)
+void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens)
 {
 	char	*input;
+	char	*new_input;
 	int		pipefd[2];
 
 	pipe_create(pipefd);
@@ -74,9 +56,18 @@ void	redir_here_docs(char *prompt, char *delimeter)
 		close(pipefd[1]);
 		return ;
 	}
-	write(pipefd[1], input, ft_strlen(input));
+	new_input = ft_extract_variables(input, tokens);
+	if (new_input)
+	{
+		write(pipefd[1], new_input, ft_strlen(new_input));
+		free (new_input);
+	}
+	else
+	{
+		write(pipefd[1], input, ft_strlen(input));
+		free(input);
+	}
 	close(pipefd[1]);
-	free (input);
 	dup2(pipefd[0], STDIN_FILENO);
 	close(pipefd[0]);
 }
@@ -103,7 +94,7 @@ int	handle_redirections(t_command *cmd, t_infos *tokens)
 						return (0) ;
 			}
 			else
-				redir_here_docs("> ", cmd->redir_cmd[i]->file);
+				redir_here_docs("> ", cmd->redir_cmd[i]->file, tokens);
 			i++;
 		}
 	}
