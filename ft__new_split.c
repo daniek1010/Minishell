@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 12:50:03 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/06 17:35:37 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/06 17:40:23 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,6 @@ char	*fill_word(const char *str, char *list, int *i)
 	x = 0;
 	j = count_string_length(str, *i);
 	j = j - *i;
-	printf("j is %d",j);
 	list = (char *)malloc(sizeof(char) * (j + 1));
 	list[j] = '\0';
 	while (x < j)
@@ -205,7 +204,6 @@ char	**ft_token_split(char const *s)
 	char	**list;
 
 	word = token_count_words(s);
-	printf("-words = %d\n", word);
 	list = (char **)malloc(sizeof(char *) * (word + 1));
 	if (!list)
 		return (NULL);
