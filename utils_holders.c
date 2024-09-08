@@ -6,75 +6,11 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 21:14:40 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 20:36:19 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	handle_sigint(int sig)
-{
-	(void)sig;
-	if (!g_int)
-	{
-		g_int = 1;
-		rl_replace_line("", 0);
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	else
-	{
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-}
-
-void	handle_sigquit(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-}
-
-void	signal_handlers(void)
-{
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-}
-
-int	builtin_export_helper(char **key_value, char ***envp)
-{
-	int		i;
-	char	*str;
-
-	i = 1;
-	while (key_value[i] != NULL)
-	{
-		str = ft_strchr(key_value[i], '=');
-		if (str)
-		{
-			*str = '\0';
-			if (alpha_numeric(key_value[i]))
-				set_env_var(envp, key_value[i], str + 1);
-			else
-			{
-				*str = '=';
-				printf("%s:\'%s\': not a valid identifier\n",
-					key_value[0], key_value[i]);
-				return (1);
-			}
-		}
-		else
-		{
-			printf("%s:\'%s\': not a valid identifier\n",
-				key_value[0], key_value[i]);
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
 
 t_command	*init_cmd(int *flag)
 {
@@ -87,4 +23,69 @@ t_command	*init_cmd(int *flag)
 	cmd->redir_count = 0;
 	*flag = 1;
 	return (cmd);
+}
+
+int	create_new(char ***envp, char *str, int i, int j)
+{
+	char	**new_envp;
+
+	if (compare_key(envp, str, i))
+	{
+		free ((*envp)[i]);
+		new_envp = (char **)ft_malloc(sizeof(char *) * (j));
+		builtin_unset_helper(&new_envp, envp, j, i);
+		return (1);
+	}
+	return (0);
+}
+
+const char	*builtin_cd_helper(char ***envp, const char *path)
+{
+	const char	*home;
+
+	if (!path)
+	{
+		home = get_env_var((*envp), "HOME");
+		if (!home)
+			errors("HOME path not set");
+		path = home;
+	}
+	return (path);
+}
+
+void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
+{
+	char	*new_input;
+
+	new_input = ft_extract_variables(input, tokens);
+	if (new_input)
+	{
+		write(pipefd[1], new_input, ft_strlen(new_input));
+		free (new_input);
+	}
+	else
+	{
+		write(pipefd[1], input, ft_strlen(input));
+		free(input);
+	}
+	close_fd(pipefd[1]);
+	dup2(pipefd[0], STDIN_FILENO);
+	close_fd(pipefd[0]);
+}
+
+void	wait_for_child(pid_t pid, t_infos *tokens, int is_last_command)
+{
+	int	status;
+
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, handle_sig_parent);
+	signal(SIGQUIT, SIG_IGN);
+	if (WIFEXITED(status))
+		tokens->e_code = WEXITSTATUS(status);
+	if (tokens->prev_pipefd[0] != -1)
+		close_pipe(tokens, 1);
+	if (!is_last_command)
+		close_fd (tokens->pipefd[1]);
 }

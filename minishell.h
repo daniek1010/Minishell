@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 21:17:18 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 20:36:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 # define MINISHELL_H
 
-#include <string.h> // used it for strcat
-
+# include <string.h>
 # include <signal.h>
 # include <stdio.h>
 # include <unistd.h>
@@ -30,10 +29,8 @@
 # define INPUT		0
 # define TRUNC		1
 # define APPEND		2
-# define HEREDOC		3
+# define HEREDOC	3
 # define INIT_SIZE	64
-
-extern volatile sig_atomic_t	g_int;
 
 typedef struct s_redir
 {
@@ -66,12 +63,17 @@ typedef struct s_infos
 
 }	t_infos;
 
-/* builtin.c .... not formated ... unset*/
-int		builtin_export(char ***envp, char *key_value[]);
-int		builtin_unset(char ***envp, char *key[]);
-int		builtin_env(char ***envp);
-int		builtin_echo(t_command *cmd);
-int		builtin_cd(char ***envp, const char *path);
+void	handle_sig_parent(int sig);
+void	signal_handlers(void);
+void	signal_handlers_child(void);
+void	handle_sig_child(int sig);
+void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens);
+void	wait_for_child(pid_t pid, t_infos *tokens, int is_last_command);
+
+/* still in main.... not formatted*/
+const char	*builtin_cd_helper(char ***envp, const char *path);
+/* still in main.... not formatted*/
+int		create_new(char ***envp, char *str, int i, int j);
 
 /* ft_parser.c .... not formatted*/
 int		ft_sort(t_infos *tokens, char **token_array);
@@ -81,11 +83,8 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
 			t_infos *tokens);
 
 /* utils_holders.c .... not formatted*/
-void	handle_sigint(int sig);
-void	handle_sigquit(int sig);
-void	signal_handlers(void);
 int		builtin_export_helper(char **key_value, char ***envp); //too large
-t_command	*init_cmd(int *flag);
+t_command		*init_cmd(int *flag);
 
 /* ft_toke_utils.c not formatted*/
 char	*list_length_create(const char *str, const int *i);
@@ -109,6 +108,13 @@ int		execute_commander(t_infos *tokens);
 int		exec_builtin_path(t_command *command, t_infos *tokens);
 
 // ***********done formated ************
+/* builtin.c .... not formated ... unset*/
+int		builtin_export(char ***envp, char *key_value[]);
+int		builtin_unset(char ***envp, char *key[]);
+int		builtin_env(char ***envp);
+int		builtin_echo(t_command *cmd);
+int		builtin_cd(char ***envp, const char *path);
+
 /* ft_expand_var.c .... formatted*/
 char	*replace_substring(char *str, char *to_replace, char *replacement);
 char	*isolate_variable(char *str, int i);
@@ -119,7 +125,8 @@ char	*ft_extract_variables(char *str, t_infos *tokens);
 /*ft_redir_dollar.c.... formatted*/
 int		is_redirection_char(t_command *cmd, char *token_array[], int *start);
 char	*ft_strstr(char *haystack, char *needle);
-int		is_dollar_char(t_command *cmd, char *token_array, int *start, t_infos *tokens);
+int		is_dollar_char(t_command *cmd, char *token_array,
+			int *start, t_infos *tokens);
 int		ft_isalnum(int c);
 int		is_valid_var_char(char c);
 

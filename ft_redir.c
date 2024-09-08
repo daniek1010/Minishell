@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 20:27:35 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 20:09:34 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,14 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	char	*str;
 
 	str = NULL;
-	g_int = 1;
 	while (1)
 	{
 		input_read = readline(prompt);
 		if (!input_read)
 		{
-			if (str)
-				free (str);
-			ft_putstr_fd("minishell: warning: here-document: ", STDOUT_FILENO);
-			ft_putendl_fd(delimeter, STDOUT_FILENO);
-			exit(EXIT_FAILURE);
+			ft_putstr_fd("minishell: warning: here-document: ", STDERR_FILENO);
+			ft_putendl_fd(delimeter, STDERR_FILENO);
+			return (str);
 		}
 		if (ft_strcmp(input_read, delimeter) == 0)
 			break ;
@@ -37,39 +34,23 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	}
 	if (input_read)
 		free (input_read);
-	g_int = 0;
 	return (str);
 }
 
 void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens)
 {
 	char	*input;
-	char	*new_input;
 	int		pipefd[2];
 
 	pipe_create(pipefd);
 	input = ft_read_input_here_doc(prompt, delimeter);
 	if (!input)
 	{
-		free (input);
-		close(pipefd[0]);
-		close(pipefd[1]);
+		close_fd(pipefd[0]);
+		close_fd(pipefd[1]);
 		return ;
 	}
-	new_input = ft_extract_variables(input, tokens);
-	if (new_input)
-	{
-		write(pipefd[1], new_input, ft_strlen(new_input));
-		free (new_input);
-	}
-	else
-	{
-		write(pipefd[1], input, ft_strlen(input));
-		free(input);
-	}
-	close(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
+	redir_here_doc_helper(input, pipefd, tokens);
 }
 
 int	handle_redirections(t_command *cmd, t_infos *tokens)

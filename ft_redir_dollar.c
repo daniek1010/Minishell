@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 20:22:50 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/06 12:26:56 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ int	is_redirection_char(t_command *cmd, char *token_array[], int *start)
 			return (1);
 		}
 		else
+		{
+			printf("minishell: syntax error near unexpected token `newline'\n");
 			return (-1);
+		}
 	}
 	return (0);
 }
@@ -73,7 +76,7 @@ int	is_dollar_char(t_command *cmd, char *token_array, int *start,
 	{
 		if (value[0] == '"')
 			value++;
-		cmd->args[cmd->i++] = value;
+		cmd->args[cmd->i++] = ft_strdup(value);
 		(*start)++;
 		return (1);
 	}

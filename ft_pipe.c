@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 15:37:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 20:33:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void	builtin_handler(t_command *cmd, t_infos *tokens)
 	{
 		if (cmd->redir_count > 0)
 			handle_redirections(cmd, tokens);
+		if (tokens->e_code == 1)
+				return ;
 		exec_builtin_path(cmd, tokens);
 	}
 }

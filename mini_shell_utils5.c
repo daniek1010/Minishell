@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 20:12:46 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 19:14:39 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@ void	free_name_args(t_command *cmd)
 	int	i;
 
 	if (cmd->name)
+	{
 		free(cmd->name);
-	cmd->name = NULL;
+		cmd->name = NULL;
+	}
 	if (cmd->args)
 	{
 		i = 0;

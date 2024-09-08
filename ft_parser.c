@@ -6,17 +6,17 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 21:17:54 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/06 20:28:45 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**ft_read_input(char *prompt)
+char	**ft_read_input(char *prompt) //token should be recived here
 {
 	char	*input_read;
 	char	**tokens;
-	char	**empty_input;
+	// char	**empty_input;
 
 	input_read = readline(prompt);
 	if (input_read == NULL)
@@ -24,16 +24,16 @@ char	**ft_read_input(char *prompt)
 		free (input_read);
 		return (NULL);
 	}
-	if (input_read[0] == '\0')
-	{
-		empty_input = malloc(sizeof(char *) * 2);
-		empty_input[0] = ft_strdup("");
-		empty_input[1] = NULL;
-		free(input_read);
-		return (empty_input);
-	}
+	// if (input_read[0] == '\0')
+	// {
+	// 	empty_input = malloc(sizeof(char *) * 2);
+	// 	empty_input[0] = ft_strdup("");
+	// 	empty_input[1] = NULL;
+	// 	free(input_read);
+	// 	return (empty_input);
+	// }
 	add_history(input_read);
-	tokens = ft_token_split(input_read);
+	tokens = ft_token_split(input_read);//token should add here aswell
 	free (input_read);
 	return (tokens);
 }
@@ -104,6 +104,11 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
 	}
 	cmd->args[cmd->i] = NULL;
 	cmd->redir_cmd[cmd->redir_count] = NULL;
+	if (redir_status < 0)
+	{
+		free_command(cmd);
+		return (NULL);
+	}
 	return (cmd);
 }
 
@@ -118,6 +123,8 @@ int	ft_sort(t_infos *tokens, char **token_array)
 
 	ft_init(tokens);
 	i = 0;
+	if (!token_array)
+		return 0;
 	while (token_array[i] != NULL)
 	{
 		start = i;
@@ -126,7 +133,7 @@ int	ft_sort(t_infos *tokens, char **token_array)
 			i++;
 		command = ft_create_cmd(start, i - 1, token_array, tokens);
 		if (!command)
-			return (0);
+			break ;
 		tokens->commands[tokens->cmd_index++] = command;
 		if (ft_strcmp(token_array[i], "|") == 0)
 		{
@@ -136,5 +143,7 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	}
 	tokens->commands[tokens->cmd_index] = NULL;
 	ft_cleaner(token_array);
+	// if (!command)
+	// 	return (0);
 	return (1);
 }

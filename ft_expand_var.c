@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_execute_cmds.c                                  :+:      :+:    :+:   */
+/*   ft_expand_var.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/04 22:19:46 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/06 12:00:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ char	*expand_var(t_infos *tokens, char *str, int x, int *flag)
 	}
 	else
 		replace = get_env_var(*(tokens->envp), var);
+	free (var);
 	return (replace);
 }
 
@@ -97,7 +98,6 @@ char	*add_var(char *str, int *i, t_infos *tokens)
 	*i += ft_strlen(replace);
 	if (flag)
 		free (replace);
-	free(str);
 	return (new);
 }
 

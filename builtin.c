@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/03 18:56:30 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/08 19:00:25 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ int	builtin_unset(char ***envp, char *key[])
 	int		i;
 	int		j;
 	int		k;
-	char	**new_envp;
 
 	i = 0;
 	j = 0;
@@ -106,13 +105,8 @@ int	builtin_unset(char ***envp, char *key[])
 			j++;
 		while ((*envp)[i])
 		{
-			if (compare_key(envp, key[k], i))
-			{
-				free ((*envp)[i]);
-				new_envp = (char **)ft_malloc(sizeof(char *) * (j));
-				builtin_unset_helper(&new_envp, envp, j, i);
+			if (create_new(envp, key[k], i, j))
 				break ;
-			}
 			i++;
 		}
 		k++;
@@ -126,18 +120,12 @@ int	builtin_unset(char ***envp, char *key[])
 and return the path to the HOME dir and use pwd to printout */
 int	builtin_cd(char ***envp, const char *path)
 {
-	const char	*home;
+	const char	*path_;
 	char		*old_pwd;
 	char		*new_path;
 
-	if (!path)
-	{
-		home = get_env_var((*envp), "HOME");
-		if (!home)
-			errors("HOME path not set");
-		path = home;
-	}
-	if (chdir(path) != 0)
+	path_ = builtin_cd_helper(envp, path);
+	if (chdir(path_) != 0)
 	{
 		perror("CHDIR");
 		return (2);
@@ -147,7 +135,7 @@ int	builtin_cd(char ***envp, const char *path)
 		old_pwd = get_env_var((*envp), "PWD");
 		set_env_var(envp, "OLDPWD", old_pwd);
 		new_path = getcwd(NULL, 0);
-		if (!new_path)	
+		if (!new_path)
 			return (3);
 		set_env_var(envp, "PWD", new_path);
 		free(new_path);
