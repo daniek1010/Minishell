@@ -6,22 +6,11 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 12:50:03 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/09 12:47:03 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/09 12:58:09 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string.h> // used it for strcat
-
-# include <signal.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <fcntl.h>
-# include <sys/wait.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+#include "minishell.h"
 
 int	pipe_count(const char *str, int i, int *count, int *in_word)
 {
@@ -362,6 +351,52 @@ char	*ft_extract_variables(char *str, t_infos *tokens)
 	}
 	return (str);
 }
+//----------------------
+
+char *remove_char_at_position(char *str, int pos)
+{
+	int		len;
+	char	*new_str;
+
+	len = ft_strlen(str);
+	*new_str = (char *)malloc((len) * sizeof(char));
+	if (!new_str)
+		return (NULL);
+	ft_strncpy(new_str, str, pos);
+	ft_strcpy(new_str + pos, str + pos + 1);
+	free (str);
+	return (new_str);
+}
+
+char *remove_qoute(char *str)
+{
+	int	i;
+	int	in_qoute_1;
+	int	in_qoute_2;
+
+	i = 1;
+	in_qoute_1 = 2;
+	in_qoute_2 = 2;
+	if (str[0] == '\'' && in_qoute_1 % 2 == 0)
+		in_qoute_2 += 1;
+	else if (str[0] == '\"' && in_qoute_2 % 2 == 0)
+		in_qoute_1 += 1;
+	while (str[i] != '\0')
+	{
+		if (str[i] == '\'' && in_qoute_1 % 2 == 0)
+			in_qoute_2 += 1;
+		else if (str[i] == '\"' && in_qoute_2 % 2 == 0)
+			in_qoute_1 += 1;
+		else if (str[i] == '$' && in_qoute_2 % 2 == 0)
+			str = remove_char_at_position(str, i);
+		else if (str[i] == '\'' && in_qoute_1 % 2 == 0)
+			str = remove_char_at_position(str,i);
+		i++;
+	}
+	return (str);
+}
+
+//------------------------------------------------------------------
 
 char	**ft_var_up(char **list, int count, t_infos *tokens)
 {
@@ -371,14 +406,13 @@ char	**ft_var_up(char **list, int count, t_infos *tokens)
 	while (x != count)
 	{
 		list[x] = ft_extract_variables(list[x], tokens);
-		//list[x] = ft_remove_qoutation();
+		list[x] = ft_remove_qoutation();
 		x++;
 	}
 	return (list);
 }
 
 //-------------------------------------------------------------------------------------------------
-// include t_infos *tokens
 char	**ft_token_split(char const *s, t_infos *tokens)
 {
 	int		word;
