@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 12:50:03 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/09 12:58:09 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/09 12:59:43 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,6 +424,6 @@ char	**ft_token_split(char const *s, t_infos *tokens)
 		return (NULL);
 	list[word] = NULL;
 	list = ft_token_fill(s, list);
-	list = ft_var_up(list, word);
+	list = ft_var_up(list, word, tokens);
 	return (list);
 }
