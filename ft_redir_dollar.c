@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/06 12:26:56 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 21:11:54 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,6 @@ char	*ft_strstr(char *haystack, char *needle)
 	return (NULL);
 }
 
-int	is_dollar_char(t_command *cmd, char *token_array, int *start,
-	t_infos *tokens)
-{
-	char	*value;
-
-	value = ft_extract_variables(token_array, tokens);
-	if (value)
-	{
-		if (value[0] == '"')
-			value++;
-		cmd->args[cmd->i++] = ft_strdup(value);
-		(*start)++;
-		return (1);
-	}
-	return (0);
-}
-
 int	ft_isalnum(int c)
 {
 	return (((c > 96 && c < 123) || (c > 64 && c < 91))
@@ -92,4 +75,26 @@ int	ft_isalnum(int c)
 int	is_valid_var_char(char c)
 {
 	return (ft_isalnum(c) || c == '_');
+}
+
+void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
+{
+	char	**new_input;
+	char	*converted_str;
+
+	new_input = ft_token_spliter_2(input, tokens);
+	if (new_input)
+	{
+		converted_str = convert_str(new_input);
+		write(pipefd[1], converted_str, ft_strlen(converted_str));
+		free (new_input);
+	}
+	else
+	{
+		write(pipefd[1], input, ft_strlen(input));
+		free(input);
+	}
+	close_fd(pipefd[1]);
+	dup2(pipefd[0], STDIN_FILENO);
+	close_fd(pipefd[0]);
 }

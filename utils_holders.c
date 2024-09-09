@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/08 20:36:19 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 21:15:34 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,24 +53,33 @@ const char	*builtin_cd_helper(char ***envp, const char *path)
 	return (path);
 }
 
-void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
+char	*convert_str(char **input)
 {
-	char	*new_input;
+	int		i;
+	int		len;
+	char	*new_str;
 
-	new_input = ft_extract_variables(input, tokens);
-	if (new_input)
+	if (!input)
+		return (NULL);
+	i = 0;
+	len = 0;
+	while (input[i] != NULL)
 	{
-		write(pipefd[1], new_input, ft_strlen(new_input));
-		free (new_input);
+		len += (ft_strlen(input[i]) + 1);
+		i++;
 	}
-	else
+	new_str = malloc(sizeof(char) * (len + 1));
+	if (!new_str)
+		return (new_str);
+	i = 0;
+	new_str[0] = '\0';
+	while (input[i] != NULL)
 	{
-		write(pipefd[1], input, ft_strlen(input));
-		free(input);
+		strcat(new_str, input[i]);
+		strcat(new_str, "\n");
+		i++;
 	}
-	close_fd(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close_fd(pipefd[0]);
+	return (new_str);
 }
 
 void	wait_for_child(pid_t pid, t_infos *tokens, int is_last_command)

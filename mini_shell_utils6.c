@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/06 12:34:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 22:01:20 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ int	is_builtin(char *type)
 	return (0);
 }
 
-int	not_env_path(t_command *cmd, int i, int x)
+void	skip_until_pipe_end(char **token_array, int *i)
 {
-	if (ft_strcmp(cmd->args[i], "404") == 0)
-		return (1);
-	return (0);
+	while (token_array[*i] && ft_strcmp(token_array[*i],
+			"|") != 0)
+		(*i)++;
 }
 
 int	echo_new_line(t_command *cmd)
@@ -36,11 +36,6 @@ int	echo_new_line(t_command *cmd)
 	i = 1;
 	while (cmd->args[i])
 	{
-		if (not_env_path(cmd, i, 1))
-		{
-			i++;
-			continue ;
-		}
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 		if (cmd->args[i + 1] != NULL)
 			ft_putstr_fd(" ", STDOUT_FILENO);

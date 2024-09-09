@@ -1,6 +1,6 @@
 NAME = minishell
 CC = gcc
-CFLAGS =  -Wall -g -I.
+CFLAGS =  -Wall -Werror -Wextra -g -I.
 LDFLAGS = -lreadline -lncurses
 INCLUDE = minishell.h
 SRC_DIR = .

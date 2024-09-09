@@ -6,36 +6,32 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/06 20:28:45 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 22:37:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**ft_read_input(char *prompt) //token should be recived here
+char	**ft_read_input(char *prompt, t_infos *tokens)
 {
 	char	*input_read;
-	char	**tokens;
-	// char	**empty_input;
+	char	**tokens_array;
 
 	input_read = readline(prompt);
+	if (g_exit == 130)
+	{
+		tokens->e_code = 130;
+		g_exit = -1;
+	}
 	if (input_read == NULL)
 	{
 		free (input_read);
 		return (NULL);
 	}
-	// if (input_read[0] == '\0')
-	// {
-	// 	empty_input = malloc(sizeof(char *) * 2);
-	// 	empty_input[0] = ft_strdup("");
-	// 	empty_input[1] = NULL;
-	// 	free(input_read);
-	// 	return (empty_input);
-	// }
 	add_history(input_read);
-	tokens = ft_token_split(input_read);//token should add here aswell
+	tokens_array = ft_token_spliter_2(input_read, tokens);
 	free (input_read);
-	return (tokens);
+	return (tokens_array);
 }
 
 /* checks for redir and simply return a value if found*/
@@ -83,8 +79,7 @@ void	save_name_args(t_command *cmd, int *flag,
 	}
 }
 
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
-	t_infos *tokens)
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
 {
 	int			redir_status;
 	t_command	*cmd;
@@ -93,8 +88,6 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
 	cmd = init_cmd(&flag);
 	while (start <= end)
 	{
-		if (is_dollar_char(cmd, tokens_array[start], &start, tokens))
-			continue ;
 		redir_status = is_redirection_char(cmd, tokens_array, &start);
 		if (redir_status > 0)
 			continue ;
@@ -123,15 +116,11 @@ int	ft_sort(t_infos *tokens, char **token_array)
 
 	ft_init(tokens);
 	i = 0;
-	if (!token_array)
-		return 0;
 	while (token_array[i] != NULL)
 	{
 		start = i;
-		while (token_array[i] && ft_strcmp(token_array[i],
-				"|") != 0)
-			i++;
-		command = ft_create_cmd(start, i - 1, token_array, tokens);
+		skip_until_pipe_end(token_array, &i);
+		command = ft_create_cmd(start, i - 1, token_array);
 		if (!command)
 			break ;
 		tokens->commands[tokens->cmd_index++] = command;
@@ -143,7 +132,7 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	}
 	tokens->commands[tokens->cmd_index] = NULL;
 	ft_cleaner(token_array);
-	// if (!command)
-	// 	return (0);
+	if (!command)
+		return (0);
 	return (1);
 }

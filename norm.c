@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/08 20:27:45 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 23:15:31 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 {
 	pid_t	pid;
 
+	tokens->e_code = 0;
 	if (is_builtin(cmd->name))
 		exec_cmd_builtin(cmd, is_last_command, tokens, flag);
 	else
@@ -90,7 +91,6 @@ int	execute_commander(t_infos *tokens)
 
 	init_pipe(tokens);
 	i = 0;
-	flag = 0;
 	while (i < tokens->cmd_index)
 	{
 		is_last_cmd = (i == tokens->cmd_index - 1);

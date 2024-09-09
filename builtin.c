@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/08 19:00:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/09 21:57:49 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ int	builtin_echo(t_command *cmd)
 		i = 2;
 		while (cmd->args[i])
 		{
-			if (not_env_path(cmd, i, 0))
-				i++;
 			ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 			if (cmd->args[i + 1] != NULL)
 				ft_putstr_fd(" ", STDOUT_FILENO);
