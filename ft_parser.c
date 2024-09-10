@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 22:37:57 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:05:06 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	**ft_read_input(char *prompt, t_infos *tokens)
 		return (NULL);
 	}
 	add_history(input_read);
-	tokens_array = ft_token_spliter_2(input_read, tokens);
+	tokens_array = ft_token_spliter(input_read, tokens);
 	free (input_read);
 	return (tokens_array);
 }
@@ -122,7 +122,7 @@ int	ft_sort(t_infos *tokens, char **token_array)
 		skip_until_pipe_end(token_array, &i);
 		command = ft_create_cmd(start, i - 1, token_array);
 		if (!command)
-			break ;
+			return (0);
 		tokens->commands[tokens->cmd_index++] = command;
 		if (ft_strcmp(token_array[i], "|") == 0)
 		{
@@ -132,7 +132,5 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	}
 	tokens->commands[tokens->cmd_index] = NULL;
 	ft_cleaner(token_array);
-	if (!command)
-		return (0);
 	return (1);
 }

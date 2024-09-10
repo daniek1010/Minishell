@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:39:45 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 20:24:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:15:22 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	ft_check_builtin(t_command *command, t_infos *tokens)
 		tokens->e_code = builtin_pwd();
 	else if (ft_strcmp("exit", command->name) == 0)
 	{
-		ft_putendl_fd("exiting", STDOUT_FILENO);
+		ft_putendl_fd("exit", STDOUT_FILENO);
 		tokens->e_code = -5;
 	}
 }

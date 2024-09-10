@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_holders.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 21:15:34 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:06:33 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ char	*convert_str(char **input)
 	new_str[0] = '\0';
 	while (input[i] != NULL)
 	{
-		strcat(new_str, input[i]);
-		strcat(new_str, "\n");
+		ft_strcat(new_str, input[i]);
+		ft_strcat(new_str, "\n");
 		i++;
 	}
 	return (new_str);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 23:19:59 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:13:46 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	mini_shell(t_infos *tokens)
 		token_array = ft_read_input("Minishell> ", tokens);
 		if (token_array == NULL)
 		{
-			ft_putendl_fd("exiter", STDOUT_FILENO);
+			ft_putendl_fd("exit", STDOUT_FILENO);
 			break ;
 		}
 		if (!ft_sort(tokens, token_array))

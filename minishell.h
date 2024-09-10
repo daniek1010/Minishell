@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 23:23:43 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:11:58 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ typedef struct s_infos
 
 }	t_infos;
 
-char		**ft_token_spliter_2(char const *s, t_infos *tokens);
+char		**ft_token_spliter(char const *s, t_infos *tokens);
 char		*convert_str(char **input);
 void		restore_stdout(t_infos *tokens);
 
@@ -189,5 +189,37 @@ int			builtin_pwd(void);
 int			echo_new_line(t_command *cmd);
 int			builtin_unset_helper(char ***new_envp, char ***envp, int j, int i);
 void		skip_until_pipe_end(char **token_array, int *i);
+
+/* split_utils.c */
+char		*ft_strncpy(char *dest, const char *src, size_t n);
+char		*ft_strcat(char *dest, const char *src);
+int			pipe_count(const char *str, int i, int *count, int *in_word);
+int			count_qoute(const char *str, int i, int *count, int	*in_word);
+int			count_word_2(const char *str, int i, int *count, int	*in_word);
+
+/* split_utils2.c */
+int			token_count_words(const char *str);
+int			count_string_length(const char *str, int i);
+char		*fill_word(const char *str, char *list, int *i);
+char		*fill_direct(const char *str, char *list, int *i);
+char		**ft_token_fill(const char *str, char **list);
+
+/* split_utils3.c */
+char		*fill_part_one(const char *str, int *j, int i);
+char		*fill_part_two(const char *str, char *new_str, int j, int i);
+char		*remove_char( char *str, char to_remove, int i);
+char		*replace_substring(char *str, char *to_rep, char *repment, int *i);
+char		*isolate_variable(char *str, int i);
+
+/* split_utils4.c */
+char		*expand_var(t_infos *tokens, char *str, int x);
+char		*remove_char_at_position(char *str, int pos);
+char		*remove_substring(const char *str, const char *to_rep, int *i);
+char		*add_var(char *str, int *i, t_infos *tokens);
+char		*ft_extract_variables(char *str, t_infos *tokens);
+
+/* minishell_utils8.c */
+int			ft_atoi(const char *str);
+int			ft_isdigit(int c);
 
 #endif

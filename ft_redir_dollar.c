@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redir_dollar.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 21:11:54 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 13:28:10 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
 	char	**new_input;
 	char	*converted_str;
 
-	new_input = ft_token_spliter_2(input, tokens);
+	new_input = ft_token_spliter(input, tokens);
 	if (new_input)
 	{
 		converted_str = convert_str(new_input);

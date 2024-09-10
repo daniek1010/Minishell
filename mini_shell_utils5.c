@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils5.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
+/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/08 19:14:39 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 14:07:09 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	add_shlvl(t_infos *tokens)
 	int		shlvl_i;
 
 	shlvl_get = get_env_var(*(tokens->envp), "SHLVL");
-	shlvl_i = atoi(shlvl_get);
+	shlvl_i = ft_atoi(shlvl_get);
 	shlvl_i += 1;
 	shlvl_set = ft_itoa(shlvl_i);
 	set_env_var(tokens->envp, "SHLVL", shlvl_set);
