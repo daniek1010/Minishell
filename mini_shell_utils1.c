@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 08:50:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 23:19:25 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 20:18:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,5 @@ void	ft_init(t_infos *tokens)
 	tokens->red_index = 0;
 	tokens->save_fdin = -1;
 	tokens->save_fdout = -1;
+	tokens->exit_flag = 0;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_expand_var.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:31:07 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 22:14:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int	export_helper_2(char **key_value, char ***envp, char *key, char *value)
 	}
 	else
 	{
-		printf("%s:\'%s\': not a valid identifier\n", key_value[0], key);
+		printf("minishell: %s:\'%s\': not a valid identifier\n",
+			key_value[0], key);
 		return (1);
 	}
 }
@@ -35,6 +36,8 @@ int	builtin_export_helper(char **key_value, char ***envp)
 	i = 1;
 	while (key_value[i] != NULL)
 	{
+		if (print_error(key_value[i], key_value[0]))
+			return (1);
 		str = ft_strchr(key_value[i], '=');
 		if (str)
 		{
@@ -45,11 +48,7 @@ int	builtin_export_helper(char **key_value, char ***envp)
 				return (result);
 		}
 		else
-		{
-			printf("%s:\'%s\': not a valid identifier\n",
-				key_value[0], key_value[i]);
-			return (1);
-		}
+			return (0);
 		i++;
 	}
 	return (0);

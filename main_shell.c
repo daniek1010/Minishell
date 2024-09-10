@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:13:46 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 22:19:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,14 @@ int	mini_shell(t_infos *tokens)
 			continue ;
 		}
 		execute_commander(tokens);
-		if (tokens->e_code == -5)
+		if (tokens->exit_flag)
 		{
-			tokens->e_code = 0;
 			free_tokens(tokens);
 			break ;
 		}
 		free_tokens(tokens);
 	}
-	return (0);
+	return (tokens->e_code);
 }
 
 void	handle_sig_parent(int sig)
@@ -63,6 +62,7 @@ int	main(int ac, char *av[], char *envp[])
 {
 	char	**env;
 	t_infos	*tokens;
+	int		status;
 
 	(void)ac;
 	(void)av;
@@ -72,9 +72,9 @@ int	main(int ac, char *av[], char *envp[])
 	tokens->envp = &env;
 	tokens->e_code = 0;
 	add_shlvl(tokens);
-	mini_shell(tokens);
+	status = mini_shell(tokens);
 	ft_cleaner(*(tokens->envp));
 	free(tokens);
 	tokens = NULL;
-	return (0);
+	return (status);
 }

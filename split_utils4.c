@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_utils4.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:51:00 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/10 14:10:07 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 15:56:01 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ char	*expand_var(t_infos *tokens, char *str, int x)
 		return (replace);
 	}
 	replace = ft_strdup(get_env_var(*(tokens->envp), var));
+	free (var);
 	return (replace);
 }
 

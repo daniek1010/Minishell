@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:39:45 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:49:50 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 22:06:11 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,20 +63,48 @@ int	alpha_numeric(char *str)
 {
 	int	i;
 
+	if ((str[0] >= '0' && str[0] <= '9'))
+		return (0);
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')
+		if ((str[i] >= 'a' && str[i] <= 'z')
+			|| (str[i] >= 'A' && str[i] <= 'Z')
 			|| (str[i] >= '0' && str[i] <= '9'))
-		{
-			if ((str[0] >= '0' && str[0] <= '9'))
-				return (0);
 			i++;
-		}
 		else
 			return (0);
 	}
 	return (1);
+}
+
+int	builtin_exit(char **args, t_infos *tokens)
+{
+	int	i;
+	int	exit_code;
+
+	ft_putendl_fd("exit", STDOUT_FILENO);
+	tokens->exit_flag = 1;
+	if (args[1] == NULL)
+		return (0);
+	i = 0;
+	while (args[1][i] != '\0')
+	{
+		if (!ft_isdigit(args[1][i]) && (args[1][0] != '+' && args[1][0] != '-'))
+		{
+			printf("minishell: exit: %s: numeric argument required\n", args[1]);
+			return (2);
+		}
+		i++;
+	}
+	if (args[2] != NULL)
+	{
+		printf("minishell: exit: too many arguments\n");
+		tokens->exit_flag = 0;
+		return (1);
+	}
+	exit_code = ft_atoi(args[1]);
+	return (exit_code);
 }
 
 void	ft_check_builtin(t_command *command, t_infos *tokens)
@@ -91,35 +119,9 @@ void	ft_check_builtin(t_command *command, t_infos *tokens)
 	else if (ft_strcmp("unset", command->name) == 0)
 		tokens->e_code = builtin_unset(tokens->envp, command->args);
 	else if (ft_strcmp("cd", command->name) == 0)
-	{
-		if (command->args[2])
-		{
-			printf("bash: cd: too many arguments\n");
-			tokens->e_code = 1;
-		}
-		else
-		{
-			if (command->args[1])
-				printf("**** %s\n", command->args[1]);
-			tokens->e_code = builtin_cd(tokens->envp, command->args[1]);
-		}
-	}
+		tokens->e_code = builtin_cd(tokens->envp, command->args);
 	else if (ft_strcmp("pwd", command->name) == 0)
 		tokens->e_code = builtin_pwd();
 	else if (ft_strcmp("exit", command->name) == 0)
-	{
-		ft_putendl_fd("exit", STDOUT_FILENO);
-		tokens->e_code = -5;
-	}
-}
-
-int	is_filename(char *token_array[], int start)
-{
-	if (is_redir(token_array, start))
-		return (0);
-	else if (ft_strcmp(token_array[start], "|") == 0
-		|| ft_strcmp(token_array[start], "*") == 0
-		|| ft_strcmp(token_array[start], "?") == 0)
-		return (0);
-	return (1);
+		tokens->e_code = builtin_exit(command->args, tokens);
 }

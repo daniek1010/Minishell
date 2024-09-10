@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/09 21:57:49 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/10 15:47:56 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,17 +116,19 @@ int	builtin_unset(char ***envp, char *key[])
 
 /*Check for path with chdir , if path is empty, i use my getter to find HOME
 and return the path to the HOME dir and use pwd to printout */
-int	builtin_cd(char ***envp, const char *path)
+int	builtin_cd(char ***envp, char **args)
 {
 	const char	*path_;
 	char		*old_pwd;
 	char		*new_path;
 
-	path_ = builtin_cd_helper(envp, path);
+	path_ = builtin_cd_helper(envp, args);
+	if (!path_)
+		return (1);
 	if (chdir(path_) != 0)
 	{
-		perror("CHDIR");
-		return (2);
+		printf("minishell: %s: No such file or directory\n", path_);
+		return (1);
 	}
 	else
 	{

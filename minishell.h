@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:11:58 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 22:15:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_infos
 	int			cmd_index;
 	int			red_index;
 	int			e_code;
+	int			exit_flag;
 	int			save_fdin;
 	int			save_fdout;
 	int			pipefd[2];
@@ -77,7 +78,7 @@ void		redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens);
 void		wait_for_child(pid_t pid, t_infos *tokens, int is_last_command);
 
 /* still in main.... not formatted*/
-const char	*builtin_cd_helper(char ***envp, const char *path);
+const char	*builtin_cd_helper(char ***envp, char **args);
 /* still in main.... not formatted*/
 int			create_new(char ***envp, char *str, int i, int j);
 
@@ -106,7 +107,7 @@ int			builtin_export(char ***envp, char *key_value[]);
 int			builtin_unset(char ***envp, char *key[]);
 int			builtin_env(char ***envp);
 int			builtin_echo(t_command *cmd);
-int			builtin_cd(char ***envp, const char *path);
+int			builtin_cd(char ***envp, char **args);
 
 /* ft_expand_var.c .... formatted*/
 
@@ -221,5 +222,6 @@ char		*ft_extract_variables(char *str, t_infos *tokens);
 /* minishell_utils8.c */
 int			ft_atoi(const char *str);
 int			ft_isdigit(int c);
+int			print_error(char *str_i, char *str_0);
 
 #endif

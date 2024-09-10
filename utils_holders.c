@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_holders.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:06:33 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 21:06:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,24 @@ int	create_new(char ***envp, char *str, int i, int j)
 	return (0);
 }
 
-const char	*builtin_cd_helper(char ***envp, const char *path)
+const char	*builtin_cd_helper(char ***envp, char **args)
 {
 	const char	*home;
 
-	if (!path)
+	if (args[2])
+	{
+		printf("minishell: cd: too many arguments\n");
+		return (NULL);
+	}
+	if (!args[1])
 	{
 		home = get_env_var((*envp), "HOME");
 		if (!home)
 			errors("HOME path not set");
-		path = home;
+		return (home);
 	}
-	return (path);
+	else
+		return (args[1]);
 }
 
 char	*convert_str(char **input)
