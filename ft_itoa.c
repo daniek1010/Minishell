@@ -6,7 +6,7 @@
 /*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:39:45 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:15:22 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/10 14:49:50 by riporth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,19 @@ void	ft_check_builtin(t_command *command, t_infos *tokens)
 	else if (ft_strcmp("unset", command->name) == 0)
 		tokens->e_code = builtin_unset(tokens->envp, command->args);
 	else if (ft_strcmp("cd", command->name) == 0)
-		tokens->e_code = builtin_cd(tokens->envp, command->args[1]);
+	{
+		if (command->args[2])
+		{
+			printf("bash: cd: too many arguments\n");
+			tokens->e_code = 1;
+		}
+		else
+		{
+			if (command->args[1])
+				printf("**** %s\n", command->args[1]);
+			tokens->e_code = builtin_cd(tokens->envp, command->args[1]);
+		}
+	}
 	else if (ft_strcmp("pwd", command->name) == 0)
 		tokens->e_code = builtin_pwd();
 	else if (ft_strcmp("exit", command->name) == 0)
