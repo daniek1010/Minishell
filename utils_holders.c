@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 21:06:35 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 12:53:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,12 @@ int	create_new(char ***envp, char *str, int i, int j)
 const char	*builtin_cd_helper(char ***envp, char **args)
 {
 	const char	*home;
+	int			i;
 
-	if (args[2])
+	i = 0;
+	while (args[i] != NULL)
+		i++;
+	if (i > 2)
 	{
 		printf("minishell: cd: too many arguments\n");
 		return (NULL);
@@ -52,7 +56,7 @@ const char	*builtin_cd_helper(char ***envp, char **args)
 	{
 		home = get_env_var((*envp), "HOME");
 		if (!home)
-			errors("HOME path not set");
+			ft_putendl_fd("HOME path not set", STDERR_FILENO);
 		return (home);
 	}
 	else

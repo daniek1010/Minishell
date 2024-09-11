@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:27:06 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/06 10:55:14 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 12:27:35 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,16 @@ char	**ft_check_path(char *envp[])
 	char	**splitted;
 
 	i = 0;
-	splitted = NULL;
 	while (envp[i] != NULL)
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
 			splitted = ft_split(envp[i] + 5, ':');
-			break ;
+			return (splitted);
 		}
 		i++;
 	}
-	return (splitted);
+	return (NULL);
 }
 
 char	*ft_access(char *av, char *envp[])
@@ -37,10 +36,12 @@ char	*ft_access(char *av, char *envp[])
 	char	*path;
 	int		i;
 
-	splitted = ft_check_path(envp);
-	i = -1;
 	if (access(av, X_OK) == 0)
 		return (av);
+	splitted = ft_check_path(envp);
+	if (!splitted)
+		return (NULL);
+	i = -1;
 	while (splitted[++i] != NULL)
 	{
 		path = join(splitted[i], av);
