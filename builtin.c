@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/11 12:53:05 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 18:02:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,14 @@ int	builtin_echo(t_command *cmd)
 int	builtin_env(char ***envp)
 {
 	int	i;
+	char	*str;
 
 	i = 0;
 	while ((*envp)[i] != NULL)
 	{
-		ft_putendl_fd((*envp)[i], STDOUT_FILENO);
+		str = ft_strchr(((*envp)[i]), '=');
+		if (str)
+			ft_putendl_fd((*envp)[i], STDOUT_FILENO);
 		i++;
 	}
 	return (0);
@@ -77,6 +80,8 @@ int	builtin_export(char ***envp, char *key_value[])
 				printf("declare -x %s=\"%s\"\n", (*envp)[i], str + 1);
 				*str = '=';
 			}
+			else
+				printf("declare -x %s\n", (*envp)[i]);
 			i++;
 		}
 		return (0);

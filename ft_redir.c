@@ -6,35 +6,39 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/09 22:55:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 20:44:16 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_read_input_here_doc(char *prompt, char *delimeter)
+char *ft_read_input_here_doc(char *prompt, char *delimeter)
 {
-	char	*input_read;
-	char	*str;
+    char *input_read;
+    char *str = NULL;
+    char *temp;
 
-	str = NULL;
-	while (1)
-	{
-		input_read = readline(prompt);
-		if (!input_read)
-		{
-			ft_putstr_fd("minishell: warning: here-document: ", STDERR_FILENO);
-			ft_putendl_fd(delimeter, STDERR_FILENO);
-			return (str);
-		}
-		if (ft_strcmp(input_read, delimeter) == 0)
-			break ;
-		str = ft_strjoin_new_line(str, input_read);
-		free (input_read);
-	}
-	if (input_read)
-		free (input_read);
-	return (str);
+    while (1)
+    {
+        input_read = readline(prompt);
+        if (!input_read)
+        {
+            ft_putstr_fd("minishell: warning: here-document: ", STDERR_FILENO);
+            ft_putendl_fd(delimeter, STDERR_FILENO);
+            free(str);
+            return (NULL);
+        }
+        if (ft_strcmp(input_read, delimeter) == 0)
+        {
+            free(input_read);
+            break;
+        }
+        temp = ft_strjoin_new_line(str, input_read);
+        free(str);
+        str = temp;
+        free(input_read);
+    }
+    return (str);
 }
 
 void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens)
@@ -44,6 +48,13 @@ void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens)
 
 	pipe_create(pipefd);
 	input = ft_read_input_here_doc(prompt, delimeter);
+	if (tokens->commands[0]->name == NULL)
+	{
+		free (input);
+		close_fd(pipefd[0]);
+		close_fd(pipefd[1]);
+		return ;
+	}
 	if (!input)
 	{
 		close_fd(pipefd[0]);

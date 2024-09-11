@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 22:14:37 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 17:58:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,9 @@ int	builtin_export_helper(char **key_value, char ***envp)
 				return (result);
 		}
 		else
-			return (0);
+		{
+			export_helper_2(key_value, envp, key_value[i], NULL);
+		}
 		i++;
 	}
 	return (0);

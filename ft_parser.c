@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 11:45:48 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 18:54:34 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,21 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
 			break ;
 		save_name_args(cmd, &flag, &start, tokens_array);
 	}
+	if (cmd->i == 0)
+		cmd->name = NULL;
 	cmd->args[cmd->i] = NULL;
 	cmd->redir_cmd[cmd->redir_count] = NULL;
 	if (redir_status < 0)
 	{
-		free_command(cmd);
+		if (cmd->i == 0 && cmd->redir_count == 0)
+		{
+			free(cmd->args);
+			free(cmd->redir_cmd);
+			free(cmd);
+			return (NULL);
+		}
+		else if (cmd->i > 0)
+			free_command(cmd);
 		return (NULL);
 	}
 	return (cmd);
@@ -119,10 +129,17 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	while (token_array[i] != NULL)
 	{
 		start = i;
-		skip_until_pipe_end(token_array, &i);
+		while (token_array[i] && ft_strcmp(token_array[i],
+			"|") != 0)
+			i++;
+		// if ((i == 0) && (ft_strcmp(token_array[i + 1], "|") == 0))
+		// {
+		// 	printf("multiple pipe\n");
+		// 	break ;
+		// }
 		command = ft_create_cmd(start, i - 1, token_array);
-		if (!command)
-			return (0);
+		if (command == NULL)
+			break ;
 		tokens->commands[tokens->cmd_index++] = command;
 		if (ft_strcmp(token_array[i], "|") == 0)
 		{
@@ -134,3 +151,4 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	ft_cleaner(token_array);
 	return (1);
 }
+

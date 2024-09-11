@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/08/27 04:20:42 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 18:07:55 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 /*bool comparison to check if key was found */
 int	compare_key(char ***envp, char *key, int i)
 {
-	if ((ft_strncmp((*envp)[i], key, ft_strlen(key)) == 0)
-		&& (*envp)[i][ft_strlen(key)] == '=')
+	if ((ft_strncmp((*envp)[i], key, ft_strlen(key)) == 0))
 		return (1);
 	return (0);
 }
@@ -68,12 +67,22 @@ void	set_env_var(char ***envp, char *key, char *value)
 	new_envp = (char **)ft_malloc(sizeof(char *) * (i + 2));
 	j = 0;
 	new_envp = write_envp(&j, i, new_envp, envp);
-	str = ft_strjoin(key, "=");
-	new_envp[j] = ft_strjoin(str, value);
-	free (str);
-	new_envp[j + 1] = NULL;
-	ft_cleaner(*envp);
-	(*envp) = new_envp;
+	if (value == NULL)
+	{
+		new_envp[j] = ft_strdup(key);
+		new_envp[j + 1] = NULL;
+		ft_cleaner(*envp);
+		(*envp) = new_envp;
+	}
+	else
+	{
+		str = ft_strjoin(key, "=");
+		new_envp[j] = ft_strjoin(str, value);
+		free (str);
+		new_envp[j + 1] = NULL;
+		ft_cleaner(*envp);
+		(*envp) = new_envp;
+	}
 	return ;
 }
 

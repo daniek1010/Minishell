@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 00:24:55 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/05 20:13:07 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 20:39:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,26 +70,57 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (str);
 }
 
-char	*ft_strjoin_new_line(char const *s1, char const *s2)
-{
-	char		*str;
-	char		*temp;
-	size_t		s1_len;
-	size_t		s2_len;
+// char	*ft_strjoin_new_line(char const *s1, char const *s2)
+// {
+// 	char		*str;
+// 	char		*temp;
+// 	size_t		s1_len;
+// 	size_t		s2_len;
 
-	if (!s1)
-		s1_len = 0;
-	else
-		s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 2));
-	if (str == NULL)
-		return (NULL);
-	temp = ft_strjoin(s1, s2);
-	ft_strcpy(str, temp);
-	str[s1_len + s2_len] = '\n';
-	str[s1_len + s2_len + 1] = '\0';
-	return (str);
+// 	if (!s1)
+// 		s1_len = 0;
+// 	else
+// 		s1_len = ft_strlen(s1);
+// 	s2_len = ft_strlen(s2);
+// 	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 2));
+// 	if (str == NULL)
+// 		return (NULL);
+// 	temp = ft_strjoin(s1, s2);
+// 	ft_strcpy(str, temp);
+// 	str[s1_len + s2_len] = '\n';
+// 	str[s1_len + s2_len + 1] = '\0';
+// 	return (str);
+// }
+
+void *ft_memcpy(void *dst, const void *src, size_t n)
+{
+    unsigned char       *d;
+    const unsigned char *s;
+
+    d = (unsigned char *)dst;
+    s = (const unsigned char *)src;
+    while (n--)
+        *d++ = *s++;
+    return (dst);
+}
+
+char *ft_strjoin_new_line(char const *s1, char const *s2)
+{
+    char    *str;
+    size_t  s1_len;
+    size_t  s2_len;
+
+    s1_len = (s1) ? ft_strlen(s1) : 0;
+    s2_len = ft_strlen(s2);
+    str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 2));
+    if (str == NULL)
+        return (NULL);
+    if (s1)
+        ft_memcpy(str, s1, s1_len);
+    ft_memcpy(str + s1_len, s2, s2_len);
+    str[s1_len + s2_len] = '\n';
+    str[s1_len + s2_len + 1] = '\0';
+    return (str);
 }
 
 pid_t	fork_process(void)

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 11:46:52 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 19:10:15 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,11 @@ void	setup_pipes(t_infos *tokens, int is_last_command, int *flag)
 
 void	builtin_handler(t_command *cmd, t_infos *tokens)
 {
-	if (is_builtin(cmd->name))
+	if (cmd->name == NULL)
+	{
+		return ;
+	}
+	else if (is_builtin(cmd->name))
 	{
 		if (cmd->redir_count > 0)
 			handle_redirections(cmd, tokens);

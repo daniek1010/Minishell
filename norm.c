@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 11:46:40 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/11 19:45:54 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,25 +63,34 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 	pid_t	pid;
 
 	tokens->e_code = 0;
-	if (is_builtin(cmd->name))
-		exec_cmd_builtin(cmd, is_last_command, tokens, flag);
-	else
+	if (cmd->name == NULL)
 	{
-		signal_handlers_child();
-		pid = fork();
-		if (pid == 0)
+		;
+	}
+	else if (is_builtin(cmd->name))
+		exec_cmd_builtin(cmd, is_last_command, tokens, flag);
+	signal_handlers_child();
+	pid = fork();
+	if (pid == 0)
+	{
+		if (cmd->name == NULL)
 		{
-			redirect_io(is_last_command, tokens);
+		redirect_io(is_last_command, tokens);
 			handle_redirections(cmd, tokens);
-			if (tokens->e_code == 1)
+			printf("fuck here *******\n");
 				exit (1);
-			exec_builtin_path(cmd, tokens);
-			exit (tokens->e_code);
 		}
+		redirect_io(is_last_command, tokens);
+		handle_redirections(cmd, tokens);
+		if (tokens->e_code == 1)
+			exit (1);
+		exec_builtin_path(cmd, tokens);
+		exit (tokens->e_code);
+	}
 		else if (pid > 0)
 			wait_for_child(pid, tokens, is_last_command);
-	}
 }
+
 
 int	execute_commander(t_infos *tokens)
 {
