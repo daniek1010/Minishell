@@ -1,31 +1,9 @@
-Hello
-'world >
-|
-testexample
-<
->
-Hello 'world >' | test"example" <>
-11111-222222222-3-4444444444444-56
-12345-123456789-1-1234567890123-11
-----------------------------------------------------------------------------------
+Changes
+ft_parser.c
+mini_shell_utils7.c
+minishell.h
+norm.c
+ split_utils.c
+split_utils2.c 
 
-/
-int	main(void)
-{
-	const char *test_str = "Hello 'world >'|test\"exam<ple\" <>";
-	char **tokens;
-	int i = 0;
-
-	tokens = ft_token_split(test_str);
-
-	// Print each token
-	printf("Tokens:\n");
-	while (tokens[i] != NULL)
-	{
-		printf("Token %d: %s\n", i + 1, tokens[i]);
-		free(tokens[i]);
-		i++;
-	}
-	free(tokens);
-	return (0);
-}
+New File split_utils5.c
