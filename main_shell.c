@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 05:22:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 18:45:38 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:17:33 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	mini_shell(t_infos *tokens)
 		if (token_array == NULL)
 		{
 			ft_putendl_fd("exit", STDOUT_FILENO);
+			tokens->e_code = 0;
 			break ;
 		}
 		if (!ft_sort(tokens, token_array))

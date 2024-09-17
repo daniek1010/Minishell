@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 17:58:05 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:27:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,20 @@ void	signal_handlers_child(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	restore_stdout(t_infos *tokens)
+void	restore_std(t_infos *tokens)
 {
 	if (tokens->save_fdout != -1)
 	{
+		ft_putendl_fd("saving stdout", STDERR_FILENO);
 		dup2(tokens->save_fdout, STDOUT_FILENO);
-		close(tokens->save_fdout);
+		close_fd(tokens->save_fdout);
 		tokens->save_fdout = -1;
 	}
+	// if (tokens->save_fdin != -1)
+	// {
+	// 	ft_putendl_fd("saving stdin", STDERR_FILENO);
+	// 	dup2(tokens->save_fdin, STDIN_FILENO);
+	// 	close_fd(tokens->save_fdin);
+	// 	tokens->save_fdin = -1;
+	// }
 }

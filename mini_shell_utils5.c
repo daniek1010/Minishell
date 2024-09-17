@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils5.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:25:24 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 14:07:09 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/13 01:05:41 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	free_name_args(t_command *cmd)
 {
 	int	i;
 
-	if (cmd->name)
+	if (cmd->name != NULL)
 	{
 		free(cmd->name);
 		cmd->name = NULL;

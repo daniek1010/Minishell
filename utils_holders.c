@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:49:30 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 12:53:40 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:17:27 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,5 @@ void	wait_for_child(pid_t pid, t_infos *tokens, int is_last_command)
 	if (tokens->prev_pipefd[0] != -1)
 		close_pipe(tokens, 1);
 	if (!is_last_command)
-		close_fd (tokens->pipefd[1]);
+		close_fd(tokens->pipefd[1]);
 }

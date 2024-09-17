@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 19:10:15 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:33:52 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	init_pipe(t_infos *tokens)
 	tokens->pipefd[1] = -1;
 	tokens->prev_pipefd[0] = -1;
 	tokens->prev_pipefd[1] = -1;
+	tokens->is_heredoc = 0;
 }
 
 void	close_pipe(t_infos *tokens, int flag)
@@ -73,6 +74,6 @@ void	builtin_handler(t_command *cmd, t_infos *tokens)
 		if (tokens->e_code == 1)
 			return ;
 		exec_builtin_path(cmd, tokens);
-		restore_stdout(tokens);
+		restore_std(tokens);
 	}
 }

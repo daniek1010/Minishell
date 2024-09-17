@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/11 18:02:03 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/13 00:10:11 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	builtin_echo(t_command *cmd)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 		return (0);
 	}
-	if (ft_strcmp(cmd->args[1], "-n") == 0)
+	if (echo_n_handeler(cmd->args[1]))
 	{
 		i = 2;
 		while (cmd->args[i])
@@ -44,7 +44,7 @@ int	builtin_echo(t_command *cmd)
 /*Iterate tru the envp and then print out to the screen */
 int	builtin_env(char ***envp)
 {
-	int	i;
+	int		i;
 	char	*str;
 
 	i = 0;

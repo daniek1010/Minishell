@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 20:23:52 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:50:06 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_infos
 	int			red_index;
 	int			e_code;
 	int			exit_flag;
+	int			is_heredoc;
 	int			save_fdin;
 	int			save_fdout;
 	int			pipefd[2];
@@ -68,7 +69,7 @@ typedef struct s_infos
 
 char		**ft_token_spliter(char const *s, t_infos *tokens);
 char		*convert_str(char **input);
-void		restore_stdout(t_infos *tokens);
+void		restore_std(t_infos *tokens);
 
 void		handle_sig_parent(int sig);
 void		signal_handlers(void);
@@ -223,5 +224,8 @@ char		*ft_extract_variables(char *str, t_infos *tokens);
 int			ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			print_error(char *str_i, char *str_0);
+
+/* minishell_utils0.c */
+int			echo_n_handeler(char *str);
 
 #endif

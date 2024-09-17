@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 18:54:34 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/13 01:08:19 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,24 @@ void	save_name_args(t_command *cmd, int *flag,
 	}
 }
 
+int	ft_redir_status(t_command *cmd, int redir_status)
+{
+	if (cmd->i == 0)
+		cmd->name = NULL;
+	cmd->args[cmd->i] = NULL;
+	cmd->redir_cmd[cmd->redir_count] = NULL;
+	if (redir_status < 0)
+	{
+		free_command(cmd);
+		return (0);
+	}
+	return (1);
+}
+
 t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
 {
-	int			redir_status;
 	t_command	*cmd;
+	int			redir_status;
 	int			flag;
 
 	cmd = init_cmd(&flag);
@@ -95,23 +109,8 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
 			break ;
 		save_name_args(cmd, &flag, &start, tokens_array);
 	}
-	if (cmd->i == 0)
-		cmd->name = NULL;
-	cmd->args[cmd->i] = NULL;
-	cmd->redir_cmd[cmd->redir_count] = NULL;
-	if (redir_status < 0)
-	{
-		if (cmd->i == 0 && cmd->redir_count == 0)
-		{
-			free(cmd->args);
-			free(cmd->redir_cmd);
-			free(cmd);
-			return (NULL);
-		}
-		else if (cmd->i > 0)
-			free_command(cmd);
+	if (!ft_redir_status(cmd, redir_status))
 		return (NULL);
-	}
 	return (cmd);
 }
 

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 21:27:39 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 18:07:55 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/13 00:07:14 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	set_env_var_helper(char *key, char *value, char ***envp, int i)
 
 	if (compare_key(envp, key, i))
 	{
+		if (value == NULL)
+			return (1);
 		free ((*envp)[i]);
 		str = ft_strjoin(key, "=");
 		(*envp)[i] = ft_strjoin(str, value);
@@ -54,7 +56,6 @@ void	set_env_var(char ***envp, char *key, char *value)
 {
 	int		i;
 	int		j;
-	char	*str;
 	char	**new_envp;
 
 	i = 0;
@@ -67,22 +68,15 @@ void	set_env_var(char ***envp, char *key, char *value)
 	new_envp = (char **)ft_malloc(sizeof(char *) * (i + 2));
 	j = 0;
 	new_envp = write_envp(&j, i, new_envp, envp);
-	if (value == NULL)
+	new_envp[j] = ft_strdup(key);
+	if (value)
 	{
-		new_envp[j] = ft_strdup(key);
-		new_envp[j + 1] = NULL;
-		ft_cleaner(*envp);
-		(*envp) = new_envp;
+		ft_strcat(new_envp[j], "=");
+		ft_strcat(new_envp[j], value);
 	}
-	else
-	{
-		str = ft_strjoin(key, "=");
-		new_envp[j] = ft_strjoin(str, value);
-		free (str);
-		new_envp[j + 1] = NULL;
-		ft_cleaner(*envp);
-		(*envp) = new_envp;
-	}
+	new_envp[j + 1] = NULL;
+	ft_cleaner(*envp);
+	(*envp) = new_envp;
 	return ;
 }
 

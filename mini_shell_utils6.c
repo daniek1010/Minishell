@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/11 18:16:57 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/12 08:29:38 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	is_builtin(char *type)
 {
+	if (type == NULL)
+		return (0);
 	if (ft_strcmp("echo", type) == 0 || ft_strcmp("cd", type) == 0
 		|| ft_strcmp("export", type) == 0 || ft_strcmp("pwd", type) == 0
 		|| ft_strcmp("unset", type) == 0 || ft_strcmp("env", type) == 0
