@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:44:50 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/10 13:46:24 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/18 10:12:50 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,25 +82,24 @@ char	*fill_word(const char *str, char *list, int *i)
 char	*fill_direct(const char *str, char *list, int *i)
 {
 	int	x;
+	int	y;
+	int	a;
 
-	x = 1;
-	if (str[*i] == '>' && str[*i + 1] == '>')
-		x++;
-	else if (str[*i] == '<' && str[*i + 1] == '<')
-		x++;
-	else if (str[*i] == '>' && str[*i + 1] == '|')
-		x++;
+	x = 0;
+	y = 0;
+	a = pipe_count(str, *i, &x, &y);
+	x = a - *i;
 	list = (char *)malloc(sizeof(char) * (x + 1));
 	if (!list)
 		return (NULL);
 	list[x] = '\0';
-	list[0] = str[*i];
-	if (x == 2)
+	x = 0;
+	while (*i < a)
 	{
-		(*i)++;
-		list[1] = str[*i];
+		list[x] = str[*i];
+		*i += 1;
+		x++;
 	}
-	(*i)++;
 	return (list);
 }
 

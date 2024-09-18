@@ -6,42 +6,17 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 12:12:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/17 16:38:12 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 09:15:03 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
-{
-	char	**new_input;
-	char	*converted_str;
-
-	if (tokens->save_fdin == -1)
-		tokens->save_fdin = dup(STDIN_FILENO);
-	new_input = ft_token_spliter(input, tokens);
-	if (new_input)
-	{
-		converted_str = convert_str(new_input);
-		write(pipefd[1], converted_str, ft_strlen(converted_str));
-		free (input);
-		free (new_input);
-		free (converted_str);
-	}
-	else
-	{
-		write(pipefd[1], input, ft_strlen(input));
-		free(input);
-	}
-	close_fd(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close_fd(pipefd[0]);
-}
-
 char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 {
 	char	*input_read;
 	char	*str;
+	char	*temp;
 
 	str = NULL;
 	while (1)
@@ -55,7 +30,9 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 		}
 		if (ft_strcmp(input_read, delimeter) == 0)
 			break ;
-		str = ft_strjoin_new_line(str, input_read);
+		temp = ft_strjoin_new_line(str, input_read);
+		free (str);
+		str = temp;
 		free (input_read);
 	}
 	if (input_read)
@@ -63,20 +40,33 @@ char	*ft_read_input_here_doc(char *prompt, char *delimeter)
 	return (str);
 }
 
-void	redir_here_docs(char *prompt, char *delimeter, t_infos *tokens)
+void	redir_here_docs(char *delimeter, t_infos *tokens, t_command *cmd,
+			int pos)
 {
 	char	*input;
 	int		pipefd[2];
+	int		last_heredoc;
 
-	pipe_create(pipefd);
-	input = ft_read_input_here_doc(prompt, delimeter);
-	if (!input)
+	last_heredoc = count_heredoc(cmd);
+	input = ft_read_input_here_doc("> ", delimeter);
+	if (last_heredoc == pos)
 	{
-		close_fd(pipefd[0]);
-		close_fd(pipefd[1]);
-		return ;
+		if (cmd->name == NULL)
+		{
+			free (input);
+			return ;
+		}
+		pipe_create(pipefd);
+		if (!input)
+		{
+			write(pipefd[1], "", STDOUT_FILENO);
+			dup2(pipefd[0], STDIN_FILENO);
+			return ;
+		}
+		redir_here_doc_helper(input, pipefd, tokens);
 	}
-	redir_here_doc_helper(input, pipefd, tokens);
+	else
+		free (input);
 }
 
 int	handle_redirections(t_command *cmd, t_infos *tokens)
@@ -99,10 +89,6 @@ int	handle_redirections(t_command *cmd, t_infos *tokens)
 			{
 				if (!redir_input(tokens, cmd->redir_cmd[i]->file))
 					return (0);
-			}
-			else
-			{
-				redir_here_docs("> ", cmd->redir_cmd[i]->file, tokens);
 			}
 			i++;
 		}

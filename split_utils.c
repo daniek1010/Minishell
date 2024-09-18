@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:38:57 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/10 13:44:30 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/18 09:47:17 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,18 @@ int	pipe_count(const char *str, int i, int *count, int *in_word)
 	*count += 1;
 	*in_word = 1;
 	if (str[i] == '>' && str[i + 1] == '>')
-		i++;
+		i += 2;
 	else if (str[i] == '<' && str[i + 1] == '<')
-		i++;
+		i += 2;
 	else if (str[i] == '>' && str[i + 1] == '|')
+		i += 2;
+	else if (str[i] == '|' && str[i + 1] == '|')
+	{
+		while (str[i] == '|')
+			i++;
+	}
+	else
 		i++;
-	i++;
 	return (i);
 }
 

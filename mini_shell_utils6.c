@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 12:51:33 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/12 08:29:38 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 09:30:22 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ int	is_builtin(char *type)
 	return (0);
 }
 
-// void	skip_until_pipe_end(char **token_array, int *i)
-// {
-// 	while (token_array[*i] && ft_strcmp(token_array[*i],
-// 			"|") != 0)
-// 		(*i)++;
-// }
+void	skip_until_pipe_end(char **token_array, int *i)
+{
+	while (token_array[*i] && ft_strcmp(token_array[*i],
+			"|") != 0)
+		(*i)++;
+}
 
 int	echo_new_line(t_command *cmd)
 {

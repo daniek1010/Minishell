@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell_utils7.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: riporth <riporth@student.42.fr>            +#+  +:+       +#+        */
+/*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 13:04:18 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 13:51:50 by riporth          ###   ########.fr       */
+/*   Updated: 2024/09/18 12:21:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,25 @@ char	**ft_token_spliter(char const *s, t_infos *tokens)
 	list = ft_token_fill(s, list);
 	list = ft_var_up(list, word, tokens);
 	remove_empty_strings(list);
+	if (list[0] != NULL)
+	{
+		if (list[0][0] == '|' && list[0][1] == '\0')
+			list[0] = change_pipe(list[0]);
+	}
 	return (list);
+}
+
+int	ft_redir_status(t_command *cmd, int redir_status, t_infos *tokens)
+{
+	if (cmd->i == 0)
+		cmd->name = NULL;
+	cmd->args[cmd->i] = NULL;
+	cmd->redir_cmd[cmd->redir_count] = NULL;
+	if (redir_status < 0)
+	{
+		tokens->e_code = 2;
+		free_command(cmd);
+		return (0);
+	}
+	return (1);
 }

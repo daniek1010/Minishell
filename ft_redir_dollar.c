@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/17 15:29:43 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 00:06:11 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,28 +77,26 @@ int	is_valid_var_char(char c)
 	return (ft_isalnum(c) || c == '_');
 }
 
-// void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
-// {
-// 	char	**new_input;
-// 	char	*converted_str;
+void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
+{
+	char	**new_input;
+	char	*converted_str;
 
-// 	if (tokens->save_fdin == -1)
-// 		tokens->save_fdin = dup(STDIN_FILENO);
-// 	new_input = ft_token_spliter(input, tokens);
-// 	if (new_input)
-// 	{
-// 		converted_str = convert_str(new_input);
-// 		write(pipefd[1], converted_str, ft_strlen(converted_str));
-// 		free (input);
-// 		free (new_input);
-// 		free (converted_str);
-// 	}
-// 	else
-// 	{
-// 		write(pipefd[1], input, ft_strlen(input));
-// 		free(input);
-// 	}
-// 	close_fd(pipefd[1]);
-// 	dup2(pipefd[0], STDIN_FILENO);
-// 	close_fd(pipefd[0]);
-// }
+	new_input = ft_token_spliter(input, tokens);
+	if (new_input)
+	{
+		converted_str = convert_str(new_input);
+		write(pipefd[1], converted_str, ft_strlen(converted_str));
+		free (input);
+		free (new_input);
+		free (converted_str);
+	}
+	else
+	{
+		write(pipefd[1], input, ft_strlen(input));
+		free(input);
+	}
+	close_fd(pipefd[1]);
+	dup2(pipefd[0], STDIN_FILENO);
+	close_fd(pipefd[0]);
+}

@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 02:57:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/13 01:08:19 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:22:05 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ t_redir	*ft_create_redir(char *str, char *file)
 	return (redir);
 }
 
-void	save_name_args(t_command *cmd, int *flag,
+int	save_name_args(t_command *cmd, int *flag,
 			int *start, char *tokens_array[])
 {
 	char	*str;
@@ -66,6 +66,8 @@ void	save_name_args(t_command *cmd, int *flag,
 		str = tokens_array[*start];
 		if (str[0] == '"' || str[0] == '\'')
 			str++;
+		if (str && ft_strlen(str) == 0)
+			return (0);
 		cmd->name = ft_strdup(str);
 		(*flag) = 0;
 	}
@@ -77,29 +79,18 @@ void	save_name_args(t_command *cmd, int *flag,
 		cmd->args[cmd->i++] = ft_strdup(str);
 		(*start)++;
 	}
-}
-
-int	ft_redir_status(t_command *cmd, int redir_status)
-{
-	if (cmd->i == 0)
-		cmd->name = NULL;
-	cmd->args[cmd->i] = NULL;
-	cmd->redir_cmd[cmd->redir_count] = NULL;
-	if (redir_status < 0)
-	{
-		free_command(cmd);
-		return (0);
-	}
 	return (1);
 }
 
-t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
+t_command	*ft_create_cmd(int start, int end, char *tokens_array[],
+				t_infos *tokens)
 {
 	t_command	*cmd;
 	int			redir_status;
 	int			flag;
 
 	cmd = init_cmd(&flag);
+	redir_status = 0;
 	while (start <= end)
 	{
 		redir_status = is_redirection_char(cmd, tokens_array, &start);
@@ -107,9 +98,13 @@ t_command	*ft_create_cmd(int start, int end, char *tokens_array[])
 			continue ;
 		else if (redir_status < 0)
 			break ;
-		save_name_args(cmd, &flag, &start, tokens_array);
+		if (!save_name_args(cmd, &flag, &start, tokens_array))
+		{
+			invalid_name_args(tokens, cmd);
+			return (NULL);
+		}
 	}
-	if (!ft_redir_status(cmd, redir_status))
+	if (!ft_redir_status(cmd, redir_status, tokens))
 		return (NULL);
 	return (cmd);
 }
@@ -128,15 +123,8 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	while (token_array[i] != NULL)
 	{
 		start = i;
-		while (token_array[i] && ft_strcmp(token_array[i],
-			"|") != 0)
-			i++;
-		// if ((i == 0) && (ft_strcmp(token_array[i + 1], "|") == 0))
-		// {
-		// 	printf("multiple pipe\n");
-		// 	break ;
-		// }
-		command = ft_create_cmd(start, i - 1, token_array);
+		skip_until_pipe_end(token_array, &i);
+		command = ft_create_cmd(start, i - 1, token_array, tokens);
 		if (command == NULL)
 			break ;
 		tokens->commands[tokens->cmd_index++] = command;
@@ -150,4 +138,3 @@ int	ft_sort(t_infos *tokens, char **token_array)
 	ft_cleaner(token_array);
 	return (1);
 }
-

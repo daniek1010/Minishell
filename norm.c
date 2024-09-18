@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/17 15:43:01 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:23:12 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	redirect_io(int is_last_command, t_infos *tokens)
 {
 	if (tokens->prev_pipefd[0] != -1)
 	{
-		ft_putendl_fd("redirect here ??", STDERR_FILENO);
 		close_fd(tokens->prev_pipefd[1]);
 		if (dup2(tokens->prev_pipefd[0], STDIN_FILENO) == -1)
 		{
@@ -27,7 +26,6 @@ void	redirect_io(int is_last_command, t_infos *tokens)
 	}
 	if (!is_last_command)
 	{
-		ft_putendl_fd("more commands ??", STDERR_FILENO);
 		close_fd(tokens->pipefd[0]);
 		tokens->save_fdout = dup(STDOUT_FILENO);
 		if (dup2(tokens->pipefd[1], STDOUT_FILENO) == -1)
@@ -52,8 +50,8 @@ void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens,
 		pid = fork_process();
 		if (pid == 0)
 		{
-			redirect_io(is_last_command, tokens);
 			builtin_handler(cmd, tokens);
+			redirect_io(is_last_command, tokens);
 			exit (tokens->e_code);
 		}
 		else if (pid > 0)
@@ -73,22 +71,7 @@ void	exec_cmd(t_command *cmd, int is_last_command, t_infos *tokens, int flag)
 		signal_handlers_child();
 		pid = fork();
 		if (pid == 0)
-		{
-			redirect_io(is_last_command, tokens);
-			handle_redirections(cmd, tokens);
-			if (cmd->name == NULL)
-			{
-				write(tokens->pipefd[1], "", 1);
-				exit (1);
-			}
-			// if (tokens->is_heredoc)
-			// {
-			// 	dup2(tokens->pipefd[1], STDOUT_FILENO);
-			// 	close_fd(tokens->pipefd[1]);
-			// }
-			exec_builtin_path(cmd, tokens);
-			exit (tokens->e_code);
-		}
+			exec_child_process(tokens, cmd, is_last_command);
 		else if (pid > 0)
 			wait_for_child(pid, tokens, is_last_command);
 	}
@@ -116,9 +99,7 @@ int	execute_commander(t_infos *tokens)
 			tokens->pipefd[1] = -1;
 		}
 		else
-		{
 			close_pipe(tokens, 2);
-		}
 		i++;
 	}
 	return (tokens->e_code);
@@ -135,20 +116,15 @@ int	exec_builtin_path(t_command *command, t_infos *tokens)
 	else
 	{
 		path = ft_access(command->name, *(tokens->envp));
-		if (path == NULL)
-		{
-			ft_putstr_fd("command \'", STDERR_FILENO);
-			ft_putstr_fd(command->name, STDERR_FILENO);
-			ft_putstr_fd("\' not found\n", STDERR_FILENO);
-			tokens->e_code = 127;
-			return (tokens->e_code);
-		}
-		if (execve(path, command->args, *(tokens->envp)) == -1)
+		if (command->name[0] == '|')
+			tokens->e_code = pipe_start_error();
+		else if (path == NULL)
+			tokens->e_code = path_not_found(command);
+		else if (execve(path, command->args, *(tokens->envp)) == -1)
 		{
 			perror("EXECVE");
 			free(path);
 			tokens->e_code = 13;
-			return (tokens->e_code);
 		}
 	}
 	return (tokens->e_code);
