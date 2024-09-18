@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 00:53:50 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/18 12:23:12 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:14:57 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,14 @@ void	exec_cmd_builtin(t_command *cmd, int is_last_command, t_infos *tokens,
 	pid_t	pid;
 
 	if ((is_last_command) && (flag == 0))
-		builtin_handler(cmd, tokens);
+		builtin_handler(cmd, tokens, is_last_command);
 	else
 	{
 		signal_handlers_child();
 		pid = fork_process();
 		if (pid == 0)
 		{
-			builtin_handler(cmd, tokens);
-			redirect_io(is_last_command, tokens);
+			builtin_handler(cmd, tokens, is_last_command);
 			exit (tokens->e_code);
 		}
 		else if (pid > 0)

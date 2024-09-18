@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 03:33:47 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/18 00:06:11 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:13:40 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	*ft_strstr(char *haystack, char *needle)
 int	ft_isalnum(int c)
 {
 	return (((c > 96 && c < 123) || (c > 64 && c < 91))
-		|| (c >= 48 && c <= 57));
+		|| (c >= 48 && c <= 57) || c == '_');
 }
 
 int	is_valid_var_char(char c)
@@ -82,7 +82,7 @@ void	redir_here_doc_helper(char *input, int pipefd[2], t_infos *tokens)
 	char	**new_input;
 	char	*converted_str;
 
-	new_input = ft_token_spliter(input, tokens);
+	new_input = ft_token_spliter_2(input, tokens);
 	if (new_input)
 	{
 		converted_str = convert_str(new_input);

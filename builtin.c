@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 11:36:34 by riporth           #+#    #+#             */
-/*   Updated: 2024/09/13 00:10:11 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:05:41 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ int	builtin_cd(char ***envp, char **args)
 		return (1);
 	if (chdir(path_) != 0)
 	{
-		printf("minishell: %s: No such file or directory\n", path_);
+		printf("minishell: cd: %s: No such file or directory\n", path_);
 		return (1);
 	}
 	else

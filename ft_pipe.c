@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:39:57 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/18 01:06:22 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:17:01 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	setup_pipes(t_infos *tokens, int is_last_command, int *flag)
 		*flag = 0;
 }
 
-void	builtin_handler(t_command *cmd, t_infos *tokens)
+void	builtin_handler(t_command *cmd, t_infos *tokens, int is_last_command)
 {
 	if (cmd->name == NULL)
 	{
@@ -76,6 +76,7 @@ void	builtin_handler(t_command *cmd, t_infos *tokens)
 		}
 		if (tokens->e_code == 1)
 			return ;
+		redirect_io(is_last_command, tokens);
 		exec_builtin_path(cmd, tokens);
 		restore_std(tokens, 1);
 	}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_expand_var.c                                    :+:      :+:    :+:   */
+/*   mini_shell_utils10.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:41:40 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/18 00:56:06 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:15:37 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void	restore_std(t_infos *tokens, int flag)
 	{
 		if (tokens->save_fdout != -1)
 		{
-			ft_putendl_fd("saving stdout", STDERR_FILENO);
 			dup2(tokens->save_fdout, STDOUT_FILENO);
 			close_fd(tokens->save_fdout);
 			tokens->save_fdout = -1;
@@ -85,7 +84,6 @@ void	restore_std(t_infos *tokens, int flag)
 	{
 		if (tokens->save_fdin != -1)
 		{
-			ft_putendl_fd("saving stdin", STDERR_FILENO);
 			dup2(tokens->save_fdin, STDIN_FILENO);
 			close_fd(tokens->save_fdin);
 			tokens->save_fdin = -1;

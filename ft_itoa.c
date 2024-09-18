@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:39:45 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/10 22:06:11 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:59:13 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ int	alpha_numeric(char *str)
 	{
 		if ((str[i] >= 'a' && str[i] <= 'z')
 			|| (str[i] >= 'A' && str[i] <= 'Z')
-			|| (str[i] >= '0' && str[i] <= '9'))
+			|| (str[i] >= '0' && str[i] <= '9')
+			|| str[i] == '_')
 			i++;
 		else
 			return (0);
