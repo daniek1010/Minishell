@@ -6,7 +6,7 @@
 /*   By: danevans <danevans@student.42.f>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 10:33:05 by danevans          #+#    #+#             */
-/*   Updated: 2024/09/18 14:14:18 by danevans         ###   ########.fr       */
+/*   Updated: 2024/09/18 15:49:20 by danevans         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,8 @@ void		close_pipe(t_infos *tokens, int flag);
 void		init_pipe(t_infos *tokens);
 void		pipe_create(int pipefd[2]);
 void		setup_pipes(t_infos *tokens, int is_last_command, int *flag);
-void		builtin_handler(t_command *cmd, t_infos *tokens, int is_last_command);
+void		builtin_handler(t_command *cmd, t_infos *tokens,
+				int is_last_command);
 
 /* ft_redir.c .... formatted*/
 char		*ft_read_input_here_doc(char *prompt, char *delimeter);
@@ -221,9 +222,9 @@ int			count_qoute(const char *str, int i, int *count, int	*in_word);
 int			count_word_2(const char *str, int i, int *count, int	*in_word);
 
 /* split_utils1.c */
-char        *ft_var_up_2(char *list, t_infos *tokens);
-char        *ft_token_fill_2(const char *str, char *list);
-char        **ft_token_spliter_2(char const *s, t_infos *tokens);
+char		*ft_var_up_2(char *list, t_infos *tokens);
+char		*ft_token_fill_2(const char *str, char *list);
+char		**ft_token_spliter_2(char const *s, t_infos *tokens);
 
 /* split_utils2.c */
 int			token_count_words(const char *str);
